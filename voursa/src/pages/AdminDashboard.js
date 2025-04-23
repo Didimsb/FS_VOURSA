@@ -455,7 +455,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `http://localhost:5000/api/admin/points-transactions/${selectedTransaction._id}`,
+        `${process.env.REACT_APP_API_URL}/admin/points-transactions/${selectedTransaction._id}`,
         { status: 'completed' },
         {
           headers: {
@@ -1316,59 +1316,57 @@ const AdminDashboard = () => {
   const [loadingPoints, setLoadingPoints] = useState(false);
 
   const fetchPointsTransactions = async () => {
-    try {
-      setLoadingPoints(true);
-      const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/admin/points-transactions', {
+  try {
+    setLoadingPoints(true);
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/admin/points-transactions`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    setPointsTransactions(response.data.transactions);
+  } catch (error) {
+    toast({
+      title: 'خطأ',
+      description: 'فشل في جلب معاملات النقاط',
+      status: 'error',
+      duration: 3000,
+      isClosable: true,
+    });
+  } finally {
+    setLoadingPoints(false);
+  }
+};
+ const handleUpdatePointsTransaction = async (transactionId, status) => {
+  try {
+    const token = localStorage.getItem('token');
+    await axios.put(
+      `${process.env.REACT_APP_API_URL}/admin/points-transactions/${transactionId}`, 
+      { status },
+      {
         headers: {
           Authorization: `Bearer ${token}`
         }
-      });
-      setPointsTransactions(response.data.transactions);
-    } catch (error) {
-      toast({
-        title: 'خطأ',
-        description: 'فشل في جلب معاملات النقاط',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    } finally {
-      setLoadingPoints(false);
-    }
-  };
-
-  const handleUpdatePointsTransaction = async (transactionId, status) => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.put(
-        `http://localhost:5000/api/admin/points-transactions/${transactionId}`, 
-        { status },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-      toast({
-        title: 'نجاح',
-        description: 'تم تحديث حالة المعاملة بنجاح',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-      fetchPointsTransactions(); // Refresh the list after update
-    } catch (error) {
-      toast({
-        title: 'خطأ',
-        description: 'فشل في تحديث حالة المعاملة',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
-    }
-  };
-
+      }
+    );
+    toast({
+      title: 'نجاح',
+      description: 'تم تحديث حالة المعاملة بنجاح',
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    });
+    fetchPointsTransactions(); // Refresh the list after update
+  } catch (error) {
+    toast({
+      title: 'خطأ',
+      description: 'فشل في تحديث حالة المعاملة',
+      status: 'error',
+      duration: 3000,
+      isClosable: true,
+    });
+  }
+};
   useEffect(() => {
     fetchPointsTransactions();
   }, []);
