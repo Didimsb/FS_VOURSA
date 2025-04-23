@@ -187,13 +187,17 @@ const uploadToCloudinary = async (file) => {
   try {
     const formData = new FormData();
     formData.append('file', file);
-
-    const response = await axios.post('http://localhost:5000/api/upload/cloudinary', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
+    
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}/upload/cloudinary`, 
+      formData, 
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    
     return response.data.secure_url;
   } catch (error) {
     console.error('Error uploading to Cloudinary:', error);
