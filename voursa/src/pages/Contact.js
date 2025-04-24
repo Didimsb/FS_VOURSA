@@ -549,23 +549,23 @@ const Contact = () => {
             </Text>
           </MotionBox>
           
-          <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={12}>
+          <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={8}>
             <GridItem>
               <VStack spacing={8} align="start">
                 <VStack spacing={6} align="start" w="full">
                   <HStack spacing={4}>
                     <Icon as={Phone} color={accentColor} boxSize={6} />
                     <Text color={textColor}>{settings?.contactPage?.phone || settings?.contactPhone || ''}</Text>
-                          </HStack>
+                  </HStack>
                   <HStack spacing={4}>
                     <Icon as={Mail} color={accentColor} boxSize={6} />
                     <Text color={textColor}>{settings?.contactPage?.email || settings?.contactEmail || ''}</Text>
-                          </HStack>
+                  </HStack>
                   <HStack spacing={4}>
                     <Icon as={MapPin} color={accentColor} boxSize={6} />
                     <Text color={textColor}>{settings?.contactPage?.address || ''}</Text>
-                          </HStack>
-                        </VStack>
+                  </HStack>
+                </VStack>
                 <VStack spacing={4} align="start">
                   <Heading size="md" color={headingColor}>
                     تابعنا على
@@ -586,14 +586,30 @@ const Contact = () => {
                         <Icon as={FaInstagram} color={accentColor} boxSize={6} />
                       </Link>
                     )}
-                          </HStack>
-                        </VStack>
-                        </VStack>
+                  </HStack>
+                </VStack>
+              </VStack>
             </GridItem>
             <GridItem>
               {settings?.contactPage?.mapEmbedUrl && (
-                <Box h="400px" rounded="xl" overflow="hidden">
-                  <div dangerouslySetInnerHTML={{ __html: settings.contactPage.mapEmbedUrl }} />
+                <Box 
+                  h={{ base: "300px", md: "400px" }} 
+                  rounded="xl" 
+                  overflow="hidden"
+                  position="relative"
+                  w="100%"
+                  maxW="100%"
+                >
+                  <Box
+                    position="absolute"
+                    top={0}
+                    left={0}
+                    right={0}
+                    bottom={0}
+                    dangerouslySetInnerHTML={{ 
+                      __html: settings.contactPage.mapEmbedUrl.replace('width="600"', 'width="100%"').replace('height="450"', 'height="100%"') 
+                    }} 
+                  />
                 </Box>
               )}
             </GridItem>
