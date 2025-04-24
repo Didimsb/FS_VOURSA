@@ -102,6 +102,7 @@ import {
   InputRightElement,
   InputRightAddon,
   InputLeftAddon,
+  Save,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import {
@@ -1792,135 +1793,92 @@ const AdminDashboard = () => {
     return matchesSearch && matchesStatus;
   });
 
-  // Mobile navigation bar
-  const MobileNavigation = () => (
-    <Box
-      position="fixed"
-      bottom={0}
-      left={0}
-      right={0}
-      bg={useColorModeValue('white', 'gray.800')}
-      boxShadow="0 -2px 10px rgba(0,0,0,0.1)"
-      zIndex={1000}
-      display={{ base: 'block', md: 'none' }}
-    >
-      <SimpleGrid columns={5} spacing={0}>
-        <Button
-          variant={activeTab === 0 ? 'solid' : 'ghost'}
-          onClick={() => setActiveTab(0)}
-          h="60px"
-          borderRadius={0}
-          flexDir="column"
-          py={2}
-        >
-          <Home size={20} />
-          <Text fontSize="xs" mt={1}>لوحة التحكم</Text>
-        </Button>
-        <Button
-          variant={activeTab === 1 ? 'solid' : 'ghost'}
-          onClick={() => setActiveTab(1)}
-          h="60px"
-          borderRadius={0}
-          flexDir="column"
-          py={2}
-        >
-          <Users size={20} />
-          <Text fontSize="xs" mt={1}>المستخدمين</Text>
-        </Button>
-        <Button
-          variant={activeTab === 2 ? 'solid' : 'ghost'}
-          onClick={() => setActiveTab(2)}
-          h="60px"
-          borderRadius={0}
-          flexDir="column"
-          py={2}
-        >
-          <Building2 size={20} />
-          <Text fontSize="xs" mt={1}>العقارات</Text>
-        </Button>
-        <Button
-          variant={activeTab === 3 ? 'solid' : 'ghost'}
-          onClick={() => setActiveTab(3)}
-          h="60px"
-          borderRadius={0}
-          flexDir="column"
-          py={2}
-        >
-          <DollarSign size={20} />
-          <Text fontSize="xs" mt={1}>النقاط</Text>
-        </Button>
-        <Button
-          variant={activeTab === 4 ? 'solid' : 'ghost'}
-          onClick={() => setActiveTab(4)}
-          h="60px"
-          borderRadius={0}
-          flexDir="column"
-          py={2}
-        >
-          <Settings size={20} />
-          <Text fontSize="xs" mt={1}>الإعدادات</Text>
-        </Button>
-      </SimpleGrid>
-    </Box>
-  );
-
   return (
-    <Box>
-      <Container maxW="container.xl" py={isMobile ? 4 : 10} px={isMobile ? 2 : 4} pb={{ base: "70px", md: 4 }}>
-        <MotionBox
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Box display="flex" flexDirection={isMobile ? "column" : "row"} gap={4}>
-            {/* Desktop Sidebar */}
+    <Container maxW="container.xl" py={isMobile ? 4 : 10} px={isMobile ? 2 : 4}>
+      <MotionBox
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Grid templateColumns={{ base: '1fr', lg: '250px 1fr' }} gap={isMobile ? 4 : 8}>
+          {/* Sidebar - Hidden on mobile */}
+          {!isMobile && (
             <Box
-              display={{ base: "none", md: "block" }}
-              w="200px"
-              flexShrink={0}
+              bg={bgColor}
+              p={6}
+              rounded="xl"
+              boxShadow="xl"
+              borderWidth="1px"
+              borderColor={borderColor}
+              position="sticky"
+              top={4}
+              height="fit-content"
             >
-              <VStack spacing={4} align="stretch" position="sticky" top="4">
-                <Button
-                  leftIcon={<Home />}
-                  variant={activeTab === 0 ? 'solid' : 'ghost'}
-                  justifyContent="flex-start"
-                  onClick={() => setActiveTab(0)}
-                >
-                  لوحة التحكم
-                </Button>
-                <Button
-                  leftIcon={<Users />}
-                  variant={activeTab === 1 ? 'solid' : 'ghost'}
-                  justifyContent="flex-start"
-                  onClick={() => setActiveTab(1)}
-                >
-                  المستخدمين
-                </Button>
-                <Button
-                  leftIcon={<Building2 />}
-                  variant={activeTab === 2 ? 'solid' : 'ghost'}
-                  justifyContent="flex-start"
-                  onClick={() => setActiveTab(2)}
-                >
-                  العقارات
-                </Button>
-                <Button
-                  leftIcon={<DollarSign />}
-                  variant={activeTab === 3 ? 'solid' : 'ghost'}
-                  justifyContent="flex-start"
-                  onClick={() => setActiveTab(3)}
-                >
-                  إدارة النقاط
-                </Button>
-                <Button
-                  leftIcon={<Settings />}
-                  variant={activeTab === 4 ? 'solid' : 'ghost'}
-                  justifyContent="flex-start"
-                  onClick={() => setActiveTab(4)}
-                >
-                  الإعدادات
-                </Button>
+              <Stack spacing={6}>
+                <Stack align="center" spacing={4}>
+                  <Avatar
+                    size="xl"
+                    name={user?.name}
+                    src={user?.avatar}
+                  />
+                  <Stack align="center" spacing={1}>
+                    <Text fontWeight="bold" fontSize="lg">
+                      {user?.name}
+                    </Text>
+                    <Text color="gray.500" fontSize="sm">
+                      {user?.phone}
+                    </Text>
+                    <Badge colorScheme="purple">مدير النظام</Badge>
+                  </Stack>
+                </Stack>
+                
                 <Divider />
+                
+                <Stack spacing={2}>
+                  <Button
+                    leftIcon={<Home />}
+                    variant={activeTab === 0 ? 'solid' : 'ghost'}
+                    justifyContent="flex-start"
+                    onClick={() => setActiveTab(0)}
+                  >
+                    لوحة التحكم
+                  </Button>
+                  <Button
+                    leftIcon={<Users />}
+                    variant={activeTab === 1 ? 'solid' : 'ghost'}
+                    justifyContent="flex-start"
+                    onClick={() => setActiveTab(1)}
+                  >
+                    المستخدمين
+                  </Button>
+                  <Button
+                    leftIcon={<Building2 />}
+                    variant={activeTab === 2 ? 'solid' : 'ghost'}
+                    justifyContent="flex-start"
+                    onClick={() => setActiveTab(2)}
+                  >
+                    العقارات
+                  </Button>
+                  <Button
+                    leftIcon={<DollarSign />}
+                    variant={activeTab === 3 ? 'solid' : 'ghost'}
+                    justifyContent="flex-start"
+                    onClick={() => setActiveTab(3)}
+                  >
+                    إدارة النقاط
+                  </Button>
+                  <Button
+                    leftIcon={<Settings />}
+                    variant={activeTab === 4 ? 'solid' : 'ghost'}
+                    justifyContent="flex-start"
+                    onClick={() => setActiveTab(4)}
+                  >
+                    الإعدادات
+                  </Button>
+                </Stack>
+                
+                <Divider />
+                
                 <Button
                   leftIcon={<LogOut />}
                   variant="ghost"
@@ -1930,209 +1888,41 @@ const AdminDashboard = () => {
                 >
                   تسجيل الخروج
                 </Button>
-              </VStack>
+              </Stack>
             </Box>
-
-            {/* Main Content */}
-            <Box flex="1">
-              <Tabs index={activeTab} onChange={setActiveTab}>
-                {/* Show tab list only on mobile */}
-                {isMobile && (
-                  <TabList 
-                    mb={6} 
-                    display="flex" 
-                    flexWrap="wrap" 
-                    justifyContent="center"
-                    bg={bgColor}
-                    p={4}
-                    rounded="xl"
-                    boxShadow="xl"
-                    borderWidth="1px"
-                    borderColor={borderColor}
-                  >
-                    <Tab>لوحة التحكم</Tab>
-                    <Tab>المستخدمين</Tab>
-                    <Tab>العقارات</Tab>
-                    <Tab>إدارة النقاط</Tab>
-                    <Tab>الإعدادات</Tab>
-                  </TabList>
-                )}
-                
-                <TabPanels>
-                  {/* Dashboard Tab */}
-                  <TabPanel px={isMobile ? 0 : 4}>
-                    <Stack spacing={8}>
-                      <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} spacing={isMobile ? 3 : 6}>
-                        <Stat
-                          bg={bgColor}
-                          p={6}
-                          rounded="xl"
-                          boxShadow="xl"
-                          borderWidth="1px"
-                          borderColor={borderColor}
-                        >
-                          <StatLabel>إجمالي المستخدمين</StatLabel>
-                          <StatNumber>{stats.totalUsers}</StatNumber>
-                          <StatHelpText>
-                            <StatArrow type="increase" />
-                            {stats.activeUsers} نشط
-                          </StatHelpText>
-                        </Stat>
-                        
-                        <Stat
-                          bg={bgColor}
-                          p={6}
-                          rounded="xl"
-                          boxShadow="xl"
-                          borderWidth="1px"
-                          borderColor={borderColor}
-                        >
-                          <StatLabel>إجمالي العقارات</StatLabel>
-                          <StatNumber>{stats.totalProperties}</StatNumber>
-                          <StatHelpText>
-                            <StatArrow type="increase" />
-                            {stats.activeProperties} نشط
-                          </StatHelpText>
-                        </Stat>
-                        
-                        <Stat
-                          bg={bgColor}
-                          p={6}
-                          rounded="xl"
-                          boxShadow="xl"
-                          borderWidth="1px"
-                          borderColor={borderColor}
-                        >
-                          <StatLabel>إجمالي المشاهدات</StatLabel>
-                          <StatNumber>{stats.totalViews}</StatNumber>
-                          <StatHelpText>
-                            
-                          </StatHelpText>
-                        </Stat>
-                        
-                        <Stat
-                          bg={bgColor}
-                          p={6}
-                          rounded="xl"
-                          boxShadow="xl"
-                          borderWidth="1px"
-                          borderColor={borderColor}
-                        >
-                          <StatLabel>إجمالي المبيعات</StatLabel>
-                          <StatNumber>{stats.totalSales}</StatNumber>
-                          <StatHelpText>
-                            <StatArrow type="increase" />
-                            {stats.totalSalesAmount?.toLocaleString() || 0} ريال
-                          </StatHelpText>
-                        </Stat>
-                      </SimpleGrid>
-                      
-                      <Box
-                        bg={bgColor}
-                        p={isMobile ? 3 : 6}
-                        rounded="xl"
-                        boxShadow="xl"
-                        borderWidth="1px"
-                        borderColor={borderColor}
-                      >
-                        <Stack spacing={6}>
-                          <Heading size="md">عمليات شراء النقاط</Heading>
-                          
-                          {loadingPoints ? (
-                            <Center>
-                              <Spinner size="xl" />
-                            </Center>
-                          ) : pointsTransactions.filter(t => t.status === 'pending').length === 0 ? (
-                            <Center>
-                              <Text color="gray.500">لا توجد عمليات شراء نقاط معلقة</Text>
-                            </Center>
-                          ) : isMobile ? (
-                            // Mobile view - cards instead of table
-                            <VStack align="stretch" spacing={4}>
-                              {pointsTransactions
-                                .filter(t => t.status === 'pending')
-                                .map((transaction) => (
-                                  <TransactionCard key={transaction._id} transaction={transaction} />
-                              ))}
-                            </VStack>
-                          ) : (
-                            // Desktop view - table
-                            <TableContainer>
-                              <Table variant="simple">
-                                <Thead>
-                                  <Tr>
-                                    <Th>البائع</Th>
-                                    <Th>المبلغ</Th>
-                                    <Th>النقاط</Th>
-                                    <Th>طريقة الدفع</Th>
-                                    <Th>التاريخ</Th>
-                                    <Th>الحالة</Th>
-                                    <Th>الإجراءات</Th>
-                                  </Tr>
-                                </Thead>
-                                <Tbody>
-                                  {pointsTransactions
-                                    .filter(t => t.status === 'pending')
-                                    .map((transaction) => (
-                                      <Tr key={transaction._id}>
-                                        <Td>
-                                          <VStack align="start" spacing={1}>
-                                            <Text fontWeight="medium">{transaction.user.name}</Text>
-                                            <Text fontSize="sm" color="gray.500">{transaction.user.email}</Text>
-                                          </VStack>
-                                        </Td>
-                                      <Td>{transaction.amount} أوقية</Td>
-                                      <Td>{transaction.points}</Td>
-                                      <Td>{transaction.paymentMethod}</Td>
-                                        <Td>{new Date(transaction.createdAt).toLocaleDateString('ar-SA')}</Td>
-                                      <Td>
-                                        <Badge colorScheme="yellow">معلق</Badge>
-                                      </Td>
-                                      <Td>
-                                        <HStack spacing={2}>
-                                          <Tooltip label="عرض">
-                <IconButton
-                                              icon={<Eye size={18} />}
-                                              size="sm"
-                  variant="ghost"
-                                              onClick={() => handleViewTransaction(transaction)}
-                                            />
-                                          </Tooltip>
-                                            <Tooltip label="موافقة">
-                                              <IconButton
-                                                icon={<CheckCircle size={18} />}
-                                                size="sm"
-                                                variant="ghost"
-                                                  colorScheme="green"
-                                                onClick={() => handleApproveTransaction(transaction)}
-                                              />
-                                            </Tooltip>
-                                            <Tooltip label="رفض">
-                                              <IconButton
-                                                icon={<XCircle size={18} />}
-                                                size="sm"
-                                                variant="ghost"
-                                                  colorScheme="red"
-                                                onClick={() => handleRejectTransaction(transaction)}
-                                              />
-                                            </Tooltip>
-                                        </HStack>
-                                      </Td>
-                                    </Tr>
-                                  ))}
-                                </Tbody>
-                              </Table>
-                            </TableContainer>
-                          )}
-                        </Stack>
-                      </Box>
-                    </Stack>
-                  </TabPanel>
-                  
-                  {/* Users Tab */}
-                  <TabPanel>
-                    <Stack spacing={6}>
-                      <Box
+          )}
+          
+          {/* Main Content */}
+          <Box position="relative">
+            <Tabs index={activeTab} onChange={setActiveTab}>
+              {/* Show tab list only on mobile */}
+              {isMobile && (
+                <TabList 
+                  mb={6} 
+                  display="flex" 
+                  flexWrap="wrap" 
+                  justifyContent="center"
+                  bg={bgColor}
+                  p={4}
+                  rounded="xl"
+                  boxShadow="xl"
+                  borderWidth="1px"
+                  borderColor={borderColor}
+                >
+                  <Tab>لوحة التحكم</Tab>
+                  <Tab>المستخدمين</Tab>
+                  <Tab>العقارات</Tab>
+                  <Tab>إدارة النقاط</Tab>
+                  <Tab>الإعدادات</Tab>
+                </TabList>
+              )}
+              
+              <TabPanels>
+                {/* Dashboard Tab */}
+                <TabPanel px={isMobile ? 0 : 4}>
+                  <Stack spacing={8}>
+                    <SimpleGrid columns={{ base: 1, sm: 2, lg: 4 }} spacing={isMobile ? 3 : 6}>
+                      <Stat
                         bg={bgColor}
                         p={6}
                         rounded="xl"
@@ -2140,313 +1930,109 @@ const AdminDashboard = () => {
                         borderWidth="1px"
                         borderColor={borderColor}
                       >
-                        <Stack spacing={6}>
-                          <Stack direction={{ base: 'column', md: 'row' }} justify="space-between" align="center">
-                            <Heading size="md">إدارة المستخدمين</Heading>
-                            <HStack spacing={4}>
-                            <Input
-                              placeholder="بحث عن مستخدم..."
-                              value={searchQuery}
-                              onChange={(e) => setSearchQuery(e.target.value)}
-                              maxW="300px"
-                              size="md"
-                            />
-                              <Select
-                                value={userRoleFilter}
-                                onChange={(e) => setUserRoleFilter(e.target.value)}
-                                maxW="200px"
-                                size="md"
-                              >
-                                <option value="all">جميع المستخدمين</option>
-                                <option value="seller">البائعين</option>
-                                <option value="admin">المدراء</option>
-                                <option value="superadmin">المدراء الأعلى</option>
-                              </Select>
-                              <Button
-                                leftIcon={<UserPlus />}
-                                colorScheme="green"
-                                onClick={onAddUserOpen}
-                              >
-                                إضافة مستخدم
-                              </Button>
-                            </HStack>
-                          </Stack>
+                        <StatLabel>إجمالي المستخدمين</StatLabel>
+                        <StatNumber>{stats.totalUsers}</StatNumber>
+                        <StatHelpText>
+                          <StatArrow type="increase" />
+                          {stats.activeUsers} نشط
+                        </StatHelpText>
+                      </Stat>
+                      
+                      <Stat
+                        bg={bgColor}
+                        p={6}
+                        rounded="xl"
+                        boxShadow="xl"
+                        borderWidth="1px"
+                        borderColor={borderColor}
+                      >
+                        <StatLabel>إجمالي العقارات</StatLabel>
+                        <StatNumber>{stats.totalProperties}</StatNumber>
+                        <StatHelpText>
+                          <StatArrow type="increase" />
+                          {stats.activeProperties} نشط
+                        </StatHelpText>
+                      </Stat>
+                      
+                      <Stat
+                        bg={bgColor}
+                        p={6}
+                        rounded="xl"
+                        boxShadow="xl"
+                        borderWidth="1px"
+                        borderColor={borderColor}
+                      >
+                        <StatLabel>إجمالي المشاهدات</StatLabel>
+                        <StatNumber>{stats.totalViews}</StatNumber>
+                        <StatHelpText>
                           
-                          {loading ? (
-                            <Center>
-                              <Spinner size="xl" />
-                            </Center>
-                          ) : error ? (
-                            <Alert status="error">
-                              <AlertIcon />
-                              {error}
-                            </Alert>
-                          ) : isMobile ? (
-                            <VStack spacing={4}>
-                              {filteredUsers.map((user) => (
-                                <UserCard key={user.id} user={user} />
-                              ))}
-                            </VStack>
-                          ) : (
+                        </StatHelpText>
+                      </Stat>
+                      
+                      <Stat
+                        bg={bgColor}
+                        p={6}
+                        rounded="xl"
+                        boxShadow="xl"
+                        borderWidth="1px"
+                        borderColor={borderColor}
+                      >
+                        <StatLabel>إجمالي المبيعات</StatLabel>
+                        <StatNumber>{stats.totalSales}</StatNumber>
+                        <StatHelpText>
+                          <StatArrow type="increase" />
+                          {stats.totalSalesAmount?.toLocaleString() || 0} ريال
+                        </StatHelpText>
+                      </Stat>
+                    </SimpleGrid>
+                    
+                    <Box
+                      bg={bgColor}
+                      p={isMobile ? 3 : 6}
+                      rounded="xl"
+                      boxShadow="xl"
+                      borderWidth="1px"
+                      borderColor={borderColor}
+                    >
+                      <Stack spacing={6}>
+                        <Heading size="md">عمليات شراء النقاط</Heading>
+                        
+                        {loadingPoints ? (
+                          <Center>
+                            <Spinner size="xl" />
+                          </Center>
+                        ) : pointsTransactions.filter(t => t.status === 'pending').length === 0 ? (
+                          <Center>
+                            <Text color="gray.500">لا توجد عمليات شراء نقاط معلقة</Text>
+                          </Center>
+                        ) : isMobile ? (
+                          // Mobile view - cards instead of table
+                          <VStack align="stretch" spacing={4}>
+                            {pointsTransactions
+                              .filter(t => t.status === 'pending')
+                              .map((transaction) => (
+                                <TransactionCard key={transaction._id} transaction={transaction} />
+                            ))}
+                          </VStack>
+                        ) : (
+                          // Desktop view - table
+                          <TableContainer>
                             <Table variant="simple">
                               <Thead>
                                 <Tr>
-                                  <Th>المستخدم</Th>
-                                  <Th>الدور</Th>
-                                  <Th>الحالة</Th>
+                                  <Th>البائع</Th>
+                                  <Th>المبلغ</Th>
+                                  <Th>النقاط</Th>
+                                  <Th>طريقة الدفع</Th>
                                   <Th>التاريخ</Th>
+                                  <Th>الحالة</Th>
                                   <Th>الإجراءات</Th>
                                 </Tr>
                               </Thead>
                               <Tbody>
-                                {filteredUsers.map((user) => (
-                                  <Tr key={user.id}>
-                                    <Td>
-                                      <HStack spacing={2}>
-                                        <Avatar size="sm" name={user.name} />
-                                        <Stack spacing={0}>
-                                          <Text fontWeight="medium">{user.name}</Text>
-                                          <Text fontSize="sm" color="gray.500">
-                                            {user.email}
-                </Text>
-                                        </Stack>
-          </HStack>
-                                    </Td>
-                                    <Td>
-                                      <Badge colorScheme={
-                                        user.role === 'admin' ? 'purple' :
-                                        user.role === 'superadmin' ? 'red' :
-                                        'blue'
-                                      }>
-                                        {user.role === 'admin' ? 'مدير' :
-                                         user.role === 'superadmin' ? 'مدير أعلى' :
-                                         'بائع'}
-                                      </Badge>
-                                    </Td>
-                                    <Td>
-                                      <Badge colorScheme={user.isActive ? 'green' : 'red'}>
-                                        {user.isActive ? 'نشط' : 'محظور'}
-                                      </Badge>
-                                    </Td>
-                                    <Td>{user.date}</Td>
-                                    <Td>
-                                      <HStack spacing={2}>
-                                        <Tooltip label="عرض">
-                                          <IconButton
-                                            icon={<Eye />}
-                                            size="sm"
-                                            variant="ghost"
-                                            onClick={() => {
-                                              setSelectedUser(user);
-                                              onViewUserOpen();
-                                            }}
-                                          />
-                                        </Tooltip>
-                                        <Tooltip label="تعديل">
-                                          <IconButton
-                                            icon={<Edit2 />}
-                                            size="sm"
-                                            variant="ghost"
-                                            colorScheme="blue"
-                                            onClick={() => {
-                                              setSelectedUser(user);
-                                              onEditUserOpen();
-                                            }}
-                                          />
-                                        </Tooltip>
-                                        {user.isActive ? (
-                                        <Tooltip label="حظر">
-                                          <IconButton
-                                            icon={<Ban />}
-                                            size="sm"
-                                            variant="ghost"
-                                            colorScheme="red"
-                                            onClick={() => handleBanUser(user)}
-                                          />
-                                        </Tooltip>
-                                        ) : (
-                                          <Tooltip label="إلغاء الحظر">
-                                            <IconButton
-                                              icon={<CheckCircle />}
-                                              size="sm"
-                                              variant="ghost"
-                                              colorScheme="green"
-                                              onClick={() => handleUnbanUser(user)}
-                                            />
-                                          </Tooltip>
-                                        )}
-                                      </HStack>
-                                    </Td>
-                                  </Tr>
-                                ))}
-                              </Tbody>
-                            </Table>
-                          )}
-                        </Stack>
-                </Box>
-                    </Stack>
-                  </TabPanel>
-                  
-                  {/* Properties Tab */}
-                  <TabPanel>
-                    <Stack spacing={6}>
-                <Box>
-                        <Heading size="lg" mb={6}>إدارة العقارات</Heading>
-                        <Stack spacing={4}>
-                          <Flex
-                            direction={{ base: "column", md: "row" }}
-                            justify="space-between"
-                            align={{ base: "stretch", md: "center" }}
-                            gap={4}
-                          >
-                            <InputGroup maxW={{ base: "100%", md: "320px" }}>
-                              <InputLeftElement pointerEvents="none">
-                                <Search size={20} color="gray.300" />
-                              </InputLeftElement>
-                              <Input
-                                placeholder="البحث عن عقار..."
-                                value={propertySearchQuery}
-                                onChange={(e) => setPropertySearchQuery(e.target.value)}
-                              />
-                            </InputGroup>
-                            
-                            <Select
-                              maxW={{ base: "100%", md: "200px" }}
-                              value={propertyStatusFilter}
-                              onChange={(e) => setPropertyStatusFilter(e.target.value)}
-                            >
-                              <option value="all">جميع الحالات</option>
-                              <option value="pending">قيد الانتظار</option>
-                              <option value="approved">تمت الموافقة</option>
-                              <option value="rejected">مرفوض</option>
-                            </Select>
-                          </Flex>
-
-                          {filteredProperties.length === 0 ? (
-                            <Box textAlign="center" py={10}>
-                              <Text>لا توجد عقارات متاحة</Text>
-                            </Box>
-                          ) : (
-                            <SimpleGrid
-                              columns={{ base: 1, md: 2, lg: 3 }}
-                              spacing={6}
-                              w="full"
-                            >
-                              {filteredProperties.map((property) => (
-                                <PropertyCard key={property._id} property={property} />
-                              ))}
-                            </SimpleGrid>
-                          )}
-                        </Stack>
-                      </Box>
-                    </Stack>
-                  </TabPanel>
-                  
-                  {/* Points Management Tab */}
-                  <TabPanel>
-                    <Stack spacing={6}>
-                      <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
-                        <Stat
-                          bg={bgColor}
-                          p={6}
-                          rounded="xl"
-                          boxShadow="xl"
-                          borderWidth="1px"
-                          borderColor={borderColor}
-                        >
-                          <StatLabel>إجمالي النقاط</StatLabel>
-                          <StatNumber>{stats.totalPoints}</StatNumber>
-                          <StatHelpText>
-                            <StatArrow type="increase" />
-                            {stats.activeSellers} بائع نشط
-                          </StatHelpText>
-                        </Stat>
-                        
-                        <Stat
-                          bg={bgColor}
-                          p={6}
-                          rounded="xl"
-                          boxShadow="xl"
-                          borderWidth="1px"
-                          borderColor={borderColor}
-                        >
-                          <StatLabel>نقاط لكل عقار</StatLabel>
-                          <StatNumber>{stats.pointsPerProperty}</StatNumber>
-                          <StatHelpText>
-                            <StatArrow type="decrease" />
-                            تكلفة نشر عقار
-                          </StatHelpText>
-                        </Stat>
-                        
-                        <Stat
-                          bg={bgColor}
-                          p={6}
-                          rounded="xl"
-                          boxShadow="xl"
-                          borderWidth="1px"
-                          borderColor={borderColor}
-                        >
-                          <StatLabel>إجمالي المعاملات</StatLabel>
-                          <StatNumber>{stats.totalTransactions}</StatNumber>
-                          <StatHelpText>
-                            <StatArrow type="increase" />
-                            معاملات ناجحة
-                          </StatHelpText>
-                        </Stat>
-                      </SimpleGrid>
-                      
-                      <Box
-                        bg={bgColor}
-                        p={6}
-                        rounded="xl"
-                        boxShadow="xl"
-                        borderWidth="1px"
-                        borderColor={borderColor}
-                      >
-                        <Stack spacing={6}>
-                          <Stack direction="row" justify="space-between" align="center">
-                            <Heading size="md">معاملات النقاط</Heading>
-                            <Button
-                              leftIcon={<Plus />}
-                              colorScheme="primary"
-                              onClick={onOpen}
-                            >
-                              إضافة نقاط
-                            </Button>
-                          </Stack>
-                          
-                          {loadingPoints ? (
-                            <Center>
-                              <Spinner size="xl" />
-                            </Center>
-                          ) : pointsTransactions.length === 0 ? (
-                            <Center>
-                              <Text color="gray.500">لا توجد عمليات شراء نقاط</Text>
-                            </Center>
-                          ) : isMobile ? (
-                            // Mobile view - cards instead of table
-                            <VStack align="stretch" spacing={4}>
-                              {pointsTransactions.map((transaction) => (
-                                <TransactionCard key={transaction._id} transaction={transaction} />
-                              ))}
-                            </VStack>
-                          ) : (
-                            // Desktop view - table
-                            <TableContainer>
-                              <Table variant="simple">
-                                <Thead>
-                                  <Tr>
-                                    <Th>البائع</Th>
-                                    <Th>المبلغ</Th>
-                                    <Th>النقاط</Th>
-                                    <Th>طريقة الدفع</Th>
-                                    <Th>التاريخ</Th>
-                                    <Th>الحالة</Th>
-                                    <Th>الإجراءات</Th>
-                                  </Tr>
-                                </Thead>
-                                <Tbody>
-                                  {pointsTransactions.map((transaction) => (
+                                {pointsTransactions
+                                  .filter(t => t.status === 'pending')
+                                  .map((transaction) => (
                                     <Tr key={transaction._id}>
                                       <Td>
                                         <VStack align="start" spacing={1}>
@@ -2454,134 +2040,548 @@ const AdminDashboard = () => {
                                           <Text fontSize="sm" color="gray.500">{transaction.user.email}</Text>
                                         </VStack>
                                       </Td>
-                                      <Td>{transaction.amount} أوقية</Td>
-                                      <Td>{transaction.points}</Td>
-                                      <Td>{transaction.paymentMethod}</Td>
+                                    <Td>{transaction.amount} أوقية</Td>
+                                    <Td>{transaction.points}</Td>
+                                    <Td>{transaction.paymentMethod}</Td>
                                       <Td>{new Date(transaction.createdAt).toLocaleDateString('ar-SA')}</Td>
-                                      <Td>
-                                        <Badge
-                                          colorScheme={
-                                            transaction.status === 'completed'
-                                              ? 'green'
-                                              : transaction.status === 'rejected'
-                                              ? 'red'
-                                              : 'yellow'
-                                          }
-                                        >
-                                          {transaction.status === 'completed' ? 'مكتمل' :
-                                           transaction.status === 'rejected' ? 'مرفوض' : 'معلق'}
-                                        </Badge>
-                                      </Td>
-                                      <Td>
-                                        <HStack spacing={2}>
-                                          <Tooltip label="عرض">
-                                            <IconButton
-                                              icon={<Eye size={18} />}
-                                              size="sm"
-                                              variant="ghost"
-                                              onClick={() => handleViewTransaction(transaction)}
-                                            />
-                                          </Tooltip>
-                                          {transaction.status === 'pending' && (
-                                            <>
-                                          <Tooltip label="موافقة">
-                                            <IconButton
-                                              icon={<CheckCircle size={18} />}
-                                              size="sm"
-                                              variant="ghost"
+                                    <Td>
+                                      <Badge colorScheme="yellow">معلق</Badge>
+                                    </Td>
+                                    <Td>
+                                      <HStack spacing={2}>
+                                        <Tooltip label="عرض">
+                                          <IconButton
+                                            icon={<Eye size={18} />}
+                                            size="sm"
+                                            variant="ghost"
+                                            onClick={() => handleViewTransaction(transaction)}
+                                          />
+                                        </Tooltip>
+                                        <Tooltip label="موافقة">
+                                          <IconButton
+                                            icon={<CheckCircle size={18} />}
+                                            size="sm"
+                                            variant="ghost"
                                               colorScheme="green"
-                                              onClick={() => handleApproveTransaction(transaction)}
-                                            />
-                                          </Tooltip>
-                                          <Tooltip label="رفض">
-                                            <IconButton
-                                              icon={<XCircle size={18} />}
-                                              size="sm"
-                                              variant="ghost"
+                                            onClick={() => handleApproveTransaction(transaction)}
+                                          />
+                                        </Tooltip>
+                                        <Tooltip label="رفض">
+                                          <IconButton
+                                            icon={<XCircle size={18} />}
+                                            size="sm"
+                                            variant="ghost"
                                               colorScheme="red"
-                                              onClick={() => handleRejectTransaction(transaction)}
-                                            />
-                                          </Tooltip>
-                                            </>
-                                          )}
-                                        </HStack>
-                                      </Td>
-                                    </Tr>
-                                  ))}
-                                </Tbody>
-                              </Table>
-                            </TableContainer>
-                          )}
-                        </Stack>
-                      </Box>
-                    </Stack>
-                  </TabPanel>
-                  
-                  {/* Settings Tab */}
-                  <TabPanel>
-                    <Box w="full" px={2}>
+                                            onClick={() => handleRejectTransaction(transaction)}
+                                          />
+                                        </Tooltip>
+                                      </HStack>
+                                    </Td>
+                                  </Tr>
+                                ))}
+                              </Tbody>
+                            </Table>
+                          </TableContainer>
+                        )}
+                      </Stack>
+                    </Box>
+                  </Stack>
+                </TabPanel>
+                
+                {/* Users Tab */}
+                <TabPanel>
+                  <Stack spacing={6}>
+                    <Box
+                      bg={bgColor}
+                      p={6}
+                      rounded="xl"
+                      boxShadow="xl"
+                      borderWidth="1px"
+                      borderColor={borderColor}
+                    >
                       <Stack spacing={6}>
-                        <Heading size="lg">الإعدادات</Heading>
+                        <Stack direction={{ base: 'column', md: 'row' }} justify="space-between" align="center">
+                          <Heading size="md">إدارة المستخدمين</Heading>
+                          <HStack spacing={4}>
+                          <Input
+                            placeholder="بحث عن مستخدم..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            maxW="300px"
+                            size="md"
+                          />
+                            <Select
+                              value={userRoleFilter}
+                              onChange={(e) => setUserRoleFilter(e.target.value)}
+                              maxW="200px"
+                              size="md"
+                            >
+                              <option value="all">جميع المستخدمين</option>
+                              <option value="seller">البائعين</option>
+                              <option value="admin">المدراء</option>
+                              <option value="superadmin">المدراء الأعلى</option>
+                            </Select>
+                            <Button
+                              leftIcon={<UserPlus />}
+                              colorScheme="green"
+                              onClick={onAddUserOpen}
+                            >
+                              إضافة مستخدم
+                            </Button>
+                          </HStack>
+                        </Stack>
                         
-                        {/* General Settings */}
-                        <Card>
-                          <CardBody>
-                            <VStack spacing={4} align="stretch">
-                              <Heading size="md">الإعدادات العامة</Heading>
-                              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                        {loading ? (
+                          <Center>
+                            <Spinner size="xl" />
+                          </Center>
+                        ) : error ? (
+                          <Alert status="error">
+                            <AlertIcon />
+                            {error}
+                          </Alert>
+                        ) : isMobile ? (
+                          <VStack spacing={4}>
+                            {filteredUsers.map((user) => (
+                              <UserCard key={user.id} user={user} />
+                            ))}
+                          </VStack>
+                        ) : (
+                          <Table variant="simple">
+                            <Thead>
+                              <Tr>
+                                <Th>المستخدم</Th>
+                                <Th>الدور</Th>
+                                <Th>الحالة</Th>
+                                <Th>التاريخ</Th>
+                                <Th>الإجراءات</Th>
+                              </Tr>
+                            </Thead>
+                            <Tbody>
+                              {filteredUsers.map((user) => (
+                                <Tr key={user.id}>
+                                  <Td>
+                                    <HStack spacing={2}>
+                                      <Avatar size="sm" name={user.name} />
+                                      <Stack spacing={0}>
+                                        <Text fontWeight="medium">{user.name}</Text>
+                                        <Text fontSize="sm" color="gray.500">
+                                          {user.email}
+                                        </Text>
+                                      </Stack>
+                                    </HStack>
+                                  </Td>
+                                  <Td>
+                                    <Badge colorScheme={
+                                      user.role === 'admin' ? 'purple' :
+                                      user.role === 'superadmin' ? 'red' :
+                                      'blue'
+                                    }>
+                                      {user.role === 'admin' ? 'مدير' :
+                                       user.role === 'superadmin' ? 'مدير أعلى' :
+                                       'بائع'}
+                                    </Badge>
+                                  </Td>
+                                  <Td>
+                                    <Badge colorScheme={user.isActive ? 'green' : 'red'}>
+                                      {user.isActive ? 'نشط' : 'محظور'}
+                                    </Badge>
+                                  </Td>
+                                  <Td>{user.date}</Td>
+                                  <Td>
+                                    <HStack spacing={2}>
+                                      <Tooltip label="عرض">
+                                        <IconButton
+                                          icon={<Eye />}
+                                          size="sm"
+                                          variant="ghost"
+                                          onClick={() => {
+                                            setSelectedUser(user);
+                                            onViewUserOpen();
+                                          }}
+                                        />
+                                      </Tooltip>
+                                      <Tooltip label="تعديل">
+                                        <IconButton
+                                          icon={<Edit2 />}
+                                          size="sm"
+                                          variant="ghost"
+                                          colorScheme="blue"
+                                          onClick={() => {
+                                            setSelectedUser(user);
+                                            onEditUserOpen();
+                                          }}
+                                        />
+                                      </Tooltip>
+                                      {user.isActive ? (
+                                      <Tooltip label="حظر">
+                                        <IconButton
+                                          icon={<Ban />}
+                                          size="sm"
+                                          variant="ghost"
+                                          colorScheme="red"
+                                          onClick={() => handleBanUser(user)}
+                                        />
+                                      </Tooltip>
+                                      ) : (
+                                        <Tooltip label="إلغاء الحظر">
+                                          <IconButton
+                                            icon={<CheckCircle />}
+                                            size="sm"
+                                            variant="ghost"
+                                            colorScheme="green"
+                                            onClick={() => handleUnbanUser(user)}
+                                          />
+                                        </Tooltip>
+                                      )}
+                                    </HStack>
+                                  </Td>
+                                </Tr>
+                              ))}
+                            </Tbody>
+                          </Table>
+                        )}
+                      </Stack>
+                    </Box>
+                  </Stack>
+                </TabPanel>
+                
+                {/* Properties Tab */}
+                <TabPanel>
+                  <Stack spacing={6}>
+                    <Box>
+                      <Heading size="lg" mb={6}>إدارة العقارات</Heading>
+                      <Stack spacing={4}>
+                        <Flex
+                          direction={{ base: "column", md: "row" }}
+                          justify="space-between"
+                          align={{ base: "stretch", md: "center" }}
+                          gap={4}
+                        >
+                          <InputGroup maxW={{ base: "100%", md: "320px" }}>
+                            <InputLeftElement pointerEvents="none">
+                              <Search size={20} color="gray.300" />
+                            </InputLeftElement>
+                            <Input
+                              placeholder="البحث عن عقار..."
+                              value={propertySearchQuery}
+                              onChange={(e) => setPropertySearchQuery(e.target.value)}
+                            />
+                          </InputGroup>
+                          
+                          <Select
+                            maxW={{ base: "100%", md: "200px" }}
+                            value={propertyStatusFilter}
+                            onChange={(e) => setPropertyStatusFilter(e.target.value)}
+                          >
+                            <option value="all">جميع الحالات</option>
+                            <option value="pending">قيد الانتظار</option>
+                            <option value="approved">تمت الموافقة</option>
+                            <option value="rejected">مرفوض</option>
+                          </Select>
+                        </Flex>
+
+                        {filteredProperties.length === 0 ? (
+                          <Box textAlign="center" py={10}>
+                            <Text>لا توجد عقارات متاحة</Text>
+                          </Box>
+                        ) : (
+                          <SimpleGrid
+                            columns={{ base: 1, md: 2, lg: 3 }}
+                            spacing={6}
+                            w="full"
+                          >
+                            {filteredProperties.map((property) => (
+                              <PropertyCard key={property._id} property={property} />
+                            ))}
+                          </SimpleGrid>
+                        )}
+                      </Stack>
+                    </Box>
+                  </Stack>
+                </TabPanel>
+                
+                {/* Points Management Tab */}
+                <TabPanel>
+                  <Stack spacing={6}>
+                    <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
+                      <Stat
+                        bg={bgColor}
+                        p={6}
+                        rounded="xl"
+                        boxShadow="xl"
+                        borderWidth="1px"
+                        borderColor={borderColor}
+                      >
+                        <StatLabel>إجمالي النقاط</StatLabel>
+                        <StatNumber>{stats.totalPoints}</StatNumber>
+                        <StatHelpText>
+                          <StatArrow type="increase" />
+                          {stats.activeSellers} بائع نشط
+                        </StatHelpText>
+                      </Stat>
+                      
+                      <Stat
+                        bg={bgColor}
+                        p={6}
+                        rounded="xl"
+                        boxShadow="xl"
+                        borderWidth="1px"
+                        borderColor={borderColor}
+                      >
+                        <StatLabel>نقاط لكل عقار</StatLabel>
+                        <StatNumber>{stats.pointsPerProperty}</StatNumber>
+                        <StatHelpText>
+                          <StatArrow type="decrease" />
+                          تكلفة نشر عقار
+                        </StatHelpText>
+                      </Stat>
+                      
+                      <Stat
+                        bg={bgColor}
+                        p={6}
+                        rounded="xl"
+                        boxShadow="xl"
+                        borderWidth="1px"
+                        borderColor={borderColor}
+                      >
+                        <StatLabel>إجمالي المعاملات</StatLabel>
+                        <StatNumber>{stats.totalTransactions}</StatNumber>
+                        <StatHelpText>
+                          <StatArrow type="increase" />
+                          معاملات ناجحة
+                        </StatHelpText>
+                      </Stat>
+                    </SimpleGrid>
+                    
+                    <Box
+                      bg={bgColor}
+                      p={6}
+                      rounded="xl"
+                      boxShadow="xl"
+                      borderWidth="1px"
+                      borderColor={borderColor}
+                    >
+                      <Stack spacing={6}>
+                        <Stack direction="row" justify="space-between" align="center">
+                          <Heading size="md">معاملات النقاط</Heading>
+                          <Button
+                            leftIcon={<Plus />}
+                            colorScheme="primary"
+                            onClick={onOpen}
+                          >
+                            إضافة نقاط
+                          </Button>
+                        </Stack>
+                        
+                        {loadingPoints ? (
+                          <Center>
+                            <Spinner size="xl" />
+                          </Center>
+                        ) : pointsTransactions.length === 0 ? (
+                          <Center>
+                            <Text color="gray.500">لا توجد عمليات شراء نقاط</Text>
+                          </Center>
+                        ) : isMobile ? (
+                          // Mobile view - cards instead of table
+                          <VStack align="stretch" spacing={4}>
+                            {pointsTransactions.map((transaction) => (
+                              <TransactionCard key={transaction._id} transaction={transaction} />
+                            ))}
+                          </VStack>
+                        ) : (
+                          // Desktop view - table
+                          <TableContainer>
+                            <Table variant="simple">
+                              <Thead>
+                                <Tr>
+                                  <Th>البائع</Th>
+                                  <Th>المبلغ</Th>
+                                  <Th>النقاط</Th>
+                                  <Th>طريقة الدفع</Th>
+                                  <Th>التاريخ</Th>
+                                  <Th>الحالة</Th>
+                                  <Th>الإجراءات</Th>
+                                </Tr>
+                              </Thead>
+                              <Tbody>
+                                {pointsTransactions.map((transaction) => (
+                                  <Tr key={transaction._id}>
+                                    <Td>
+                                      <VStack align="start" spacing={1}>
+                                        <Text fontWeight="medium">{transaction.user.name}</Text>
+                                        <Text fontSize="sm" color="gray.500">{transaction.user.email}</Text>
+                                      </VStack>
+                                    </Td>
+                                    <Td>{transaction.amount} أوقية</Td>
+                                    <Td>{transaction.points}</Td>
+                                    <Td>{transaction.paymentMethod}</Td>
+                                    <Td>{new Date(transaction.createdAt).toLocaleDateString('ar-SA')}</Td>
+                                    <Td>
+                                      <Badge
+                                        colorScheme={
+                                          transaction.status === 'completed'
+                                            ? 'green'
+                                            : transaction.status === 'rejected'
+                                            ? 'red'
+                                            : 'yellow'
+                                        }
+                                      >
+                                        {transaction.status === 'completed' ? 'مكتمل' :
+                                         transaction.status === 'rejected' ? 'مرفوض' : 'معلق'}
+                                      </Badge>
+                                    </Td>
+                                    <Td>
+                                      <HStack spacing={2}>
+                                        <Tooltip label="عرض">
+                                          <IconButton
+                                            icon={<Eye size={18} />}
+                                            size="sm"
+                                            variant="ghost"
+                                            onClick={() => handleViewTransaction(transaction)}
+                                          />
+                                        </Tooltip>
+                                        {transaction.status === 'pending' && (
+                                          <>
+                                        <Tooltip label="موافقة">
+                                          <IconButton
+                                            icon={<CheckCircle size={18} />}
+                                            size="sm"
+                                            variant="ghost"
+                                            colorScheme="green"
+                                            onClick={() => handleApproveTransaction(transaction)}
+                                          />
+                                        </Tooltip>
+                                        <Tooltip label="رفض">
+                                          <IconButton
+                                            icon={<XCircle size={18} />}
+                                            size="sm"
+                                            variant="ghost"
+                                            colorScheme="red"
+                                            onClick={() => handleRejectTransaction(transaction)}
+                                          />
+                                        </Tooltip>
+                                          </>
+                                        )}
+                                      </HStack>
+                                    </Td>
+                                  </Tr>
+                                ))}
+                              </Tbody>
+                            </Table>
+                          </TableContainer>
+                        )}
+                      </Stack>
+                    </Box>
+                  </Stack>
+                </TabPanel>
+                
+                {/* Settings Tab */}
+                <TabPanel px={isMobile ? 2 : 4}>
+                  <Box
+                    bg={bgColor}
+                    p={isMobile ? 3 : 6}
+                    rounded="xl"
+                    boxShadow="xl"
+                    borderWidth="1px"
+                    borderColor={borderColor}
+                    overflowX="hidden" // Prevent horizontal scroll
+                    w="100%"
+                  >
+                    <Stack spacing={6}>
+                      <Heading size="md">الإعدادات</Heading>
+                      
+                      <Tabs variant="enclosed" size={isMobile ? "sm" : "md"} isFitted>
+                        <TabList flexWrap="wrap">
+                          <Tab flex={isMobile ? "1 1 auto" : "1"} minW={isMobile ? "120px" : "auto"}>معلومات الموقع</Tab>
+                          <Tab flex={isMobile ? "1 1 auto" : "1"} minW={isMobile ? "120px" : "auto"}>وسائل التواصل</Tab>
+                          <Tab flex={isMobile ? "1 1 auto" : "1"} minW={isMobile ? "120px" : "auto"}>فريق العمل</Tab>
+                          <Tab flex={isMobile ? "1 1 auto" : "1"} minW={isMobile ? "120px" : "auto"}>إعدادات النقاط</Tab>
+                          <Tab flex={isMobile ? "1 1 auto" : "1"} minW={isMobile ? "120px" : "auto"}>طرق الدفع</Tab>
+                          <Tab flex={isMobile ? "1 1 auto" : "1"} minW={isMobile ? "120px" : "auto"}>الصفحة الرئيسية</Tab>
+                          <Tab flex={isMobile ? "1 1 auto" : "1"} minW={isMobile ? "120px" : "auto"}>من نحن</Tab>
+                          <Tab flex={isMobile ? "1 1 auto" : "1"} minW={isMobile ? "120px" : "auto"}>اتصل بنا</Tab>
+                        </TabList>
+
+                        <TabPanels>
+                          {/* Site Info Settings */}
+                          <TabPanel>
+                            <VStack spacing={6} align="stretch">
+                              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={isMobile ? 3 : 6}>
                                 <FormControl>
-                                  <FormLabel>تكلفة النقطة (MRU)</FormLabel>
-                                  <NumberInput
-                                    value={localSettings.pointCost}
-                                    onChange={(value) => handleSettingChange('pointCost', Number(value))}
-                                  >
-                                    <NumberInputField />
-                                    <NumberInputStepper>
-                                      <NumberIncrementStepper />
-                                      <NumberDecrementStepper />
-                                    </NumberInputStepper>
-                                  </NumberInput>
+                                  <FormLabel>اسم الموقع</FormLabel>
+                                  <Input
+                                    value={localSettings?.siteName || ''}
+                                    onChange={(e) => handleSettingChange('siteName', e.target.value)}
+                                    placeholder="اسم الموقع"
+                                  />
                                 </FormControl>
                                 <FormControl>
-                                  <FormLabel>النقاط لكل عقار</FormLabel>
-                                  <NumberInput
-                                    value={localSettings.pointsPerProperty}
-                                    onChange={(value) => handleSettingChange('pointsPerProperty', Number(value))}
-                                  >
-                                    <NumberInputField />
-                                    <NumberInputStepper>
-                                      <NumberIncrementStepper />
-                                      <NumberDecrementStepper />
-                                    </NumberInputStepper>
-                                  </NumberInput>
+                                  <FormLabel>وصف الموقع</FormLabel>
+                                  <Textarea
+                                    value={localSettings?.siteDescription || ''}
+                                    onChange={(e) => handleSettingChange('siteDescription', e.target.value)}
+                                    placeholder="وصف الموقع"
+                                  />
+                                </FormControl>
+                                <FormControl>
+                                  <FormLabel>البريد الإلكتروني للتواصل</FormLabel>
+                                  <Input
+                                    value={localSettings?.contactEmail || ''}
+                                    onChange={(e) => handleSettingChange('contactEmail', e.target.value)}
+                                    placeholder="البريد الإلكتروني للتواصل"
+                                  />
+                                </FormControl>
+                                <FormControl>
+                                  <FormLabel>رقم الهاتف للتواصل</FormLabel>
+                                  <Input
+                                    value={localSettings?.contactPhone || ''}
+                                    onChange={(e) => handleSettingChange('contactPhone', e.target.value)}
+                                    placeholder="رقم الهاتف للتواصل"
+                                  />
                                 </FormControl>
                               </SimpleGrid>
                             </VStack>
-                          </CardBody>
-                        </Card>
-
-                        {/* Payment Methods */}
-                        <Card>
-                          <CardBody>
+                          </TabPanel>
+                          {/* ... existing code ... */}
+                          {/* Payment Methods */}
+                          <TabPanel>
                             <VStack spacing={4} align="stretch">
-                              <Heading size="md">طرق الدفع</Heading>
-                              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                                {localSettings.paymentMethods?.map((method, index) => (
-                                  <Card key={method.id} variant="outline">
-                                    <CardBody>
-                                      <VStack spacing={3} align="stretch">
+                              {!localSettings?.paymentMethods?.length ? (
+                                <Text color="gray.500" textAlign="center">لا توجد طرق دفع مضافة</Text>
+                              ) : (
+                                localSettings.paymentMethods.map((method, index) => (
+                                  <Box 
+                                    key={index} 
+                                    p={isMobile ? 3 : 4} 
+                                    borderWidth="1px" 
+                                    borderRadius="lg"
+                                    bg={cardBgColor}
+                                  >
+                                    <VStack spacing={4} align="stretch">
+                                      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={isMobile ? 3 : 4}>
                                         <FormControl>
-                                          <FormLabel>اسم البنك</FormLabel>
-                                          <Input
-                                            value={method.name}
-                                            onChange={(e) => handlePaymentMethodChange(index, 'name', e.target.value)}
-                                          />
+                                          <FormLabel>اختر البنك</FormLabel>
+                                          <Select
+                                            value={method.bankId}
+                                            onChange={(e) => handlePaymentMethodChange(index, 'bankId', e.target.value)}
+                                            placeholder="اختر البنك"
+                                            size={isMobile ? "sm" : "md"}
+                                          >
+                                            {staticBanks.map((bank) => (
+                                              <option key={bank.id} value={bank.id}>
+                                                {bank.name}
+                                              </option>
+                                            ))}
+                                          </Select>
                                         </FormControl>
                                         <FormControl>
                                           <FormLabel>رقم الحساب</FormLabel>
                                           <Input
                                             value={method.accountNumber}
                                             onChange={(e) => handlePaymentMethodChange(index, 'accountNumber', e.target.value)}
+                                            placeholder="رقم الحساب"
+                                            size={isMobile ? "sm" : "md"}
                                           />
                                         </FormControl>
                                         <FormControl>
@@ -2589,58 +2589,274 @@ const AdminDashboard = () => {
                                           <Input
                                             value={method.accountName}
                                             onChange={(e) => handlePaymentMethodChange(index, 'accountName', e.target.value)}
+                                            placeholder="اسم صاحب الحساب"
+                                            size={isMobile ? "sm" : "md"}
                                           />
                                         </FormControl>
                                         <FormControl>
-                                          <FormLabel>صورة البنك</FormLabel>
-                                          <Input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={(e) => {
-                                              if (e.target.files?.[0]) {
-                                                handleImageUpload(e.target.files[0], method.id);
-                                              }
-                                            }}
-                                          />
+                                          <FormLabel>شعار البنك</FormLabel>
+                                          <VStack spacing={2} align="stretch">
+                                            {method.image && (
+                                              <Box position="relative" width={isMobile ? "80px" : "100px"} height={isMobile ? "80px" : "100px"}>
+                                                <Image
+                                                  src={method.image}
+                                                  alt={`${staticBanks.find(b => b.id === method.bankId)?.name} logo`}
+                                                  objectFit="contain"
+                                                  width="100%"
+                                                  height="100%"
+                                                />
+                                              </Box>
+                                            )}
+                                            <Input
+                                              type="file"
+                                              accept="image/*"
+                                              size={isMobile ? "sm" : "md"}
+                                              onChange={async (e) => {
+                                                const file = e.target.files[0];
+                                                if (file) {
+                                                  try {
+                                                    const imageUrl = await uploadToCloudinary(file);
+                                                    handlePaymentMethodChange(index, 'image', imageUrl);
+                                                    toast({
+                                                      title: "تم رفع الصورة بنجاح",
+                                                      status: "success",
+                                                      duration: 3000,
+                                                      isClosable: true,
+                                                    });
+                                                  } catch (error) {
+                                                    toast({
+                                                      title: "خطأ",
+                                                      description: "فشل في رفع الصورة",
+                                                      status: "error",
+                                                      duration: 3000,
+                                                      isClosable: true,
+                                                    });
+                                                  }
+                                                }
+                                              }}
+                                            />
+                                          </VStack>
                                         </FormControl>
-                                        <FormControl display="flex" alignItems="center">
-                                          <FormLabel mb="0">نشط</FormLabel>
+                                      </SimpleGrid>
+                                      <HStack spacing={4} justify="space-between" wrap="wrap" gap={2}>
+                                        <FormControl 
+                                          display="flex" 
+                                          alignItems="center" 
+                                          w={isMobile ? "100%" : "auto"}
+                                          justifyContent={isMobile ? "space-between" : "flex-start"}
+                                        >
+                                          <FormLabel mb="0">تفعيل طريقة الدفع</FormLabel>
                                           <Switch
                                             isChecked={method.isActive}
                                             onChange={(e) => handlePaymentMethodChange(index, 'isActive', e.target.checked)}
                                           />
                                         </FormControl>
-                                      </VStack>
-                                    </CardBody>
-                                  </Card>
-                                ))}
-                              </SimpleGrid>
+                                        <Button
+                                          colorScheme="red"
+                                          variant="ghost"
+                                          size={isMobile ? "sm" : "md"}
+                                          w={isMobile ? "100%" : "auto"}
+                                          onClick={() => {
+                                            const updatedMethods = [...localSettings.paymentMethods];
+                                            updatedMethods.splice(index, 1);
+                                            setLocalSettings({
+                                              ...localSettings,
+                                              paymentMethods: updatedMethods
+                                            });
+                                          }}
+                                        >
+                                          حذف
+                                        </Button>
+                                      </HStack>
+                                    </VStack>
+                                  </Box>
+                                ))
+                              )}
+                              <Button
+                                leftIcon={<Plus />}
+                                size={isMobile ? "sm" : "md"}
+                                onClick={() => {
+                                  const newMethod = {
+                                    bankId: '',
+                                    accountNumber: '',
+                                    accountName: '',
+                                    isActive: true
+                                  };
+                                  setLocalSettings({
+                                    ...localSettings,
+                                    paymentMethods: [...(localSettings?.paymentMethods || []), newMethod]
+                                  });
+                                }}
+                              >
+                                إضافة طريقة دفع جديدة
+                              </Button>
                             </VStack>
-                          </CardBody>
-                        </Card>
+                          </TabPanel>
+                          {/* ... existing code ... */}
+                          {/* Team Members */}
+                          <TabPanel>
+                            <VStack spacing={6} align="stretch">
+                              {localSettings?.teamMembers?.map((member, index) => (
+                                <Box 
+                                  key={index} 
+                                  p={isMobile ? 3 : 4} 
+                                  borderWidth="1px" 
+                                  borderRadius="lg"
+                                  bg={cardBgColor}
+                                >
+                                  <VStack spacing={4} align="stretch">
+                                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={isMobile ? 3 : 4}>
+                                      <FormControl>
+                                        <FormLabel>الاسم</FormLabel>
+                                        <Input
+                                          value={member.name}
+                                          onChange={(e) => handleTeamMemberChange(index, 'name', e.target.value)}
+                                          placeholder="اسم العضو"
+                                          size={isMobile ? "sm" : "md"}
+                                        />
+                                      </FormControl>
+                                      <FormControl>
+                                        <FormLabel>المسمى الوظيفي</FormLabel>
+                                        <Input
+                                          value={member.position}
+                                          onChange={(e) => handleTeamMemberChange(index, 'position', e.target.value)}
+                                          placeholder="المسمى الوظيفي"
+                                          size={isMobile ? "sm" : "md"}
+                                        />
+                                      </FormControl>
+                                      <FormControl>
+                                        <FormLabel>نبذة مختصرة</FormLabel>
+                                        <Textarea
+                                          value={member.bio}
+                                          onChange={(e) => handleTeamMemberChange(index, 'bio', e.target.value)}
+                                          placeholder="نبذة مختصرة عن العضو"
+                                          size={isMobile ? "sm" : "md"}
+                                        />
+                                      </FormControl>
+                                      <FormControl>
+                                        <FormLabel>الصورة الشخصية</FormLabel>
+                                        <VStack spacing={2} align="stretch">
+                                          {member.image && (
+                                            <Box position="relative" width={isMobile ? "80px" : "100px"} height={isMobile ? "80px" : "100px"}>
+                                              <Image
+                                                src={member.image}
+                                                alt={member.name}
+                                                objectFit="cover"
+                                                width="100%"
+                                                height="100%"
+                                                borderRadius="md"
+                                              />
+                                            </Box>
+                                          )}
+                                          <Input
+                                            type="file"
+                                            accept="image/*"
+                                            size={isMobile ? "sm" : "md"}
+                                            onChange={(e) => {
+                                              if (e.target.files && e.target.files[0]) {
+                                                handleTeamMemberImageUpload(index, e.target.files[0]);
+                                              }
+                                            }}
+                                          />
+                                        </VStack>
+                                      </FormControl>
+                                    </SimpleGrid>
 
-                        {/* Save Button */}
-                        <Button
-                          colorScheme="blue"
-                          onClick={handleSaveSettings}
-                          isLoading={isSavingSettings}
-                          size="lg"
-                          w={{ base: "full", md: "auto" }}
-                        >
-                          حفظ الإعدادات
-                        </Button>
-                      </Stack>
-                    </Box>
-                  </TabPanel>
-                </TabPanels>
-              </Tabs>
+                                    <Box>
+                                      <Text fontWeight="medium" mb={2}>روابط التواصل الاجتماعي</Text>
+                                      <SimpleGrid columns={{ base: 1, sm: 2, md: 3 }} spacing={isMobile ? 3 : 4}>
+                                        <FormControl>
+                                          <FormLabel>فيسبوك</FormLabel>
+                                          <Input
+                                            value={member.social?.facebook || ''}
+                                            onChange={(e) => handleTeamMemberSocialChange(index, 'facebook', e.target.value)}
+                                            placeholder="رابط فيسبوك"
+                                            size={isMobile ? "sm" : "md"}
+                                          />
+                                        </FormControl>
+                                        <FormControl>
+                                          <FormLabel>تويتر</FormLabel>
+                                          <Input
+                                            value={member.social?.twitter || ''}
+                                            onChange={(e) => handleTeamMemberSocialChange(index, 'twitter', e.target.value)}
+                                            placeholder="رابط تويتر"
+                                            size={isMobile ? "sm" : "md"}
+                                          />
+                                        </FormControl>
+                                        <FormControl>
+                                          <FormLabel>لينكد إن</FormLabel>
+                                          <Input
+                                            value={member.social?.linkedin || ''}
+                                            onChange={(e) => handleTeamMemberSocialChange(index, 'linkedin', e.target.value)}
+                                            placeholder="رابط لينكد إن"
+                                            size={isMobile ? "sm" : "md"}
+                                          />
+                                        </FormControl>
+                                      </SimpleGrid>
+                                    </Box>
+
+                                    <Button
+                                      colorScheme="red"
+                                      onClick={() => handleDeleteTeamMember(index)}
+                                      size={isMobile ? "sm" : "md"}
+                                      w={isMobile ? "100%" : "auto"}
+                                    >
+                                      حذف العضو
+                                    </Button>
+                                  </VStack>
+                                </Box>
+                              ))}
+                              <Button
+                                colorScheme="blue"
+                                onClick={handleAddTeamMember}
+                                size={isMobile ? "sm" : "md"}
+                                w={isMobile ? "100%" : "auto"}
+                              >
+                                إضافة عضو جديد
+                              </Button>
+                            </VStack>
+                          </TabPanel>
+                          {/* ... existing code ... */}
+                        </TabPanels>
+                      </Tabs>
+                    </Stack>
+                  </Box>
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+
+            <Divider my={6} />
+
+            <Box 
+              position="sticky" 
+              bottom={0} 
+              bg={bgColor} 
+              pt={4} 
+              pb={isMobile ? 4 : 6}
+              borderTop="1px solid"
+              borderColor={borderColor}
+              mt={4}
+              mx={isMobile ? -3 : -6}
+              px={isMobile ? 3 : 6}
+            >
+              <Button
+                colorScheme="blue"
+                size={isMobile ? "md" : "lg"}
+                w={isMobile ? "100%" : "auto"}
+                isLoading={isSavingSettings}
+                loadingText="جاري الحفظ..."
+                onClick={handleSaveSettings}
+                leftIcon={<Save />}
+              >
+                حفظ الإعدادات
+              </Button>
             </Box>
           </Box>
-        </MotionBox>
-      </Container>
-      
-      {/* Mobile Navigation */}
-      <MobileNavigation />
+        </Grid>
+      </MotionBox>
+
+      {/* Mobile Sidebar */}
+      <MobileSidebar />
 
       {/* Add Points Modal */}
       <Modal isOpen={isOpen} onClose={onClose} size="xl">
@@ -2799,8 +3015,8 @@ const AdminDashboard = () => {
                         objectFit="cover"
                       />
                     </Box>
-              </Box>
-            )}
+                  </Box>
+                )}
 
                 <Box>
                   <Text fontWeight="bold" fontSize="lg" mb={4}>الإجراءات</Text>
@@ -2826,7 +3042,7 @@ const AdminDashboard = () => {
                       رفض
                     </Button>
                   </HStack>
-          </Box>
+                </Box>
               </VStack>
             )}
           </ModalBody>
@@ -2844,7 +3060,7 @@ const AdminDashboard = () => {
               <Box textAlign="center">
                 <Icon as={CheckCircle} w={12} h={12} color="green.500" mb={4} />
                 <Text fontSize="lg" fontWeight="medium">هل أنت متأكد من الموافقة على عملية شراء النقاط هذه؟</Text>
-        </Box>
+              </Box>
               
               {selectedTransaction && (
                 <Box bg="gray.50" p={4} borderRadius="lg">
@@ -3376,7 +3592,7 @@ const AdminDashboard = () => {
         </ModalContent>
       </Modal>
 
-    </Box>
+    </Container>
   );
 };
 
