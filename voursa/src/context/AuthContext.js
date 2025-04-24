@@ -95,6 +95,8 @@ export const AuthProvider = ({ children }) => {
       
       // First try admin login
       try {
+        console.log('Trying admin login with URL:', process.env.REACT_APP_API_URL);
+        
         const adminResponse = await axiosInstance.post('/admin/login', {
           email: username,
           password: password
@@ -112,15 +114,22 @@ export const AuthProvider = ({ children }) => {
           if (admin.role === 'admin' || admin.role === 'superadmin') {
             navigate('/admin/dashboard', { replace: true });
           }
-        return { success: true };
+          return { success: true };
         }
       } catch (adminError) {
-        console.log('Admin login failed, trying seller login');
+        console.log('Admin login failed:', adminError.message);
+        if (adminError.response) {
+          console.log('Admin login error response:', adminError.response.status, adminError.response.data);
+        } else if (adminError.request) {
+          console.log('Admin login no response received:', adminError.request);
+        }
         // Don't throw here, continue to seller login
       }
       
       // If admin login fails, try seller login
       try {
+        console.log('Trying seller login with URL:', process.env.REACT_APP_API_URL);
+        
         const sellerResponse = await axiosInstance.post('/users/login', {
           email: username,
           password: password
@@ -143,12 +152,28 @@ export const AuthProvider = ({ children }) => {
           throw new Error(sellerResponse.data.message || 'فشل تسجيل الدخول');
         }
       } catch (sellerError) {
-        console.error('Seller login error:', sellerError);
+        console.error('Seller login error:', sellerError.message);
+        if (sellerError.response) {
+          console.log('Seller login error response:', sellerError.response.status, sellerError.response.data);
+        } else if (sellerError.request) {
+          console.log('Seller login no response received:', sellerError.request);
+        }
         throw sellerError;
       }
     } catch (err) {
       console.error('Login error:', err);
-      const errorMessage = err.response?.data?.message || err.message || 'فشل تسجيل الدخول';
+      let errorMessage;
+      
+      if (err.response) {
+        console.error('Error response data:', err.response.data);
+        errorMessage = err.response?.data?.message || 'فشل تسجيل الدخول - خطأ في الاستجابة';
+      } else if (err.request) {
+        console.error('Error request:', err.request);
+        errorMessage = 'فشل الاتصال بالخادم - يرجى التحقق من اتصالك بالإنترنت';
+      } else {
+        errorMessage = err.message || 'فشل تسجيل الدخول - خطأ غير معروف';
+      }
+      
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
