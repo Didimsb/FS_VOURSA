@@ -31,7 +31,6 @@ import {
 import { HamburgerIcon, CloseIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import ThemeToggle from './ThemeToggle';
 
 const MotionBox = motion(Box);
 
@@ -114,8 +113,6 @@ const Navbar = () => {
             <NavLink to="/about">من نحن</NavLink>
             <NavLink to="/contact">اتصل بنا</NavLink>
             
-            <ThemeToggle />
-            
             {isAuthenticated ? (
               <Menu>
                 <MenuButton
@@ -169,7 +166,6 @@ const Navbar = () => {
 
           {/* Mobile menu button */}
           <HStack spacing={2} display={{ base: 'flex', md: 'none' }}>
-            <ThemeToggle />
             <IconButton
               size={'md'}
               icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
