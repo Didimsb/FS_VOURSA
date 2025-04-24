@@ -102,7 +102,6 @@ import {
   InputRightElement,
   InputRightAddon,
   InputLeftAddon,
-  Search2Icon,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import {
@@ -127,6 +126,7 @@ import {
   X,
   Menu as MenuIcon,
   User,
+  Search,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import PropertyMediaSlider from '../components/PropertyMediaSlider';
@@ -2259,7 +2259,7 @@ const AdminDashboard = () => {
                         >
                           <InputGroup maxW={{ base: "100%", md: "320px" }}>
                             <InputLeftElement pointerEvents="none">
-                              <Search2Icon color="gray.300" />
+                              <Search size={20} color="gray.300" />
                             </InputLeftElement>
                             <Input
                               placeholder="البحث عن عقار..."
