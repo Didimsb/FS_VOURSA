@@ -1,39 +1,26 @@
-# Voursa - Plateforme Immobilière
+## Voursa - Financial Services Platform
 
-Voursa est une plateforme de gestion immobilière complète construite avec la stack MERN (MongoDB, Express, React, Node.js).
+A modern financial services platform built with Next.js and React.
 
-## Structure du projet
+### Features
+- Real-time market data
+- User authentication
+- Responsive design
+- Financial analytics
 
-- `/server` - Backend API (Node.js/Express)
-- `/voursa` - Frontend (React)
+### Tech Stack
+- Next.js
+- React
+- Tailwind CSS
+- Node.js
 
-## Installation
+### Getting Started
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Run development server: `npm run dev`
+4. Open [http://localhost:3000](http://localhost:3000)
 
-### Configuration requise
-- Node.js (v14+)
-- MongoDB (ou connexion à MongoDB Atlas)
+### Contact
+For any inquiries, please reach out to our team.
 
-### Backend
-```bash
-cd server
-npm install
-npm run dev
-```
-
-### Frontend
-```bash
-cd voursa
-npm install
-npm start
-```
-
-## Déploiement
-Le projet est configuré pour être facilement déployé sur:
-- Backend: Render.com
-- Frontend: Vercel
-
-## Fonctionnalités
-- Gestion des propriétés immobilières
-- Système d'authentification multi-rôles (admin, vendeur)
-- Upload d'images via Cloudinary
-- Interface administrateur et vendeur
+Last updated: 2024
