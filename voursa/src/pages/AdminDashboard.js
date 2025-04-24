@@ -1,47 +1,70 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Box,
   Container,
-  Grid,
-  Heading,
+  Box,
   Text,
-  Stack,
   Button,
-  useColorModeValue,
+  Stack,
+  VStack,
+  HStack,
+  Avatar,
+  Badge,
+  Divider,
+  Grid,
   SimpleGrid,
   Stat,
   StatLabel,
   StatNumber,
   StatHelpText,
   StatArrow,
+  Heading,
+  Input,
+  FormControl,
+  FormLabel,
+  Textarea,
+  Select,
+  Switch,
+  Image,
   Tabs,
   TabList,
   TabPanels,
   Tab,
   TabPanel,
+  useColorModeValue,
+  useToast,
+  useDisclosure,
+  useBreakpointValue,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  IconButton,
+  Collapse,
+  Spacer,
+  List,
+  ListItem,
+  ListIcon,
+  OrderedList,
+  UnorderedList,
+  Radio,
+  RadioGroup,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+  InputRightAddon,
+  InputLeftAddon,
+  Flex,
+  Center,
+  Spinner,
+  Alert,
+  AlertIcon,
   Table,
   Thead,
   Tbody,
   Tr,
   Th,
   Td,
-  Badge,
-  IconButton,
-  useToast,
-  FormControl,
-  FormLabel,
-  Input,
-  Select,
-  VStack,
-  HStack,
-  Avatar,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Divider,
-  Switch,
-  Tooltip,
+  TableContainer,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -49,21 +72,13 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  useDisclosure,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  Radio,
-  RadioGroup,
-  Image,
-  TableContainer,
+  Tooltip,
   Icon,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
   Drawer,
   DrawerOverlay,
   DrawerContent,
@@ -71,63 +86,35 @@ import {
   DrawerHeader,
   DrawerBody,
   DrawerFooter,
-  Flex,
-  useBreakpointValue,
-  FormHelperText,
-  IconButton as ChakraIconButton,
-  IconButtonProps,
-  useMediaQuery,
-  useBreakpoint,
-  useDisclosureProps,
-  useMediaQueryProps,
-  useMediaQueryOptions,
-  useMediaQueryResult,
-  useMediaQueryState,
-  useMediaQueryStateProps,
-  useMediaQueryStateResult,
-  useMediaQueryStateOptions,
-  useMediaQueryStateOptionsProps,
-  useMediaQueryStateOptionsResult,
-  useMediaQueryStateOptionsPropsResult,
-  Spinner,
-  Center,
-  Alert,
-  AlertIcon,
-  ButtonGroup,
-  Textarea,
-  List,
-  ListItem,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
-  InputRightAddon,
-  InputLeftAddon,
-  Save,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import {
   Home,
   Users,
-  Building2,
   Settings,
   LogOut,
+  Building2,
   Shield,
   AlertTriangle,
-  CheckCircle,
-  XCircle,
-  Eye,
+  Plus,
+  Edit,
   Edit2,
   Trash2,
-  Ban,
-  UserPlus,
-  DollarSign,
-  BarChart2,
-  MessageSquare,
-  Plus,
+  Check,
+  CheckCircle,
   X,
+  XCircle,
   Menu as MenuIcon,
   User,
   Search,
+  BarChart2,
+  MessageSquare,
+  DollarSign,
+  ArrowUp,
+  Save,
+  Eye,
+  Ban,
+  UserPlus,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import PropertyMediaSlider from '../components/PropertyMediaSlider';
@@ -512,7 +499,7 @@ const AdminDashboard = () => {
 
   // Mobile-friendly transaction card component
   const TransactionCard = ({ transaction }) => (
-    <Card 
+    <Box 
       bg={cardBgColor}
       borderWidth="1px" 
       borderColor={cardBorderColor}
@@ -520,81 +507,73 @@ const AdminDashboard = () => {
       overflow="hidden"
       mb={4}
     >
-      <CardBody>
-        <VStack align="stretch" spacing={3}>
-          <HStack justify="space-between">
-            <Box>
-              <Text fontWeight="bold">{transaction.user.name}</Text>
-              <Text fontSize="sm" color="gray.500">{transaction.user.email}</Text>
-            </Box>
-            <Badge
-              colorScheme={
-                transaction.status === 'completed'
-                  ? 'green'
-                  : transaction.status === 'rejected'
-                  ? 'red'
-                  : 'yellow'
-              }
-            >
-              {transaction.status === 'completed' ? 'مكتمل' :
-               transaction.status === 'rejected' ? 'مرفوض' : 'معلق'}
-            </Badge>
-          </HStack>
-
-          <SimpleGrid columns={2} spacing={2}>
-            <Box>
-              <Text fontSize="sm" color="gray.500">المبلغ</Text>
-            <Text>{transaction.amount} أوقية</Text>
-            </Box>
-            <Box>
-              <Text fontSize="sm" color="gray.500">النقاط</Text>
-            <Text>{transaction.points}</Text>
-            </Box>
-            <Box>
-              <Text fontSize="sm" color="gray.500">طريقة الدفع</Text>
-            <Text>{transaction.paymentMethod}</Text>
-            </Box>
-            <Box>
-              <Text fontSize="sm" color="gray.500">التاريخ</Text>
-              <Text>{new Date(transaction.createdAt).toLocaleDateString('ar-SA')}</Text>
-            </Box>
-          </SimpleGrid>
-
-          <HStack spacing={2} justify="flex-end">
-          <Tooltip label="عرض">
-            <IconButton
-              icon={<Eye size={18} />}
-              size="sm"
-              variant="ghost"
-              onClick={() => handleViewTransaction(transaction)}
-            />
-          </Tooltip>
-            {transaction.status === 'pending' && (
-              <>
-          <Tooltip label="موافقة">
-            <IconButton
-              icon={<CheckCircle size={18} />}
-              size="sm"
-              variant="ghost"
-                    colorScheme="green"
-              onClick={() => handleApproveTransaction(transaction)}
-            />
-          </Tooltip>
-          <Tooltip label="رفض">
-            <IconButton
-              icon={<XCircle size={18} />}
-              size="sm"
-              variant="ghost"
-                    colorScheme="red"
-              onClick={() => handleRejectTransaction(transaction)}
-            />
-          </Tooltip>
-              </>
-            )}
+      <VStack align="stretch" spacing={3}>
+        <HStack justify="space-between">
+          <Box>
+            <Text fontWeight="bold">{transaction.user.name}</Text>
+            <Text fontSize="sm" color="gray.500">{transaction.user.email}</Text>
+          </Box>
+          <Badge
+            colorScheme={
+              transaction.status === 'completed'
+                ? 'green'
+                : transaction.status === 'rejected'
+                ? 'red'
+                : 'yellow'
+            }
+          >
+            {transaction.status === 'completed' ? 'مكتمل' :
+             transaction.status === 'rejected' ? 'مرفوض' : 'معلق'}
+          </Badge>
         </HStack>
-        </VStack>
-      </CardBody>
-    </Card>
+
+        <SimpleGrid columns={2} spacing={2}>
+          <Box>
+            <Text fontSize="sm" color="gray.500">المبلغ</Text>
+          <Text>{transaction.amount} أوقية</Text>
+          </Box>
+          <Box>
+            <Text fontSize="sm" color="gray.500">النقاط</Text>
+          <Text>{transaction.points}</Text>
+          </Box>
+          <Box>
+            <Text fontSize="sm" color="gray.500">طريقة الدفع</Text>
+          <Text>{transaction.paymentMethod}</Text>
+          </Box>
+          <Box>
+            <Text fontSize="sm" color="gray.500">التاريخ</Text>
+            <Text>{new Date(transaction.createdAt).toLocaleDateString('ar-SA')}</Text>
+          </Box>
+        </SimpleGrid>
+
+        <HStack spacing={2} justify="flex-end">
+        <IconButton
+          icon={<Eye size={18} />}
+          size="sm"
+          variant="ghost"
+          onClick={() => handleViewTransaction(transaction)}
+        />
+          {transaction.status === 'pending' && (
+            <>
+        <IconButton
+          icon={<CheckCircle size={18} />}
+          size="sm"
+          variant="ghost"
+                  colorScheme="green"
+          onClick={() => handleApproveTransaction(transaction)}
+        />
+        <IconButton
+          icon={<XCircle size={18} />}
+          size="sm"
+          variant="ghost"
+                  colorScheme="red"
+          onClick={() => handleRejectTransaction(transaction)}
+        />
+            </>
+          )}
+      </HStack>
+      </VStack>
+    </Box>
   );
 
   // Mobile sidebar drawer
@@ -693,83 +672,73 @@ const AdminDashboard = () => {
   // Update the UserCard component to use the handlers
   const UserCard = ({ user }) => {
     return (
-      <Card
+      <Box
         w="full"
         bg={bgColor}
         borderWidth="1px"
         borderColor={borderColor}
       >
-        <CardBody>
-          <VStack spacing={4} align="stretch">
-            <HStack spacing={4}>
-              <Avatar size="lg" name={user.name} src={user.avatar} />
-              <VStack align="start" spacing={1}>
-                <Text fontSize="lg" fontWeight="bold">{user.name}</Text>
-                <Text color="gray.500">رقم الهاتف: {user.phone}</Text>
-                <Badge colorScheme={user.role === 'admin' ? 'purple' : user.role === 'superadmin' ? 'red' : 'blue'}>
-                  {user.role === 'admin' ? 'مدير' : user.role === 'superadmin' ? 'مدير أعلى' : 'بائع'}
-                </Badge>
-              </VStack>
-            </HStack>
-            
-            <Divider />
-            
-            <SimpleGrid columns={2} spacing={4}>
-              <Box>
-                <Text fontWeight="bold">عدد العقارات</Text>
-                <Text>{user.properties?.length || 0}</Text>
-              </Box>
-              <Box>
-                <Text fontWeight="bold">الحالة</Text>
-                <Badge colorScheme={user.isActive ? 'green' : 'red'}>
-                  {user.isActive ? 'نشط' : 'محظور'}
-                </Badge>
-              </Box>
-            </SimpleGrid>
-            
-            <HStack spacing={2} justify="flex-end">
-              <Tooltip label="عرض">
-                <IconButton
-                  icon={<Eye />}
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => handleViewUser(user)}
-                />
-              </Tooltip>
-              <Tooltip label="تعديل">
-                <IconButton
-                  icon={<Edit2 />}
-                  size="sm"
-                  variant="ghost"
-                  colorScheme="blue"
-                  onClick={() => handleEditUser(user)}
-                />
-              </Tooltip>
-              {user.isActive ? (
-              <Tooltip label="حظر">
-                <IconButton
-                  icon={<Ban />}
-                  size="sm"
-                  variant="ghost"
-                  colorScheme="red"
-                  onClick={() => handleBanUser(user)}
-                />
-              </Tooltip>
-              ) : (
-                <Tooltip label="إلغاء الحظر">
-                  <IconButton
-                    icon={<CheckCircle />}
-                    size="sm"
-                    variant="ghost"
-                    colorScheme="green"
-                    onClick={() => handleUnbanUser(user)}
-                  />
-                </Tooltip>
-              )}
-            </HStack>
-          </VStack>
-        </CardBody>
-      </Card>
+        <VStack spacing={4} align="stretch">
+          <HStack spacing={4}>
+            <Avatar size="lg" name={user.name} src={user.avatar} />
+            <VStack align="start" spacing={1}>
+              <Text fontSize="lg" fontWeight="bold">{user.name}</Text>
+              <Text color="gray.500">رقم الهاتف: {user.phone}</Text>
+              <Badge colorScheme={user.role === 'admin' ? 'purple' : user.role === 'superadmin' ? 'red' : 'blue'}>
+                {user.role === 'admin' ? 'مدير' : user.role === 'superadmin' ? 'مدير أعلى' : 'بائع'}
+              </Badge>
+            </VStack>
+          </HStack>
+          
+          <Divider />
+          
+          <SimpleGrid columns={2} spacing={4}>
+            <Box>
+              <Text fontWeight="bold">عدد العقارات</Text>
+              <Text>{user.properties?.length || 0}</Text>
+            </Box>
+            <Box>
+              <Text fontWeight="bold">الحالة</Text>
+              <Badge colorScheme={user.isActive ? 'green' : 'red'}>
+                {user.isActive ? 'نشط' : 'محظور'}
+              </Badge>
+            </Box>
+          </SimpleGrid>
+          
+          <HStack spacing={2} justify="flex-end">
+            <IconButton
+              icon={<Eye size={18} />}
+              size="sm"
+              variant="ghost"
+              onClick={() => handleViewUser(user)}
+            />
+            <IconButton
+              icon={<Edit2 />}
+              size="sm"
+              variant="ghost"
+              colorScheme="blue"
+              onClick={() => handleEditUser(user)}
+            />
+            {user.isActive ? (
+            <IconButton
+              icon={<Ban />}
+              size="sm"
+              variant="ghost"
+              colorScheme="red"
+              onClick={() => handleBanUser(user)}
+            />
+            ) : (
+              <IconButton
+                icon={<CheckCircle />}
+                size="sm"
+                variant="ghost"
+                colorScheme="green"
+                onClick={() => handleUnbanUser(user)}
+              />
+            )}
+          </HStack>
+        </VStack>
+      </Box>
     );
   };
 
@@ -1178,7 +1147,7 @@ const AdminDashboard = () => {
 
           <Flex justify="space-between" mt={2}>
             <Button
-              leftIcon={<Eye />}
+              leftIcon={<Eye size={18} />}
               size="sm"
               variant="outline"
               onClick={() => handleViewProperty(property)}
@@ -1186,7 +1155,7 @@ const AdminDashboard = () => {
               عرض
             </Button>
             <Button
-              leftIcon={<XCircle />}
+              leftIcon={<XCircle size={18} />}
               size="sm"
               colorScheme="red"
               variant="outline"
@@ -1202,7 +1171,7 @@ const AdminDashboard = () => {
 
   // Update the PointsTransactionCard component definition
   const PointsTransactionCard = ({ transaction }) => (
-    <Card 
+    <Box 
       bg={cardBgColor}
       borderWidth="1px" 
       borderColor={cardBorderColor}
@@ -1210,66 +1179,58 @@ const AdminDashboard = () => {
       overflow="hidden"
       mb={4}
     >
-      <CardBody>
-        <VStack align="stretch" spacing={3}>
-          <HStack justify="space-between">
-            <Box>
-              <Text fontWeight="bold">{transaction.sellerName}</Text>
-              <Text fontSize="sm" color="gray.500">{transaction.sellerEmail}</Text>
-            </Box>
-            <Badge colorScheme="yellow">معلق</Badge>
-          </HStack>
+      <VStack align="stretch" spacing={3}>
+        <HStack justify="space-between">
+          <Box>
+            <Text fontWeight="bold">{transaction.sellerName}</Text>
+            <Text fontSize="sm" color="gray.500">{transaction.sellerEmail}</Text>
+          </Box>
+          <Badge colorScheme="yellow">معلق</Badge>
+        </HStack>
 
-          <SimpleGrid columns={2} spacing={2}>
-            <Box>
-              <Text fontSize="sm" color="gray.500">المبلغ</Text>
-              <Text>{transaction.amount} أوقية</Text>
-            </Box>
-            <Box>
-              <Text fontSize="sm" color="gray.500">النقاط</Text>
-              <Text>{transaction.points}</Text>
-            </Box>
-            <Box>
-              <Text fontSize="sm" color="gray.500">طريقة الدفع</Text>
-              <Text>{transaction.paymentMethod}</Text>
-            </Box>
-            <Box>
-              <Text fontSize="sm" color="gray.500">التاريخ</Text>
-              <Text>{transaction.date}</Text>
-            </Box>
-          </SimpleGrid>
+        <SimpleGrid columns={2} spacing={2}>
+          <Box>
+            <Text fontSize="sm" color="gray.500">المبلغ</Text>
+            <Text>{transaction.amount} أوقية</Text>
+          </Box>
+          <Box>
+            <Text fontSize="sm" color="gray.500">النقاط</Text>
+            <Text>{transaction.points}</Text>
+          </Box>
+          <Box>
+            <Text fontSize="sm" color="gray.500">طريقة الدفع</Text>
+            <Text>{transaction.paymentMethod}</Text>
+          </Box>
+          <Box>
+            <Text fontSize="sm" color="gray.500">التاريخ</Text>
+            <Text>{transaction.date}</Text>
+          </Box>
+        </SimpleGrid>
 
-          <HStack spacing={2} justify="flex-end">
-            <Tooltip label="عرض">
-              <IconButton
-                icon={<Eye size={18} />}
-                size="sm"
-                variant="ghost"
-                onClick={() => handleViewTransaction(transaction)}
-              />
-            </Tooltip>
-            <Tooltip label="موافقة">
-              <IconButton
-                icon={<CheckCircle size={18} />}
-                size="sm"
-                variant="ghost"
-                colorScheme="green"
-                onClick={() => handleApproveTransaction(transaction)}
-              />
-            </Tooltip>
-            <Tooltip label="رفض">
-              <IconButton
-                icon={<XCircle size={18} />}
-                size="sm"
-                variant="ghost"
-                colorScheme="red"
-                onClick={() => handleRejectTransaction(transaction)}
-              />
-            </Tooltip>
-          </HStack>
-        </VStack>
-      </CardBody>
-    </Card>
+        <HStack spacing={2} justify="flex-end">
+          <IconButton
+            icon={<Eye size={18} />}
+            size="sm"
+            variant="ghost"
+            onClick={() => handleViewTransaction(transaction)}
+          />
+          <IconButton
+            icon={<CheckCircle size={18} />}
+            size="sm"
+            variant="ghost"
+            colorScheme="green"
+            onClick={() => handleApproveTransaction(transaction)}
+          />
+          <IconButton
+            icon={<XCircle size={18} />}
+            size="sm"
+            variant="ghost"
+            colorScheme="red"
+            onClick={() => handleRejectTransaction(transaction)}
+          />
+        </HStack>
+      </VStack>
+    </Box>
   );
 
   const navigate = useNavigate();
