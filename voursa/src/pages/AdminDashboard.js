@@ -97,6 +97,12 @@ import {
   Textarea,
   List,
   ListItem,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
+  InputRightAddon,
+  InputLeftAddon,
+  Search2Icon,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import {
@@ -1099,7 +1105,7 @@ const AdminDashboard = () => {
     fetchProperties();
   }, []);
 
-  // Update the PropertyCard component
+  // Update the PropertyCard component to be more mobile-friendly
   const PropertyCard = ({ property }) => {
     const getStatusColor = (status) => {
       switch (status) {
@@ -1121,61 +1127,73 @@ const AdminDashboard = () => {
         mb={4}
         bg="white"
         boxShadow="sm"
+        w="full"
       >
-        <Flex justify="space-between" align="center" mb={4}>
-          <Heading size="md">{property.title}</Heading>
-          <Button
-            colorScheme="red"
-            size="sm"
-            onClick={() => handleRejectProperty(property)}
-          >
-            رفض
-          </Button>
-        </Flex>
-        
-        <Grid templateColumns="repeat(3, 1fr)" gap={4} mb={4}>
-          {property.images?.map((image, index) => (
-            <Box key={index} position="relative">
-              {image.endsWith('.mp4') ? (
-                <video
-                  src={image}
-                  controls
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
-              ) : (
-                <Image
-                  src={image}
-                  alt={`Property image ${index + 1}`}
-                  objectFit="cover"
-                  w="100%"
-                  h="100%"
-                />
-              )}
-            </Box>
-          ))}
-        </Grid>
+        <VStack spacing={4} align="stretch">
+          <Flex justify="space-between" align="center">
+            <Heading size="md" noOfLines={1}>{property.title}</Heading>
+            <Badge colorScheme={getStatusColor(property.status)}>
+              {getStatusText(property.status)}
+            </Badge>
+          </Flex>
 
-        <VStack align="start" spacing={2}>
-          <Text><strong>السعر:</strong> {property.price} أوقية</Text>
-          <Text><strong>الموقع:</strong> {property.location}</Text>
-          <Text><strong>النوع:</strong> {property.propertyType}</Text>
-          <Text><strong>عدد الغرف:</strong> {property.bedrooms}</Text>
-          <Text><strong>عدد الحمامات:</strong> {property.bathrooms}</Text>
-          <Text><strong>المساحة:</strong> {property.area} م²</Text>
-          {property.features?.length > 0 && (
+          {property.images && property.images.length > 0 && (
             <Box>
-              <Text fontWeight="bold" mb={2}>المميزات:</Text>
-              <VStack align="start" spacing={1}>
-                {property.features.map((feature, index) => (
-                  <Text key={index}>• {feature}</Text>
-                ))}
-              </VStack>
+              <Image
+                src={property.images[0]}
+                alt={property.title}
+                objectFit="cover"
+                w="100%"
+                h="200px"
+                borderRadius="md"
+              />
             </Box>
           )}
-          <Text><strong>تاريخ النشر:</strong> {new Date(property.createdAt).toLocaleDateString('ar-SA')}</Text>
-          <Badge colorScheme={getStatusColor(property.status)}>
-            {getStatusText(property.status)}
-          </Badge>
+
+          <SimpleGrid columns={2} spacing={4}>
+            <Box>
+              <Text fontWeight="bold">السعر</Text>
+              <Text>{property.price} أوقية</Text>
+            </Box>
+            <Box>
+              <Text fontWeight="bold">النوع</Text>
+              <Text>{property.propertyType}</Text>
+            </Box>
+            <Box>
+              <Text fontWeight="bold">الموقع</Text>
+              <Text noOfLines={1}>{property.location}</Text>
+            </Box>
+            <Box>
+              <Text fontWeight="bold">المساحة</Text>
+              <Text>{property.area} م²</Text>
+            </Box>
+          </SimpleGrid>
+
+          <Box>
+            <Text fontWeight="bold">البائع</Text>
+            <Text>{property.createdBy?.name || 'غير معروف'}</Text>
+            <Text fontSize="sm" color="gray.500">{property.createdBy?.phone || ''}</Text>
+          </Box>
+
+          <Flex justify="space-between" mt={2}>
+            <Button
+              leftIcon={<Eye />}
+              size="sm"
+              variant="outline"
+              onClick={() => handleViewProperty(property)}
+            >
+              عرض
+            </Button>
+            <Button
+              leftIcon={<XCircle />}
+              size="sm"
+              colorScheme="red"
+              variant="outline"
+              onClick={() => handleRejectProperty(property)}
+            >
+              رفض
+            </Button>
+          </Flex>
         </VStack>
       </Box>
     );
@@ -1759,6 +1777,21 @@ const AdminDashboard = () => {
     </Box>
   );
 
+  const [propertySearchQuery, setPropertySearchQuery] = useState('');
+  const [propertyStatusFilter, setPropertyStatusFilter] = useState('all');
+
+  // Add filtering logic for properties
+  const filteredProperties = properties.filter(property => {
+    const matchesSearch = 
+      property.title.toLowerCase().includes(propertySearchQuery.toLowerCase()) ||
+      property.location.toLowerCase().includes(propertySearchQuery.toLowerCase()) ||
+      property.propertyType.toLowerCase().includes(propertySearchQuery.toLowerCase());
+    
+    const matchesStatus = propertyStatusFilter === 'all' || property.status === propertyStatusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
+
   return (
     <Container maxW="container.xl" py={isMobile ? 4 : 10} px={isMobile ? 2 : 4}>
       <MotionBox
@@ -2215,88 +2248,52 @@ const AdminDashboard = () => {
                 {/* Properties Tab */}
                 <TabPanel>
                   <Stack spacing={6}>
-                    <Box
-                      bg={bgColor}
-                      p={6}
-                      rounded="xl"
-                      boxShadow="xl"
-                      borderWidth="1px"
-                      borderColor={borderColor}
-                    >
-                      <Stack spacing={6}>
-                        <Stack direction="row" justify="space-between" align="center">
-                          <Heading size="md">إدارة العقارات</Heading>
-                          <Button
-                            leftIcon={<Eye />}
-                            colorScheme="primary"
+                    <Box>
+                      <Heading size="lg" mb={6}>إدارة العقارات</Heading>
+                      <Stack spacing={4}>
+                        <Flex
+                          direction={{ base: "column", md: "row" }}
+                          justify="space-between"
+                          align={{ base: "stretch", md: "center" }}
+                          gap={4}
+                        >
+                          <InputGroup maxW={{ base: "100%", md: "320px" }}>
+                            <InputLeftElement pointerEvents="none">
+                              <Search2Icon color="gray.300" />
+                            </InputLeftElement>
+                            <Input
+                              placeholder="البحث عن عقار..."
+                              value={propertySearchQuery}
+                              onChange={(e) => setPropertySearchQuery(e.target.value)}
+                            />
+                          </InputGroup>
+                          
+                          <Select
+                            maxW={{ base: "100%", md: "200px" }}
+                            value={propertyStatusFilter}
+                            onChange={(e) => setPropertyStatusFilter(e.target.value)}
                           >
-                            عرض الكل
-                          </Button>
-                        </Stack>
-                        
-                        {isMobile ? (
-                          <VStack spacing={4}>
-                            {properties.map((property) => (
+                            <option value="all">جميع الحالات</option>
+                            <option value="pending">قيد الانتظار</option>
+                            <option value="approved">تمت الموافقة</option>
+                            <option value="rejected">مرفوض</option>
+                          </Select>
+                        </Flex>
+
+                        {filteredProperties.length === 0 ? (
+                          <Box textAlign="center" py={10}>
+                            <Text>لا توجد عقارات متاحة</Text>
+                          </Box>
+                        ) : (
+                          <SimpleGrid
+                            columns={{ base: 1, md: 2, lg: 3 }}
+                            spacing={6}
+                            w="full"
+                          >
+                            {filteredProperties.map((property) => (
                               <PropertyCard key={property._id} property={property} />
                             ))}
-                          </VStack>
-                        ) : (
-                          <Table variant="simple">
-                            <Thead>
-                              <Tr>
-                                <Th>العنوان</Th>
-                                <Th>النوع</Th>
-                                <Th>السعر</Th>
-                                <Th>الموقع</Th>
-                                <Th>البائع</Th>
-                                <Th>الحالة</Th>
-                                <Th>الإجراءات</Th>
-                              </Tr>
-                            </Thead>
-                            <Tbody>
-                              {properties.map((property) => (
-                                <Tr key={property._id}>
-                                  <Td>{property.title}</Td>
-                                  <Td>{property.propertyType}</Td>
-                                  <Td>{property.price} أوقية</Td>
-                                  <Td>{property.location}</Td>
-                                  <Td>
-                                    <VStack align="start" spacing={1}>
-                                      <Text>{property.createdBy?.name || 'غير معروف'}</Text>
-                                      <Text fontSize="sm" color="gray.500">{property.createdBy?.email || ''}</Text>
-                                      <Text fontSize="sm" color="gray.500">{property.createdBy?.phone || ''}</Text>
-                                    </VStack>
-                                  </Td>
-                                  <Td>
-                                    <Badge colorScheme={getStatusColor(property.status)}>
-                                      {getStatusText(property.status)}
-                                    </Badge>
-                                  </Td>
-                                  <Td>
-                                    <HStack spacing={2}>
-                                      <Tooltip label="عرض">
-                                        <IconButton
-                                          icon={<Eye />}
-                                          size="sm"
-                                          variant="ghost"
-                                          onClick={() => handleViewProperty(property)}
-                                        />
-                                      </Tooltip>
-                                      <Tooltip label="رفض">
-                                        <IconButton
-                                          icon={<XCircle />}
-                                          size="sm"
-                                          variant="ghost"
-                                          colorScheme="red"
-                                          onClick={() => handleRejectProperty(property)}
-                                        />
-                                      </Tooltip>
-                                    </HStack>
-                                  </Td>
-                                </Tr>
-                              ))}
-                            </Tbody>
-                          </Table>
+                          </SimpleGrid>
                         )}
                       </Stack>
                     </Box>
