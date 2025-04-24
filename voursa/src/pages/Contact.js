@@ -1,3 +1,4 @@
+// Contact page component - Updated for better responsiveness and removed theme toggle
 import React, { useEffect } from 'react';
 import {
   Box,
