@@ -48,7 +48,7 @@ const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
 const MotionVStack = motion(VStack);
 
-const SellerLogin = () => {
+const SellerLogin = ({ admin = false }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);

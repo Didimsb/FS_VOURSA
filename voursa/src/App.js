@@ -76,6 +76,8 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/property/:id" element={<PropertyDetail />} />
             <Route path="/login" element={<SellerLogin />} />
+            <Route path="/seller-login" element={<SellerLogin />} />
+            <Route path="/admin/login" element={<SellerLogin admin={true} />} />
             
             {/* Seller Routes */}
             <Route
