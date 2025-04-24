@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }) => {
       
       // First try admin login
       try {
-        console.log('Trying admin login with URL:', process.env.REACT_APP_API_URL);
+        console.log('Trying admin login with API URL:', process.env.REACT_APP_API_URL);
         
         const adminResponse = await axiosInstance.post('/admin/login', {
           email: username,
@@ -128,7 +128,7 @@ export const AuthProvider = ({ children }) => {
       
       // If admin login fails, try seller login
       try {
-        console.log('Trying seller login with URL:', process.env.REACT_APP_API_URL);
+        console.log('Trying seller login with API URL:', process.env.REACT_APP_API_URL);
         
         const sellerResponse = await axiosInstance.post('/users/login', {
           email: username,
