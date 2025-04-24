@@ -1,4 +1,5 @@
-// Contact page component - Updated for better responsiveness and removed theme toggle
+// Contact page component - Updated with improved mobile responsiveness
+// Last modified: 24/04/2024
 import React, { useEffect } from 'react';
 import {
   Box,
