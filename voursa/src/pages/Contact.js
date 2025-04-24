@@ -77,6 +77,7 @@ const Contact = () => {
   const tabBorderColor = useColorModeValue('primary.500', 'primary.400');
   
   const toast = useToast();
+  const isMobile = useBreakpointValue({ base: true, md: false });
   
   const teamMembers = [
     {
@@ -183,11 +184,11 @@ const Contact = () => {
   }, [settings]);
   
   return (
-    <Box bg={bgColor}>
+    <Box bg={bgColor} overflow="hidden">
       {/* Hero Section with Parallax */}
       <Box 
         bg={lightBg} 
-        py={24} 
+        py={{ base: 16, md: 24 }} 
         position="relative" 
         overflow="hidden"
         _before={{
@@ -204,7 +205,7 @@ const Contact = () => {
           zIndex: 0,
         }}
       >
-        <Container maxW="container.xl" position="relative" zIndex={1}>
+        <Container maxW="container.xl" position="relative" zIndex={1} px={{ base: 4, md: 6 }}>
           <MotionFlex 
             direction="column" 
             align="center" 
@@ -215,18 +216,18 @@ const Contact = () => {
           >
             <Heading
               as="h1"
-              size="2xl"
+              size={{ base: "xl", md: "2xl" }}
               mb={4}
               textShadow="2px 2px 4px rgba(0,0,0,0.5)"
             >
               {settings?.banners?.contact?.title || 'تواصل معنا'}
             </Heading>
-            <Text fontSize="xl" maxW="3xl" mx="auto" textShadow="1px 1px 2px rgba(0,0,0,0.5)">
+            <Text fontSize={{ base: "lg", md: "xl" }} maxW="3xl" mx="auto" textShadow="1px 1px 2px rgba(0,0,0,0.5)">
               {settings?.banners?.contact?.description || 'نحن هنا لمساعدتك في جميع احتياجاتك العقارية'}
             </Text>
-            <HStack spacing={4}>
+            <HStack spacing={4} mt={6} flexWrap={{ base: "wrap", md: "nowrap" }} justify="center">
               <Button
-                size="lg"
+                size={{ base: "md", md: "lg" }}
                 colorScheme="green"
                 leftIcon={<Phone />}
                 as="a"
@@ -236,11 +237,12 @@ const Contact = () => {
                   boxShadow: "xl",
                 }}
                 transition="all 0.3s ease"
+                mb={{ base: 2, md: 0 }}
               >
                 اتصل الآن
               </Button>
               <Button
-                size="lg"
+                size={{ base: "md", md: "lg" }}
                 variant="outline"
                 colorScheme="primary"
                 leftIcon={<MessageCircle />}
