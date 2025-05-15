@@ -2726,30 +2726,7 @@ const AdminDashboard = () => {
 
             <Divider my={6} />
 
-            <Box 
-              position="sticky" 
-              bottom={0} 
-              bg={bgColor} 
-              pt={4} 
-              pb={isMobile ? 4 : 6}
-              borderTop="1px solid"
-              borderColor={borderColor}
-              mt={4}
-              mx={isMobile ? -3 : -6}
-              px={isMobile ? 3 : 6}
-            >
-              <Button
-                colorScheme="blue"
-                size={isMobile ? "md" : "lg"}
-                w={isMobile ? "100%" : "auto"}
-                isLoading={isSavingSettings}
-                loadingText="جاري الحفظ..."
-                onClick={handleSaveSettings}
-                leftIcon={<Save />}
-              >
-                حفظ الإعدادات
-              </Button>
-            </Box>
+           
           </Box>
         </Grid>
       </MotionBox>
