@@ -28,7 +28,7 @@ export const SettingsProvider = ({ children }) => {
       storyTitle: 'قصتنا',
       storyContent: 'تأسست وكالة ورسة العقارية في عام 2013 بهدف تقديم خدمات عقارية متكاملة تلبي احتياجات العملاء في موريتانيا',
       values: [],
-      teamMembers: []
+      teamMembers: [] 
     },
     contactPage: {
       title: 'تواصل معنا',
