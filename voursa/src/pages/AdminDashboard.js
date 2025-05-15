@@ -237,6 +237,31 @@ const AdminDashboard = () => {
     minPointsToBuy: 0,
     maxPointsToBuy: 0,
     paymentMethods: [],
+    homePage: {
+      heroTitle: '',
+      heroDescription: '',
+      featuredPropertiesTitle: '',
+      featuredPropertiesDescription: '',
+      heroMedia: []
+    },
+    aboutPage: {
+      heroTitle: '',
+      heroDescription: '',
+      storyTitle: '',
+      storyContent: '',
+      storyImage: '',
+      values: [],
+      teamMembers: []
+    },
+    contactPage: {
+      title: '',
+      description: '',
+      address: '',
+      phone: '',
+      email: '',
+      socialMedia: {},
+      mapEmbedUrl: ''
+    },
     banners: {
       home: {
         banner1: {
@@ -269,9 +294,31 @@ const AdminDashboard = () => {
   
   // Update local settings when settings from context change
   useEffect(() => {
-    console.log('Settings from context changed:', settings);
     if (settings) {
-      setLocalSettings(settings);
+      setLocalSettings(prev => ({
+        ...prev,
+        ...settings,
+        homePage: {
+          ...prev.homePage,
+          ...settings.homePage
+        },
+        aboutPage: {
+          ...prev.aboutPage,
+          ...settings.aboutPage
+        },
+        contactPage: {
+          ...prev.contactPage,
+          ...settings.contactPage
+        },
+        banners: {
+          ...prev.banners,
+          ...settings.banners
+        },
+        socialMedia: {
+          ...prev.socialMedia,
+          ...settings.socialMedia
+        }
+      }));
     }
   }, [settings]);
   
@@ -285,18 +332,26 @@ const AdminDashboard = () => {
     });
   };
   
-  // Update the settings management functions to only update local state
+  // Update the settings management functions
   const handleSettingChange = (setting, value) => {
     setLocalSettings(prev => {
       const newSettings = { ...prev };
       
       // Handle nested settings
       if (setting.includes('.')) {
-        const [parent, child] = setting.split('.');
-        newSettings[parent] = {
-          ...newSettings[parent],
-          [child]: value
-        };
+        const parts = setting.split('.');
+        let current = newSettings;
+        
+        // Navigate to the nested property
+        for (let i = 0; i < parts.length - 1; i++) {
+          if (!current[parts[i]]) {
+            current[parts[i]] = {};
+          }
+          current = current[parts[i]];
+        }
+        
+        // Set the value
+        current[parts[parts.length - 1]] = value;
       } else {
         newSettings[setting] = value;
       }
@@ -323,29 +378,9 @@ const AdminDashboard = () => {
   };
   
   const handleSaveSettings = async () => {
-    setIsSavingSettings(true);
     try {
-      console.log('Save button clicked');
-      console.log('Current localSettings:', localSettings);
-
-      // Prepare settings data
-      const settingsData = { ...localSettings };
-
-      // Remove _id and __v fields
-      delete settingsData._id;
-      delete settingsData.__v;
-
-      console.log('Prepared settings data:', settingsData);
-
-      const response = await axiosInstance.put('/settings', settingsData);
-      
-      if (response.data.success) {
-        // Update both context and local settings with the response data
-        const updatedSettings = response.data.settings;
-        
-        updateSettings(updatedSettings);
-        setLocalSettings(updatedSettings);
-        
+      const response = await updateSettings(localSettings);
+      if (response.success) {
         toast({
           title: 'تم الحفظ',
           description: 'تم حفظ الإعدادات بنجاح',
@@ -363,8 +398,6 @@ const AdminDashboard = () => {
         duration: 5000,
         isClosable: true,
       });
-    } finally {
-      setIsSavingSettings(false);
     }
   };
   
