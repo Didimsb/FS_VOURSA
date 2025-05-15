@@ -245,7 +245,7 @@ const PropertyDetail = () => {
                   السعر
                 </Heading>
                 <Text fontSize="2xl" fontWeight="bold" color="blue.500">
-                  {property.price?.toLocaleString('ar-SA')} ريال
+                  {property.price?.toLocaleString('fr-FR')} أوقية
                   </Text>
                 </Box>
 

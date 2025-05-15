@@ -80,7 +80,7 @@ const PropertyCard = ({ property }) => {
           fontWeight="bold"
           color={useColorModeValue('primary.600', 'primary.200')}
         >
-          {property.price} د.ت
+          {property.price?.toLocaleString('fr-FR')} أوقية
         </Text>
 
         <Button
