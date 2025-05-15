@@ -13,40 +13,110 @@ export const useSettings = () => {
 };
 
 const defaultSettings = {
+  // Site Info
   siteName: '',
   siteDescription: '',
   contactEmail: '',
   contactPhone: '',
+
+  // Points Settings
   pointCost: 0,
   pointsPerProperty: 0,
   minPointsToBuy: 0,
   maxPointsToBuy: 0,
-  paymentMethods: [],
+
+  // Payment Methods
+  paymentMethods: [
+    {
+      bankId: '',
+      accountNumber: '',
+      accountName: '',
+      isActive: true,
+      image: ''
+    }
+  ],
+
+  // Home Page Settings
   homePage: {
     heroTitle: '',
     heroDescription: '',
     featuredPropertiesTitle: '',
     featuredPropertiesDescription: '',
-    heroMedia: []
+    heroMedia: [],
+    sections: {
+      featuredProperties: {
+        title: '',
+        description: ''
+      },
+      latestProperties: {
+        title: '',
+        description: ''
+      },
+      testimonials: {
+        title: '',
+        description: ''
+      }
+    }
   },
+
+  // About Page Settings
   aboutPage: {
     heroTitle: '',
     heroDescription: '',
     storyTitle: '',
     storyContent: '',
     storyImage: '',
-    values: [],
-    teamMembers: []
+    values: [
+      {
+        title: '',
+        description: '',
+        icon: ''
+      }
+    ],
+    teamMembers: [
+      {
+        name: '',
+        position: '',
+        bio: '',
+        image: '',
+        social: {
+          facebook: '',
+          twitter: '',
+          instagram: '',
+          linkedin: ''
+        }
+      }
+    ]
   },
+
+  // Contact Page Settings
   contactPage: {
     title: '',
     description: '',
     address: '',
     phone: '',
     email: '',
-    socialMedia: {},
-    mapEmbedUrl: ''
+    socialMedia: {
+      facebook: '',
+      twitter: '',
+      instagram: '',
+      linkedin: '',
+      whatsapp: '',
+      youtube: ''
+    },
+    mapEmbedUrl: '',
+    workingHours: {
+      monday: '',
+      tuesday: '',
+      wednesday: '',
+      thursday: '',
+      friday: '',
+      saturday: '',
+      sunday: ''
+    }
   },
+
+  // Banners
   banners: {
     home: {
       banner1: {
@@ -66,6 +136,8 @@ const defaultSettings = {
       image: ''
     }
   },
+
+  // Social Media
   socialMedia: {
     facebook: '',
     twitter: '',
@@ -73,8 +145,7 @@ const defaultSettings = {
     linkedin: '',
     whatsapp: '',
     youtube: ''
-  },
-  teamMembers: []
+  }
 };
 
 export const SettingsProvider = ({ children }) => {
@@ -88,36 +159,69 @@ export const SettingsProvider = ({ children }) => {
       setLoading(true);
       const response = await axiosInstance.get('/settings');
       if (response.data.success) {
-        // Merge the fetched settings with default settings to ensure all fields exist
+        // Deep merge the fetched settings with default settings
         const mergedSettings = {
           ...defaultSettings,
           ...response.data.settings,
           homePage: {
             ...defaultSettings.homePage,
-            ...response.data.settings.homePage
+            ...response.data.settings.homePage,
+            sections: {
+              ...defaultSettings.homePage.sections,
+              ...(response.data.settings.homePage?.sections || {})
+            }
           },
           aboutPage: {
             ...defaultSettings.aboutPage,
-            ...response.data.settings.aboutPage
+            ...response.data.settings.aboutPage,
+            values: response.data.settings.aboutPage?.values || defaultSettings.aboutPage.values,
+            teamMembers: response.data.settings.aboutPage?.teamMembers || defaultSettings.aboutPage.teamMembers
           },
           contactPage: {
             ...defaultSettings.contactPage,
-            ...response.data.settings.contactPage
+            ...response.data.settings.contactPage,
+            socialMedia: {
+              ...defaultSettings.contactPage.socialMedia,
+              ...(response.data.settings.contactPage?.socialMedia || {})
+            },
+            workingHours: {
+              ...defaultSettings.contactPage.workingHours,
+              ...(response.data.settings.contactPage?.workingHours || {})
+            }
           },
           banners: {
             ...defaultSettings.banners,
-            ...response.data.settings.banners
+            ...response.data.settings.banners,
+            home: {
+              ...defaultSettings.banners.home,
+              ...(response.data.settings.banners?.home || {})
+            }
           },
           socialMedia: {
             ...defaultSettings.socialMedia,
             ...response.data.settings.socialMedia
-          }
+          },
+          paymentMethods: response.data.settings.paymentMethods || defaultSettings.paymentMethods
         };
+
+        // Ensure numeric values are properly converted
+        mergedSettings.pointCost = Number(mergedSettings.pointCost) || 0;
+        mergedSettings.pointsPerProperty = Number(mergedSettings.pointsPerProperty) || 0;
+        mergedSettings.minPointsToBuy = Number(mergedSettings.minPointsToBuy) || 0;
+        mergedSettings.maxPointsToBuy = Number(mergedSettings.maxPointsToBuy) || 0;
+
         setSettings(mergedSettings);
       }
     } catch (error) {
       console.error('Error fetching settings:', error);
       setError(error.message);
+      toast({
+        title: 'خطأ',
+        description: 'حدث خطأ أثناء جلب الإعدادات',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     } finally {
       setLoading(false);
     }
@@ -125,30 +229,49 @@ export const SettingsProvider = ({ children }) => {
 
   const updateSettings = async (newSettings) => {
     try {
-      // Ensure all required fields are present
+      // Deep merge the new settings with default settings
       const settingsToUpdate = {
         ...defaultSettings,
         ...newSettings,
         homePage: {
           ...defaultSettings.homePage,
-          ...newSettings.homePage
+          ...newSettings.homePage,
+          sections: {
+            ...defaultSettings.homePage.sections,
+            ...(newSettings.homePage?.sections || {})
+          }
         },
         aboutPage: {
           ...defaultSettings.aboutPage,
-          ...newSettings.aboutPage
+          ...newSettings.aboutPage,
+          values: newSettings.aboutPage?.values || defaultSettings.aboutPage.values,
+          teamMembers: newSettings.aboutPage?.teamMembers || defaultSettings.aboutPage.teamMembers
         },
         contactPage: {
           ...defaultSettings.contactPage,
-          ...newSettings.contactPage
+          ...newSettings.contactPage,
+          socialMedia: {
+            ...defaultSettings.contactPage.socialMedia,
+            ...(newSettings.contactPage?.socialMedia || {})
+          },
+          workingHours: {
+            ...defaultSettings.contactPage.workingHours,
+            ...(newSettings.contactPage?.workingHours || {})
+          }
         },
         banners: {
           ...defaultSettings.banners,
-          ...newSettings.banners
+          ...newSettings.banners,
+          home: {
+            ...defaultSettings.banners.home,
+            ...(newSettings.banners?.home || {})
+          }
         },
         socialMedia: {
           ...defaultSettings.socialMedia,
           ...newSettings.socialMedia
-        }
+        },
+        paymentMethods: newSettings.paymentMethods || defaultSettings.paymentMethods
       };
 
       const response = await axiosInstance.put('/settings', settingsToUpdate);
