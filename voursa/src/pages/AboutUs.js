@@ -84,7 +84,7 @@ const AboutUs = () => {
   const bgColor = useColorModeValue('white', 'gray.800');
   const textColor = useColorModeValue('gray.600', 'gray.300');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
-  const accentColor = useColorModeValue('primary.500', 'primary.300');
+  const accentColor = useColorModeValue('yellow.500', 'yellow.300');
   const lightBg = useColorModeValue('gray.50', 'gray.900');
   const darkBg = useColorModeValue('gray.100', 'gray.700');
   const cardBg = useColorModeValue('white', 'gray.800');
@@ -320,7 +320,7 @@ const AboutUs = () => {
                     left: 0,
                     right: 0,
                     height: "4px",
-                    bgGradient: "linear(to-r, primary.400, primary.600)",
+                    bgGradient: "linear(to-r, yellow.400, yellow.600)",
                   }}
                 >
                   <MotionBox
@@ -364,7 +364,7 @@ const AboutUs = () => {
                   as="h2"
                   size="xl"
                   mb={6}
-                  bgGradient="linear(to-r, primary.400, primary.600)"
+                  bgGradient="linear(to-r, yellow.400, yellow.600)"
                   bgClip="text"
                 >
                   {settings?.aboutPage?.storyTitle || 'قصتنا'}
@@ -442,7 +442,7 @@ const AboutUs = () => {
               as="h2"
               size="xl"
               mb={4}
-              bgGradient="linear(to-r, primary.400, primary.600)"
+              bgGradient="linear(to-r, yellow.400, yellow.600)"
               bgClip="text"
             >
               {settings?.about?.valuesTitle || 'قيمنا'}
@@ -480,25 +480,25 @@ const AboutUs = () => {
                 icon: Shield,
                 title: 'الشفافية',
                 description: 'نؤمن بالشفافية الكاملة في جميع معاملاتنا العقارية',
-                color: 'blue.400',
+                color: 'yellow.400',
               },
               {
                 icon: Heart,
                 title: 'الالتزام',
                 description: 'نلتزم بتقديم أفضل الخدمات وتلبية احتياجات عملائنا',
-                color: 'red.400',
+                color: 'yellow.400',
               },
               {
                 icon: Target,
                 title: 'التميز',
                 description: 'نسعى دائماً للتميز في مجال الخدمات العقارية',
-                color: 'green.400',
+                color: 'yellow.400',
               },
               {
                 icon: Users,
                 title: 'التعاون',
                 description: 'نؤمن بأهمية التعاون مع عملائنا وشركائنا',
-                color: 'purple.400',
+                color: 'yellow.400',
               },
             ].map((value, index) => (
               <MotionBox
@@ -541,7 +541,7 @@ const AboutUs = () => {
               as="h2"
               size="xl"
               mb={4}
-              bgGradient="linear(to-r, primary.400, primary.600)"
+              bgGradient="linear(to-r, yellow.400, yellow.600)"
               bgClip="text"
             >
               خدماتنا
@@ -553,7 +553,7 @@ const AboutUs = () => {
           
           <Tabs
             variant="enclosed"
-            colorScheme="primary"
+            colorScheme="yellow"
             onChange={(index) => setActiveTab(index)}
             isFitted
             mb={8}
@@ -567,9 +567,9 @@ const AboutUs = () => {
               <TabPanel>
                 <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
                   {[
-                    { icon: Home, title: 'منازل', description: 'بيع وشراء المنازل بجميع الأحجام والمواقع', color: 'blue.400' },
-                    { icon: Building2, title: 'شقق', description: 'بيع وشراء الشقق السكنية والتجارية', color: 'green.400' },
-                    { icon: LandPlot, title: 'أراضي', description: 'بيع وشراء الأراضي السكنية والتجارية', color: 'orange.400' },
+                    { icon: Home, title: 'منازل', description: 'بيع وشراء المنازل بجميع الأحجام والمواقع', color: 'yellow.400' },
+                    { icon: Building2, title: 'شقق', description: 'بيع وشراء الشقق السكنية والتجارية', color: 'yellow.400' },
+                    { icon: LandPlot, title: 'أراضي', description: 'بيع وشراء الأراضي السكنية والتجارية', color: 'yellow.400' },
                   ].map((service, index) => (
                     <MotionBox
                       key={index}
@@ -641,7 +641,7 @@ const AboutUs = () => {
               as="h2"
               size="xl"
               mb={4}
-              bgGradient="linear(to-r, primary.400, primary.600)"
+              bgGradient="linear(to-r, yellow.400, yellow.600)"
               bgClip="text"
             >
               فريقنا
@@ -681,7 +681,7 @@ const AboutUs = () => {
                     left: 0,
                     right: 0,
                     height: "4px",
-                    bgGradient: "linear(to-r, primary.400, primary.600)",
+                    bgGradient: "linear(to-r, yellow.400, yellow.600)",
                   }}
                 >
                   <Avatar
@@ -693,11 +693,11 @@ const AboutUs = () => {
                     transition="all 0.3s ease"
                     _hover={{
                       transform: "scale(1.1)",
-                      borderColor: "primary.600"
+                      borderColor: "yellow.600"
                     }}
                   />
                   <Heading size="md" color={headingColor}>{member.name}</Heading>
-                  <Badge colorScheme="primary">{member.position}</Badge>
+                  <Badge colorScheme="yellow">{member.position}</Badge>
                   <Text color={textColor} textAlign="center">
                     {member.bio}
                   </Text>
@@ -707,7 +707,7 @@ const AboutUs = () => {
                         icon={<FaFacebook />}
                         aria-label="Facebook"
                         variant="ghost"
-                        colorScheme="primary"
+                        colorScheme="yellow"
                         as="a"
                         href={member.social.facebook}
                         target="_blank"
@@ -715,7 +715,7 @@ const AboutUs = () => {
                         _hover={{
                           transform: "translateY(-3px)",
                           boxShadow: "md",
-                          bg: "blue.50"
+                          bg: "yellow.50"
                         }}
                         transition="all 0.3s ease"
                       />
@@ -725,7 +725,7 @@ const AboutUs = () => {
                         icon={<FaTwitter />}
                         aria-label="Twitter"
                         variant="ghost"
-                        colorScheme="primary"
+                        colorScheme="yellow"
                         as="a"
                         href={member.social.twitter}
                         target="_blank"
@@ -733,7 +733,7 @@ const AboutUs = () => {
                         _hover={{
                           transform: "translateY(-3px)",
                           boxShadow: "md",
-                          bg: "cyan.50"
+                          bg: "yellow.50"
                         }}
                         transition="all 0.3s ease"
                       />
@@ -743,7 +743,7 @@ const AboutUs = () => {
                         icon={<FaInstagram />}
                         aria-label="Instagram"
                         variant="ghost"
-                        colorScheme="primary"
+                        colorScheme="yellow"
                         as="a"
                         href={member.social.instagram}
                         target="_blank"
@@ -751,7 +751,7 @@ const AboutUs = () => {
                         _hover={{
                           transform: "translateY(-3px)",
                           boxShadow: "md",
-                          bg: "pink.50"
+                          bg: "yellow.50"
                         }}
                         transition="all 0.3s ease"
                       />
@@ -778,7 +778,7 @@ const AboutUs = () => {
                   as="h2"
                   size="xl"
                   mb={6}
-                  bgGradient="linear(to-r, primary.400, primary.600)"
+                  bgGradient="linear(to-r, yellow.400, yellow.600)"
                   bgClip="text"
                 >
                   تواصل معنا
@@ -819,7 +819,7 @@ const AboutUs = () => {
                     <IconButton
                       icon={<FaFacebook />}
                       aria-label="Facebook"
-                      colorScheme="primary"
+                      colorScheme="yellow"
                       variant="outline"
                       rounded="full"
                       as="a"
@@ -829,7 +829,7 @@ const AboutUs = () => {
                       _hover={{
                         transform: "translateY(-3px)",
                         boxShadow: "md",
-                        bg: "blue.50"
+                        bg: "yellow.50"
                       }}
                       transition="all 0.3s ease"
                     />
@@ -838,7 +838,7 @@ const AboutUs = () => {
                     <IconButton
                       icon={<FaTwitter />}
                       aria-label="Twitter"
-                      colorScheme="primary"
+                      colorScheme="yellow"
                       variant="outline"
                       rounded="full"
                       as="a"
@@ -848,7 +848,7 @@ const AboutUs = () => {
                       _hover={{
                         transform: "translateY(-3px)",
                         boxShadow: "md",
-                        bg: "cyan.50"
+                        bg: "yellow.50"
                       }}
                       transition="all 0.3s ease"
                     />
@@ -857,7 +857,7 @@ const AboutUs = () => {
                     <IconButton
                       icon={<FaInstagram />}
                       aria-label="Instagram"
-                      colorScheme="primary"
+                      colorScheme="yellow"
                       variant="outline"
                       rounded="full"
                       as="a"
@@ -867,7 +867,7 @@ const AboutUs = () => {
                       _hover={{
                         transform: "translateY(-3px)",
                         boxShadow: "md",
-                        bg: "pink.50"
+                        bg: "yellow.50"
                       }}
                       transition="all 0.3s ease"
                     />
@@ -900,7 +900,7 @@ const AboutUs = () => {
               as="h2"
               size="xl"
               mb={4}
-              bgGradient="linear(to-r, primary.400, primary.600)"
+              bgGradient="linear(to-r, yellow.400, yellow.600)"
               bgClip="text"
             >
               المطورين
@@ -936,7 +936,7 @@ const AboutUs = () => {
               href="https://wa.me/22242900600"
               target="_blank"
               leftIcon={<MessageCircle />}
-              colorScheme="green"
+              colorScheme="yellow"
               size="lg"
               _hover={{
                 transform: "translateY(-3px)",

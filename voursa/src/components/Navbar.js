@@ -156,7 +156,7 @@ const Navbar = () => {
                 as={RouterLink}
                 to="/login"
                 variant={'solid'}
-                colorScheme={'primary'}
+                colorScheme={'yellow'}
                 size={'sm'}
               >
                 تسجيل الدخول
@@ -217,7 +217,7 @@ const Navbar = () => {
                   as={RouterLink}
                   to="/login"
                   variant={'solid'}
-                  colorScheme={'primary'}
+                  colorScheme={'yellow'}
                   size={'sm'}
                   w="full"
                   onClick={onClose}

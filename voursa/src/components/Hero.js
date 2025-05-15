@@ -115,7 +115,7 @@ const Hero = ({ onSearch }) => {
             <Heading
               as="h1"
               size="2xl"
-              bgGradient="linear(to-r, primary.400, primary.600)"
+              bgGradient="linear(to-r, yellow.400, yellow.600)"
               bgClip="text"
               mb={4}
             >
@@ -152,7 +152,7 @@ const Hero = ({ onSearch }) => {
                   leftIcon={<Filter size={20} />}
                   rightIcon={showFilters ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                   variant="outline"
-                  colorScheme="primary"
+                  colorScheme="yellow"
                   onClick={toggleFilters}
                 >
                   تصفية البحث
@@ -164,7 +164,7 @@ const Hero = ({ onSearch }) => {
                   <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }} gap={6}>
                     <GridItem>
                       <VStack align="start" spacing={4}>
-                        <Badge colorScheme="primary" fontSize="sm" px={2} py={1} borderRadius="md">
+                        <Badge colorScheme="yellow" fontSize="sm" px={2} py={1} borderRadius="md">
                           نوع العقار
                         </Badge>
                         <Select
@@ -185,7 +185,7 @@ const Hero = ({ onSearch }) => {
                     
                     <GridItem>
                       <VStack align="start" spacing={4}>
-                        <Badge colorScheme="primary" fontSize="sm" px={2} py={1} borderRadius="md">
+                        <Badge colorScheme="yellow" fontSize="sm" px={2} py={1} borderRadius="md">
                           الولاية
                         </Badge>
                         <Select
@@ -206,7 +206,7 @@ const Hero = ({ onSearch }) => {
                     
                     <GridItem>
                       <VStack align="start" spacing={4}>
-                        <Badge colorScheme="primary" fontSize="sm" px={2} py={1} borderRadius="md">
+                        <Badge colorScheme="yellow" fontSize="sm" px={2} py={1} borderRadius="md">
                           المقاطعة
                         </Badge>
                         <Select
@@ -228,7 +228,7 @@ const Hero = ({ onSearch }) => {
                     
                     <GridItem>
                       <VStack align="start" spacing={4}>
-                        <Badge colorScheme="primary" fontSize="sm" px={2} py={1} borderRadius="md">
+                        <Badge colorScheme="yellow" fontSize="sm" px={2} py={1} borderRadius="md">
                           نطاق السعر
                         </Badge>
                         <HStack spacing={2} width="100%">
@@ -261,7 +261,7 @@ const Hero = ({ onSearch }) => {
                     
                     <GridItem>
                       <VStack align="start" spacing={4}>
-                        <Badge colorScheme="primary" fontSize="sm" px={2} py={1} borderRadius="md">
+                        <Badge colorScheme="yellow" fontSize="sm" px={2} py={1} borderRadius="md">
                           الترتيب
                         </Badge>
                         <Select
@@ -283,7 +283,7 @@ const Hero = ({ onSearch }) => {
                   </Grid>
                   
                   <Button
-                    colorScheme="primary"
+                    colorScheme="yellow"
                     size="lg"
                     w="full"
                     mt={6}

@@ -126,7 +126,7 @@ const Home = () => {
   if (settingsLoading) {
     return (
       <Box bg={containerBg} minH="100vh" display="flex" alignItems="center" justifyContent="center">
-        <Spinner size="xl" color="primary.500" />
+        <Spinner size="xl" color="yellow.500" />
       </Box>
     );
   }
@@ -146,7 +146,7 @@ const Home = () => {
             <Heading
               as="h2"
               size="xl"
-              bgGradient="linear(to-r, primary.400, primary.600)"
+              bgGradient="linear(to-r, yellow.400, yellow.600)"
               bgClip="text"
             >
               {settings?.homePage?.featuredPropertiesTitle || 'أحدث العقارات'}
@@ -158,7 +158,7 @@ const Home = () => {
 
           {loading && page === 1 ? (
             <Center py={10}>
-              <Spinner size="xl" color="primary.500" />
+              <Spinner size="xl" color="yellow.500" />
             </Center>
           ) : properties.length === 0 ? (
             <Center py={10}>
@@ -177,7 +177,7 @@ const Home = () => {
               {hasMore && (
                 <Center mt={8}>
                   <Button
-                    colorScheme="primary"
+                    colorScheme="yellow"
                     size="lg"
                     onClick={handleLoadMore}
                     isLoading={loading && page > 1}
