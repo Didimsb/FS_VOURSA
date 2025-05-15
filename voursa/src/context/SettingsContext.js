@@ -1,155 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axiosInstance from '../utils/axiosInstance';
+import { getSettings, updateSettings as updateSettingsApi, updatePaymentMethods } from '../services/SettingsService';
 import { useToast } from '@chakra-ui/react';
 
 const SettingsContext = createContext();
 
-export const useSettings = () => {
-  const context = useContext(SettingsContext);
-  if (!context) {
-    throw new Error('useSettings must be used within a SettingsProvider');
-  }
-  return context;
-};
-
-const defaultSettings = {
-  // Site Info
-  siteName: '',
-  siteDescription: '',
-  contactEmail: '',
-  contactPhone: '',
-
-  // Points Settings
-  pointCost: 0,
-  pointsPerProperty: 0,
-  minPointsToBuy: 0,
-  maxPointsToBuy: 0,
-
-  // Payment Methods
-  paymentMethods: [
-    {
-      bankId: '',
-      accountNumber: '',
-      accountName: '',
-      isActive: true,
-      image: ''
-    }
-  ],
-
-  // Home Page Settings
-  homePage: {
-    heroTitle: '',
-    heroDescription: '',
-    featuredPropertiesTitle: '',
-    featuredPropertiesDescription: '',
-    heroMedia: [],
-    sections: {
-      featuredProperties: {
-        title: '',
-        description: ''
-      },
-      latestProperties: {
-        title: '',
-        description: ''
-      },
-      testimonials: {
-        title: '',
-        description: ''
-      }
-    }
-  },
-
-  // About Page Settings
-  aboutPage: {
-    heroTitle: '',
-    heroDescription: '',
-    storyTitle: '',
-    storyContent: '',
-    storyImage: '',
-    values: [
-      {
-        title: '',
-        description: '',
-        icon: ''
-      }
-    ],
-    teamMembers: [
-      {
-        name: '',
-        position: '',
-        bio: '',
-        image: '',
-        social: {
-          facebook: '',
-          twitter: '',
-          instagram: '',
-          linkedin: ''
-        }
-      }
-    ]
-  },
-
-  // Contact Page Settings
-  contactPage: {
-    title: '',
-    description: '',
-    address: '',
-    phone: '',
-    email: '',
-    socialMedia: {
-      facebook: '',
-      twitter: '',
-      instagram: '',
-      linkedin: '',
-      whatsapp: '',
-      youtube: ''
-    },
-    mapEmbedUrl: '',
-    workingHours: {
-      monday: '',
-      tuesday: '',
-      wednesday: '',
-      thursday: '',
-      friday: '',
-      saturday: '',
-      sunday: ''
-    }
-  },
-
-  // Banners
-  banners: {
-    home: {
-      banner1: {
-        title: '',
-        description: '',
-        image: ''
-      }
-    },
-    about: {
-      title: '',
-      description: '',
-      image: ''
-    },
-    contact: {
-      title: '',
-      description: '',
-      image: ''
-    }
-  },
-
-  // Social Media
-  socialMedia: {
-    facebook: '',
-    twitter: '',
-    instagram: '',
-    linkedin: '',
-    whatsapp: '',
-    youtube: ''
-  }
-};
-
 export const SettingsProvider = ({ children }) => {
-  const [settings, setSettings] = useState(defaultSettings);
+  const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const toast = useToast();
@@ -157,70 +13,96 @@ export const SettingsProvider = ({ children }) => {
   const fetchSettings = async () => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get('/settings');
-      if (response.data.success) {
-        // Deep merge the fetched settings with default settings
-        const mergedSettings = {
-          ...defaultSettings,
-          ...response.data.settings,
+      const response = await getSettings();
+      if (response.success) {
+        setSettings(response.settings);
+        setError(null);
+      } else {
+        setError(response.message);
+        setSettings({
+          siteName: 'وكالة بورصة العقارية',
+          siteDescription: 'أفضل وكالة عقارية في المملكة',
+          contactEmail: 'info@voursa.com',
+          contactPhone: '+222 123 456 789',
           homePage: {
-            ...defaultSettings.homePage,
-            ...response.data.settings.homePage,
-            sections: {
-              ...defaultSettings.homePage.sections,
-              ...(response.data.settings.homePage?.sections || {})
-            }
+            heroTitle: 'وكالة بورصة العقارية',
+            heroDescription: 'نقدم حلولاً عقارية متكاملة تلبي احتياجات عملائنا بأعلى معايير الجودة والشفافية',
+            featuredPropertiesTitle: 'أحدث العقارات',
+            featuredPropertiesDescription: 'اكتشف مجموعة متنوعة من العقارات المميزة في أفضل المواقع',
+            heroMedia: []
           },
           aboutPage: {
-            ...defaultSettings.aboutPage,
-            ...response.data.settings.aboutPage,
-            values: response.data.settings.aboutPage?.values || defaultSettings.aboutPage.values,
-            teamMembers: response.data.settings.aboutPage?.teamMembers || defaultSettings.aboutPage.teamMembers
+            heroTitle: 'وكالة ورسة العقارية',
+            heroDescription: 'نحن نقدم حلولاً عقارية متكاملة تلبي احتياجات عملائنا بأعلى معايير الجودة والشفافية',
+            storyTitle: 'قصتنا',
+            storyContent: 'تأسست وكالة ورسة العقارية في عام 2013 بهدف تقديم خدمات عقارية متكاملة تلبي احتياجات العملاء في موريتانيا',
+            values: [],
+            teamMembers: []
           },
           contactPage: {
-            ...defaultSettings.contactPage,
-            ...response.data.settings.contactPage,
-            socialMedia: {
-              ...defaultSettings.contactPage.socialMedia,
-              ...(response.data.settings.contactPage?.socialMedia || {})
-            },
-            workingHours: {
-              ...defaultSettings.contactPage.workingHours,
-              ...(response.data.settings.contactPage?.workingHours || {})
-            }
+            title: 'تواصل معنا',
+            description: 'نحن هنا لمساعدتك في جميع استفساراتك. لا تتردد في التواصل معنا',
+            address: 'شارع الرئيسي، نواكشوط، موريتانيا',
+            phone: '+222 123 456 789',
+            email: 'info@voursa.com',
+            socialMedia: {},
+            mapEmbedUrl: ''
           },
           banners: {
-            ...defaultSettings.banners,
-            ...response.data.settings.banners,
-            home: {
-              ...defaultSettings.banners.home,
-              ...(response.data.settings.banners?.home || {})
-            }
+            home: {},
+            about: {},
+            contact: {}
           },
-          socialMedia: {
-            ...defaultSettings.socialMedia,
-            ...response.data.settings.socialMedia
-          },
-          paymentMethods: response.data.settings.paymentMethods || defaultSettings.paymentMethods
-        };
-
-        // Ensure numeric values are properly converted
-        mergedSettings.pointCost = Number(mergedSettings.pointCost) || 0;
-        mergedSettings.pointsPerProperty = Number(mergedSettings.pointsPerProperty) || 0;
-        mergedSettings.minPointsToBuy = Number(mergedSettings.minPointsToBuy) || 0;
-        mergedSettings.maxPointsToBuy = Number(mergedSettings.maxPointsToBuy) || 0;
-
-        setSettings(mergedSettings);
+          socialMedia: {},
+          pointCost: 0,
+          pointsPerProperty: 0,
+          minPointsToBuy: 0,
+          maxPointsToBuy: 0,
+          paymentMethods: []
+        });
       }
     } catch (error) {
-      console.error('Error fetching settings:', error);
       setError(error.message);
-      toast({
-        title: 'خطأ',
-        description: 'حدث خطأ أثناء جلب الإعدادات',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
+      setSettings({
+        siteName: 'وكالة بورصة العقارية',
+        siteDescription: 'أفضل وكالة عقارية في المملكة',
+        contactEmail: 'info@voursa.com',
+        contactPhone: '+222 123 456 789',
+        homePage: {
+          heroTitle: 'وكالة بورصة العقارية',
+          heroDescription: 'نقدم حلولاً عقارية متكاملة تلبي احتياجات عملائنا بأعلى معايير الجودة والشفافية',
+          featuredPropertiesTitle: 'أحدث العقارات',
+          featuredPropertiesDescription: 'اكتشف مجموعة متنوعة من العقارات المميزة في أفضل المواقع',
+          heroMedia: []
+        },
+        aboutPage: {
+          heroTitle: 'وكالة ورسة العقارية',
+          heroDescription: 'نحن نقدم حلولاً عقارية متكاملة تلبي احتياجات عملائنا بأعلى معايير الجودة والشفافية',
+          storyTitle: 'قصتنا',
+          storyContent: 'تأسست وكالة ورسة العقارية في عام 2013 بهدف تقديم خدمات عقارية متكاملة تلبي احتياجات العملاء في موريتانيا',
+          values: [],
+          teamMembers: []
+        },
+        contactPage: {
+          title: 'تواصل معنا',
+          description: 'نحن هنا لمساعدتك في جميع استفساراتك. لا تتردد في التواصل معنا',
+          address: 'شارع الرئيسي، نواكشوط، موريتانيا',
+          phone: '+222 123 456 789',
+          email: 'info@voursa.com',
+          socialMedia: {},
+          mapEmbedUrl: ''
+        },
+        banners: {
+          home: {},
+          about: {},
+          contact: {}
+        },
+        socialMedia: {},
+        pointCost: 0,
+        pointsPerProperty: 0,
+        minPointsToBuy: 0,
+        maxPointsToBuy: 0,
+        paymentMethods: []
       });
     } finally {
       setLoading(false);
@@ -229,54 +111,11 @@ export const SettingsProvider = ({ children }) => {
 
   const updateSettings = async (newSettings) => {
     try {
-      // Deep merge the new settings with default settings
-      const settingsToUpdate = {
-        ...defaultSettings,
-        ...newSettings,
-        homePage: {
-          ...defaultSettings.homePage,
-          ...newSettings.homePage,
-          sections: {
-            ...defaultSettings.homePage.sections,
-            ...(newSettings.homePage?.sections || {})
-          }
-        },
-        aboutPage: {
-          ...defaultSettings.aboutPage,
-          ...newSettings.aboutPage,
-          values: newSettings.aboutPage?.values || defaultSettings.aboutPage.values,
-          teamMembers: newSettings.aboutPage?.teamMembers || defaultSettings.aboutPage.teamMembers
-        },
-        contactPage: {
-          ...defaultSettings.contactPage,
-          ...newSettings.contactPage,
-          socialMedia: {
-            ...defaultSettings.contactPage.socialMedia,
-            ...(newSettings.contactPage?.socialMedia || {})
-          },
-          workingHours: {
-            ...defaultSettings.contactPage.workingHours,
-            ...(newSettings.contactPage?.workingHours || {})
-          }
-        },
-        banners: {
-          ...defaultSettings.banners,
-          ...newSettings.banners,
-          home: {
-            ...defaultSettings.banners.home,
-            ...(newSettings.banners?.home || {})
-          }
-        },
-        socialMedia: {
-          ...defaultSettings.socialMedia,
-          ...newSettings.socialMedia
-        },
-        paymentMethods: newSettings.paymentMethods || defaultSettings.paymentMethods
-      };
-
-      const response = await axiosInstance.put('/settings', settingsToUpdate);
-      if (response.data.success) {
-        setSettings(settingsToUpdate);
+      setLoading(true);
+      const response = await updateSettingsApi(newSettings);
+      if (response.success) {
+        setSettings(response.data);
+        setError(null);
         toast({
           title: 'تم التحديث',
           description: 'تم تحديث الإعدادات بنجاح',
@@ -284,18 +123,20 @@ export const SettingsProvider = ({ children }) => {
           duration: 5000,
           isClosable: true,
         });
-        return { success: true, settings: settingsToUpdate };
+        return { success: true };
+      } else {
+        setError(response.error);
+        toast({
+          title: 'خطأ',
+          description: response.error,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+        return { success: false, error: response.error };
       }
-      toast({
-        title: 'خطأ',
-        description: response.data.message,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-      return { success: false, error: response.data.message };
     } catch (error) {
-      console.error('Error updating settings:', error);
+      setError(error.message);
       toast({
         title: 'خطأ',
         description: 'حدث خطأ أثناء تحديث الإعدادات',
@@ -304,13 +145,15 @@ export const SettingsProvider = ({ children }) => {
         isClosable: true,
       });
       return { success: false, error: error.message };
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleUpdatePaymentMethods = async (paymentMethods) => {
     try {
-      const response = await axiosInstance.put('/settings/payment-methods', { paymentMethods });
-      if (response.data.success) {
+      const response = await updatePaymentMethods(paymentMethods);
+      if (response.success) {
         setSettings(prev => ({
           ...prev,
           paymentMethods: response.data.paymentMethods
@@ -326,7 +169,7 @@ export const SettingsProvider = ({ children }) => {
       } else {
         toast({
           title: 'خطأ',
-          description: response.data.message,
+          description: response.error,
           status: 'error',
           duration: 5000,
           isClosable: true,
@@ -365,4 +208,10 @@ export const SettingsProvider = ({ children }) => {
   );
 };
 
-export default SettingsContext; 
+export const useSettings = () => {
+  const context = useContext(SettingsContext);
+  if (!context) {
+    throw new Error('useSettings must be used within a SettingsProvider');
+  }
+  return context;
+}; 

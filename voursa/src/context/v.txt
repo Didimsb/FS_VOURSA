@@ -1,70 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Container,
   Box,
-  Text,
-  Button,
-  Stack,
-  VStack,
-  HStack,
-  Avatar,
-  Badge,
-  Divider,
+  Container,
   Grid,
+  Heading,
+  Text,
+  Stack,
+  Button,
+  useColorModeValue,
   SimpleGrid,
   Stat,
   StatLabel,
   StatNumber,
   StatHelpText,
   StatArrow,
-  Heading,
-  Input,
-  FormControl,
-  FormLabel,
-  Textarea,
-  Select,
-  Switch,
-  Image,
   Tabs,
   TabList,
   TabPanels,
   Tab,
   TabPanel,
-  useColorModeValue,
-  useToast,
-  useDisclosure,
-  useBreakpointValue,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  IconButton,
-  Collapse,
-  Spacer,
-  List,
-  ListItem,
-  ListIcon,
-  OrderedList,
-  UnorderedList,
-  Radio,
-  RadioGroup,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
-  InputRightAddon,
-  InputLeftAddon,
-  Flex,
-  Center,
-  Spinner,
-  Alert,
-  AlertIcon,
   Table,
   Thead,
   Tbody,
   Tr,
   Th,
   Td,
-  TableContainer,
+  Badge,
+  IconButton,
+  useToast,
+  FormControl,
+  FormLabel,
+  Input,
+  Select,
+  VStack,
+  HStack,
+  Avatar,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Divider,
+  Switch,
+  Tooltip,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -72,13 +49,21 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  useDisclosure,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  Tooltip,
+  Radio,
+  RadioGroup,
+  Image,
+  TableContainer,
   Icon,
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
   Drawer,
   DrawerOverlay,
   DrawerContent,
@@ -86,35 +71,56 @@ import {
   DrawerHeader,
   DrawerBody,
   DrawerFooter,
+  Flex,
+  useBreakpointValue,
+  FormHelperText,
+  IconButton as ChakraIconButton,
+  IconButtonProps,
+  useMediaQuery,
+  useBreakpoint,
+  useDisclosureProps,
+  useMediaQueryProps,
+  useMediaQueryOptions,
+  useMediaQueryResult,
+  useMediaQueryState,
+  useMediaQueryStateProps,
+  useMediaQueryStateResult,
+  useMediaQueryStateOptions,
+  useMediaQueryStateOptionsProps,
+  useMediaQueryStateOptionsResult,
+  useMediaQueryStateOptionsPropsResult,
+  Spinner,
+  Center,
+  Alert,
+  AlertIcon,
+  ButtonGroup,
+  Textarea,
+  List,
+  ListItem,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import {
   Home,
   Users,
+  Building2,
   Settings,
   LogOut,
-  Building2,
   Shield,
   AlertTriangle,
-  Plus,
-  Edit,
+  CheckCircle,
+  XCircle,
+  Eye,
   Edit2,
   Trash2,
-  Check,
-  CheckCircle,
-  X,
-  XCircle,
-  Menu as MenuIcon,
-  User,
-  Search,
-  BarChart2,
-  MessageSquare,
-  DollarSign,
-  ArrowUp,
-  Save,
-  Eye,
   Ban,
   UserPlus,
+  DollarSign,
+  BarChart2,
+  MessageSquare,
+  Plus,
+  X,
+  Menu as MenuIcon,
+  User,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import PropertyMediaSlider from '../components/PropertyMediaSlider';
@@ -181,17 +187,13 @@ const uploadToCloudinary = async (file) => {
   try {
     const formData = new FormData();
     formData.append('file', file);
-    
-    const response = await axios.post(
-      `${process.env.REACT_APP_API_URL}/upload/cloudinary`, 
-      formData, 
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
-    );
-    
+
+    const response = await axios.post('http://localhost:5000/api/upload/cloudinary', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
     return response.data.secure_url;
   } catch (error) {
     console.error('Error uploading to Cloudinary:', error);
@@ -449,7 +451,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `${process.env.REACT_APP_API_URL}/admin/points-transactions/${selectedTransaction._id}`,
+        `http://localhost:5000/api/admin/points-transactions/${selectedTransaction._id}`,
         { status: 'completed' },
         {
           headers: {
@@ -499,7 +501,7 @@ const AdminDashboard = () => {
 
   // Mobile-friendly transaction card component
   const TransactionCard = ({ transaction }) => (
-    <Box 
+    <Card 
       bg={cardBgColor}
       borderWidth="1px" 
       borderColor={cardBorderColor}
@@ -507,73 +509,81 @@ const AdminDashboard = () => {
       overflow="hidden"
       mb={4}
     >
-      <VStack align="stretch" spacing={3}>
-        <HStack justify="space-between">
-          <Box>
-            <Text fontWeight="bold">{transaction.user.name}</Text>
-            <Text fontSize="sm" color="gray.500">{transaction.user.email}</Text>
-          </Box>
-          <Badge
-            colorScheme={
-              transaction.status === 'completed'
-                ? 'green'
-                : transaction.status === 'rejected'
-                ? 'red'
-                : 'yellow'
-            }
-          >
-            {transaction.status === 'completed' ? 'مكتمل' :
-             transaction.status === 'rejected' ? 'مرفوض' : 'معلق'}
-          </Badge>
+      <CardBody>
+        <VStack align="stretch" spacing={3}>
+          <HStack justify="space-between">
+            <Box>
+              <Text fontWeight="bold">{transaction.user.name}</Text>
+              <Text fontSize="sm" color="gray.500">{transaction.user.email}</Text>
+            </Box>
+            <Badge
+              colorScheme={
+                transaction.status === 'completed'
+                  ? 'green'
+                  : transaction.status === 'rejected'
+                  ? 'red'
+                  : 'yellow'
+              }
+            >
+              {transaction.status === 'completed' ? 'مكتمل' :
+               transaction.status === 'rejected' ? 'مرفوض' : 'معلق'}
+            </Badge>
+          </HStack>
+
+          <SimpleGrid columns={2} spacing={2}>
+            <Box>
+              <Text fontSize="sm" color="gray.500">المبلغ</Text>
+            <Text>{transaction.amount} أوقية</Text>
+            </Box>
+            <Box>
+              <Text fontSize="sm" color="gray.500">النقاط</Text>
+            <Text>{transaction.points}</Text>
+            </Box>
+            <Box>
+              <Text fontSize="sm" color="gray.500">طريقة الدفع</Text>
+            <Text>{transaction.paymentMethod}</Text>
+            </Box>
+            <Box>
+              <Text fontSize="sm" color="gray.500">التاريخ</Text>
+              <Text>{new Date(transaction.createdAt).toLocaleDateString('ar-SA')}</Text>
+            </Box>
+          </SimpleGrid>
+
+          <HStack spacing={2} justify="flex-end">
+          <Tooltip label="عرض">
+            <IconButton
+              icon={<Eye size={18} />}
+              size="sm"
+              variant="ghost"
+              onClick={() => handleViewTransaction(transaction)}
+            />
+          </Tooltip>
+            {transaction.status === 'pending' && (
+              <>
+          <Tooltip label="موافقة">
+            <IconButton
+              icon={<CheckCircle size={18} />}
+              size="sm"
+              variant="ghost"
+                    colorScheme="green"
+              onClick={() => handleApproveTransaction(transaction)}
+            />
+          </Tooltip>
+          <Tooltip label="رفض">
+            <IconButton
+              icon={<XCircle size={18} />}
+              size="sm"
+              variant="ghost"
+                    colorScheme="red"
+              onClick={() => handleRejectTransaction(transaction)}
+            />
+          </Tooltip>
+              </>
+            )}
         </HStack>
-
-        <SimpleGrid columns={2} spacing={2}>
-          <Box>
-            <Text fontSize="sm" color="gray.500">المبلغ</Text>
-          <Text>{transaction.amount} أوقية</Text>
-          </Box>
-          <Box>
-            <Text fontSize="sm" color="gray.500">النقاط</Text>
-          <Text>{transaction.points}</Text>
-          </Box>
-          <Box>
-            <Text fontSize="sm" color="gray.500">طريقة الدفع</Text>
-          <Text>{transaction.paymentMethod}</Text>
-          </Box>
-          <Box>
-            <Text fontSize="sm" color="gray.500">التاريخ</Text>
-            <Text>{new Date(transaction.createdAt).toLocaleDateString('ar-SA')}</Text>
-          </Box>
-        </SimpleGrid>
-
-        <HStack spacing={2} justify="flex-end">
-        <IconButton
-          icon={<Eye size={18} />}
-          size="sm"
-          variant="ghost"
-          onClick={() => handleViewTransaction(transaction)}
-        />
-          {transaction.status === 'pending' && (
-            <>
-        <IconButton
-          icon={<CheckCircle size={18} />}
-          size="sm"
-          variant="ghost"
-                  colorScheme="green"
-          onClick={() => handleApproveTransaction(transaction)}
-        />
-        <IconButton
-          icon={<XCircle size={18} />}
-          size="sm"
-          variant="ghost"
-                  colorScheme="red"
-          onClick={() => handleRejectTransaction(transaction)}
-        />
-            </>
-          )}
-      </HStack>
-      </VStack>
-    </Box>
+        </VStack>
+      </CardBody>
+    </Card>
   );
 
   // Mobile sidebar drawer
@@ -672,73 +682,83 @@ const AdminDashboard = () => {
   // Update the UserCard component to use the handlers
   const UserCard = ({ user }) => {
     return (
-      <Box
+      <Card
         w="full"
         bg={bgColor}
         borderWidth="1px"
         borderColor={borderColor}
       >
-        <VStack spacing={4} align="stretch">
-          <HStack spacing={4}>
-            <Avatar size="lg" name={user.name} src={user.avatar} />
-            <VStack align="start" spacing={1}>
-              <Text fontSize="lg" fontWeight="bold">{user.name}</Text>
-              <Text color="gray.500">رقم الهاتف: {user.phone}</Text>
-              <Badge colorScheme={user.role === 'admin' ? 'purple' : user.role === 'superadmin' ? 'red' : 'blue'}>
-                {user.role === 'admin' ? 'مدير' : user.role === 'superadmin' ? 'مدير أعلى' : 'بائع'}
-              </Badge>
-            </VStack>
-          </HStack>
-          
-          <Divider />
-          
-          <SimpleGrid columns={2} spacing={4}>
-            <Box>
-              <Text fontWeight="bold">عدد العقارات</Text>
-              <Text>{user.properties?.length || 0}</Text>
-            </Box>
-            <Box>
-              <Text fontWeight="bold">الحالة</Text>
-              <Badge colorScheme={user.isActive ? 'green' : 'red'}>
-                {user.isActive ? 'نشط' : 'محظور'}
-              </Badge>
-            </Box>
-          </SimpleGrid>
-          
-          <HStack spacing={2} justify="flex-end">
-            <IconButton
-              icon={<Eye size={18} />}
-              size="sm"
-              variant="ghost"
-              onClick={() => handleViewUser(user)}
-            />
-            <IconButton
-              icon={<Edit2 />}
-              size="sm"
-              variant="ghost"
-              colorScheme="blue"
-              onClick={() => handleEditUser(user)}
-            />
-            {user.isActive ? (
-            <IconButton
-              icon={<Ban />}
-              size="sm"
-              variant="ghost"
-              colorScheme="red"
-              onClick={() => handleBanUser(user)}
-            />
-            ) : (
-              <IconButton
-                icon={<CheckCircle />}
-                size="sm"
-                variant="ghost"
-                colorScheme="green"
-                onClick={() => handleUnbanUser(user)}
-              />
-            )}
-          </HStack>
-        </VStack>
-      </Box>
+        <CardBody>
+          <VStack spacing={4} align="stretch">
+            <HStack spacing={4}>
+              <Avatar size="lg" name={user.name} src={user.avatar} />
+              <VStack align="start" spacing={1}>
+                <Text fontSize="lg" fontWeight="bold">{user.name}</Text>
+                <Text color="gray.500">رقم الهاتف: {user.phone}</Text>
+                <Badge colorScheme={user.role === 'admin' ? 'purple' : user.role === 'superadmin' ? 'red' : 'blue'}>
+                  {user.role === 'admin' ? 'مدير' : user.role === 'superadmin' ? 'مدير أعلى' : 'بائع'}
+                </Badge>
+              </VStack>
+            </HStack>
+            
+            <Divider />
+            
+            <SimpleGrid columns={2} spacing={4}>
+              <Box>
+                <Text fontWeight="bold">عدد العقارات</Text>
+                <Text>{user.properties?.length || 0}</Text>
+              </Box>
+              <Box>
+                <Text fontWeight="bold">الحالة</Text>
+                <Badge colorScheme={user.isActive ? 'green' : 'red'}>
+                  {user.isActive ? 'نشط' : 'محظور'}
+                </Badge>
+              </Box>
+            </SimpleGrid>
+            
+            <HStack spacing={2} justify="flex-end">
+              <Tooltip label="عرض">
+                <IconButton
+                  icon={<Eye />}
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => handleViewUser(user)}
+                />
+              </Tooltip>
+              <Tooltip label="تعديل">
+                <IconButton
+                  icon={<Edit2 />}
+                  size="sm"
+                  variant="ghost"
+                  colorScheme="blue"
+                  onClick={() => handleEditUser(user)}
+                />
+              </Tooltip>
+              {user.isActive ? (
+              <Tooltip label="حظر">
+                <IconButton
+                  icon={<Ban />}
+                  size="sm"
+                  variant="ghost"
+                  colorScheme="red"
+                  onClick={() => handleBanUser(user)}
+                />
+              </Tooltip>
+              ) : (
+                <Tooltip label="إلغاء الحظر">
+                  <IconButton
+                    icon={<CheckCircle />}
+                    size="sm"
+                    variant="ghost"
+                    colorScheme="green"
+                    onClick={() => handleUnbanUser(user)}
+                  />
+                </Tooltip>
+              )}
+            </HStack>
+          </VStack>
+        </CardBody>
+      </Card>
     );
   };
 
@@ -1075,7 +1095,7 @@ const AdminDashboard = () => {
     fetchProperties();
   }, []);
 
-  // Update the PropertyCard component to be more mobile-friendly
+  // Update the PropertyCard component
   const PropertyCard = ({ property }) => {
     const getStatusColor = (status) => {
       switch (status) {
@@ -1097,73 +1117,61 @@ const AdminDashboard = () => {
         mb={4}
         bg="white"
         boxShadow="sm"
-        w="full"
       >
-        <VStack spacing={4} align="stretch">
-          <Flex justify="space-between" align="center">
-            <Heading size="md" noOfLines={1}>{property.title}</Heading>
-            <Badge colorScheme={getStatusColor(property.status)}>
-              {getStatusText(property.status)}
-            </Badge>
-          </Flex>
+        <Flex justify="space-between" align="center" mb={4}>
+          <Heading size="md">{property.title}</Heading>
+          <Button
+            colorScheme="red"
+            size="sm"
+            onClick={() => handleRejectProperty(property)}
+          >
+            رفض
+          </Button>
+        </Flex>
+        
+        <Grid templateColumns="repeat(3, 1fr)" gap={4} mb={4}>
+          {property.images?.map((image, index) => (
+            <Box key={index} position="relative">
+              {image.endsWith('.mp4') ? (
+                <video
+                  src={image}
+                  controls
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              ) : (
+                <Image
+                  src={image}
+                  alt={`Property image ${index + 1}`}
+                  objectFit="cover"
+                  w="100%"
+                  h="100%"
+                />
+              )}
+            </Box>
+          ))}
+        </Grid>
 
-          {property.images && property.images.length > 0 && (
+        <VStack align="start" spacing={2}>
+          <Text><strong>السعر:</strong> {property.price} أوقية</Text>
+          <Text><strong>الموقع:</strong> {property.location}</Text>
+          <Text><strong>النوع:</strong> {property.propertyType}</Text>
+          <Text><strong>عدد الغرف:</strong> {property.bedrooms}</Text>
+          <Text><strong>عدد الحمامات:</strong> {property.bathrooms}</Text>
+          <Text><strong>المساحة:</strong> {property.area} م²</Text>
+          {property.features?.length > 0 && (
             <Box>
-              <Image
-                src={property.images[0]}
-                alt={property.title}
-                objectFit="cover"
-                w="100%"
-                h="200px"
-                borderRadius="md"
-              />
+              <Text fontWeight="bold" mb={2}>المميزات:</Text>
+              <VStack align="start" spacing={1}>
+                {property.features.map((feature, index) => (
+                  <Text key={index}>• {feature}</Text>
+                ))}
+              </VStack>
             </Box>
           )}
-
-          <SimpleGrid columns={2} spacing={4}>
-            <Box>
-              <Text fontWeight="bold">السعر</Text>
-              <Text>{property.price} أوقية</Text>
-            </Box>
-            <Box>
-              <Text fontWeight="bold">النوع</Text>
-              <Text>{property.propertyType}</Text>
-            </Box>
-            <Box>
-              <Text fontWeight="bold">الموقع</Text>
-              <Text noOfLines={1}>{property.location}</Text>
-            </Box>
-            <Box>
-              <Text fontWeight="bold">المساحة</Text>
-              <Text>{property.area} م²</Text>
-            </Box>
-          </SimpleGrid>
-
-          <Box>
-            <Text fontWeight="bold">البائع</Text>
-            <Text>{property.createdBy?.name || 'غير معروف'}</Text>
-            <Text fontSize="sm" color="gray.500">{property.createdBy?.phone || ''}</Text>
-          </Box>
-
-          <Flex justify="space-between" mt={2}>
-            <Button
-              leftIcon={<Eye size={18} />}
-              size="sm"
-              variant="outline"
-              onClick={() => handleViewProperty(property)}
-            >
-              عرض
-            </Button>
-            <Button
-              leftIcon={<XCircle size={18} />}
-              size="sm"
-              colorScheme="red"
-              variant="outline"
-              onClick={() => handleRejectProperty(property)}
-            >
-              رفض
-            </Button>
-          </Flex>
+          <Text><strong>تاريخ النشر:</strong> {new Date(property.createdAt).toLocaleDateString('ar-SA')}</Text>
+          <Badge colorScheme={getStatusColor(property.status)}>
+            {getStatusText(property.status)}
+          </Badge>
         </VStack>
       </Box>
     );
@@ -1171,7 +1179,7 @@ const AdminDashboard = () => {
 
   // Update the PointsTransactionCard component definition
   const PointsTransactionCard = ({ transaction }) => (
-    <Box 
+    <Card 
       bg={cardBgColor}
       borderWidth="1px" 
       borderColor={cardBorderColor}
@@ -1179,58 +1187,66 @@ const AdminDashboard = () => {
       overflow="hidden"
       mb={4}
     >
-      <VStack align="stretch" spacing={3}>
-        <HStack justify="space-between">
-          <Box>
-            <Text fontWeight="bold">{transaction.sellerName}</Text>
-            <Text fontSize="sm" color="gray.500">{transaction.sellerEmail}</Text>
-          </Box>
-          <Badge colorScheme="yellow">معلق</Badge>
-        </HStack>
+      <CardBody>
+        <VStack align="stretch" spacing={3}>
+          <HStack justify="space-between">
+            <Box>
+              <Text fontWeight="bold">{transaction.sellerName}</Text>
+              <Text fontSize="sm" color="gray.500">{transaction.sellerEmail}</Text>
+            </Box>
+            <Badge colorScheme="yellow">معلق</Badge>
+          </HStack>
 
-        <SimpleGrid columns={2} spacing={2}>
-          <Box>
-            <Text fontSize="sm" color="gray.500">المبلغ</Text>
-            <Text>{transaction.amount} أوقية</Text>
-          </Box>
-          <Box>
-            <Text fontSize="sm" color="gray.500">النقاط</Text>
-            <Text>{transaction.points}</Text>
-          </Box>
-          <Box>
-            <Text fontSize="sm" color="gray.500">طريقة الدفع</Text>
-            <Text>{transaction.paymentMethod}</Text>
-          </Box>
-          <Box>
-            <Text fontSize="sm" color="gray.500">التاريخ</Text>
-            <Text>{transaction.date}</Text>
-          </Box>
-        </SimpleGrid>
+          <SimpleGrid columns={2} spacing={2}>
+            <Box>
+              <Text fontSize="sm" color="gray.500">المبلغ</Text>
+              <Text>{transaction.amount} أوقية</Text>
+            </Box>
+            <Box>
+              <Text fontSize="sm" color="gray.500">النقاط</Text>
+              <Text>{transaction.points}</Text>
+            </Box>
+            <Box>
+              <Text fontSize="sm" color="gray.500">طريقة الدفع</Text>
+              <Text>{transaction.paymentMethod}</Text>
+            </Box>
+            <Box>
+              <Text fontSize="sm" color="gray.500">التاريخ</Text>
+              <Text>{transaction.date}</Text>
+            </Box>
+          </SimpleGrid>
 
-        <HStack spacing={2} justify="flex-end">
-          <IconButton
-            icon={<Eye size={18} />}
-            size="sm"
-            variant="ghost"
-            onClick={() => handleViewTransaction(transaction)}
-          />
-          <IconButton
-            icon={<CheckCircle size={18} />}
-            size="sm"
-            variant="ghost"
-            colorScheme="green"
-            onClick={() => handleApproveTransaction(transaction)}
-          />
-          <IconButton
-            icon={<XCircle size={18} />}
-            size="sm"
-            variant="ghost"
-            colorScheme="red"
-            onClick={() => handleRejectTransaction(transaction)}
-          />
-        </HStack>
-      </VStack>
-    </Box>
+          <HStack spacing={2} justify="flex-end">
+            <Tooltip label="عرض">
+              <IconButton
+                icon={<Eye size={18} />}
+                size="sm"
+                variant="ghost"
+                onClick={() => handleViewTransaction(transaction)}
+              />
+            </Tooltip>
+            <Tooltip label="موافقة">
+              <IconButton
+                icon={<CheckCircle size={18} />}
+                size="sm"
+                variant="ghost"
+                colorScheme="green"
+                onClick={() => handleApproveTransaction(transaction)}
+              />
+            </Tooltip>
+            <Tooltip label="رفض">
+              <IconButton
+                icon={<XCircle size={18} />}
+                size="sm"
+                variant="ghost"
+                colorScheme="red"
+                onClick={() => handleRejectTransaction(transaction)}
+              />
+            </Tooltip>
+          </HStack>
+        </VStack>
+      </CardBody>
+    </Card>
   );
 
   const navigate = useNavigate();
@@ -1296,57 +1312,59 @@ const AdminDashboard = () => {
   const [loadingPoints, setLoadingPoints] = useState(false);
 
   const fetchPointsTransactions = async () => {
-  try {
-    setLoadingPoints(true);
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/admin/points-transactions`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
-    setPointsTransactions(response.data.transactions);
-  } catch (error) {
-    toast({
-      title: 'خطأ',
-      description: 'فشل في جلب معاملات النقاط',
-      status: 'error',
-      duration: 3000,
-      isClosable: true,
-    });
-  } finally {
-    setLoadingPoints(false);
-  }
-};
- const handleUpdatePointsTransaction = async (transactionId, status) => {
-  try {
-    const token = localStorage.getItem('token');
-    await axios.put(
-      `${process.env.REACT_APP_API_URL}/admin/points-transactions/${transactionId}`, 
-      { status },
-      {
+    try {
+      setLoadingPoints(true);
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:5000/api/admin/points-transactions', {
         headers: {
           Authorization: `Bearer ${token}`
         }
-      }
-    );
-    toast({
-      title: 'نجاح',
-      description: 'تم تحديث حالة المعاملة بنجاح',
-      status: 'success',
-      duration: 3000,
-      isClosable: true,
-    });
-    fetchPointsTransactions(); // Refresh the list after update
-  } catch (error) {
-    toast({
-      title: 'خطأ',
-      description: 'فشل في تحديث حالة المعاملة',
-      status: 'error',
-      duration: 3000,
-      isClosable: true,
-    });
-  }
-};
+      });
+      setPointsTransactions(response.data.transactions);
+    } catch (error) {
+      toast({
+        title: 'خطأ',
+        description: 'فشل في جلب معاملات النقاط',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoadingPoints(false);
+    }
+  };
+
+  const handleUpdatePointsTransaction = async (transactionId, status) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put(
+        `http://localhost:5000/api/admin/points-transactions/${transactionId}`, 
+        { status },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      toast({
+        title: 'نجاح',
+        description: 'تم تحديث حالة المعاملة بنجاح',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      fetchPointsTransactions(); // Refresh the list after update
+    } catch (error) {
+      toast({
+        title: 'خطأ',
+        description: 'فشل في تحديث حالة المعاملة',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
   useEffect(() => {
     fetchPointsTransactions();
   }, []);
@@ -1738,21 +1756,6 @@ const AdminDashboard = () => {
       </VStack>
     </Box>
   );
-
-  const [propertySearchQuery, setPropertySearchQuery] = useState('');
-  const [propertyStatusFilter, setPropertyStatusFilter] = useState('all');
-
-  // Add filtering logic for properties
-  const filteredProperties = properties.filter(property => {
-    const matchesSearch = 
-      property.title.toLowerCase().includes(propertySearchQuery.toLowerCase()) ||
-      property.location.toLowerCase().includes(propertySearchQuery.toLowerCase()) ||
-      property.propertyType.toLowerCase().includes(propertySearchQuery.toLowerCase());
-    
-    const matchesStatus = propertyStatusFilter === 'all' || property.status === propertyStatusFilter;
-    
-    return matchesSearch && matchesStatus;
-  });
 
   return (
     <Container maxW="container.xl" py={isMobile ? 4 : 10} px={isMobile ? 2 : 4}>
@@ -2210,52 +2213,88 @@ const AdminDashboard = () => {
                 {/* Properties Tab */}
                 <TabPanel>
                   <Stack spacing={6}>
-                    <Box>
-                      <Heading size="lg" mb={6}>إدارة العقارات</Heading>
-                      <Stack spacing={4}>
-                        <Flex
-                          direction={{ base: "column", md: "row" }}
-                          justify="space-between"
-                          align={{ base: "stretch", md: "center" }}
-                          gap={4}
-                        >
-                          <InputGroup maxW={{ base: "100%", md: "320px" }}>
-                            <InputLeftElement pointerEvents="none">
-                              <Search size={20} color="gray.300" />
-                            </InputLeftElement>
-                            <Input
-                              placeholder="البحث عن عقار..."
-                              value={propertySearchQuery}
-                              onChange={(e) => setPropertySearchQuery(e.target.value)}
-                            />
-                          </InputGroup>
-                          
-                          <Select
-                            maxW={{ base: "100%", md: "200px" }}
-                            value={propertyStatusFilter}
-                            onChange={(e) => setPropertyStatusFilter(e.target.value)}
+                    <Box
+                      bg={bgColor}
+                      p={6}
+                      rounded="xl"
+                      boxShadow="xl"
+                      borderWidth="1px"
+                      borderColor={borderColor}
+                    >
+                      <Stack spacing={6}>
+                        <Stack direction="row" justify="space-between" align="center">
+                          <Heading size="md">إدارة العقارات</Heading>
+                          <Button
+                            leftIcon={<Eye />}
+                            colorScheme="primary"
                           >
-                            <option value="all">جميع الحالات</option>
-                            <option value="pending">قيد الانتظار</option>
-                            <option value="approved">تمت الموافقة</option>
-                            <option value="rejected">مرفوض</option>
-                          </Select>
-                        </Flex>
-
-                        {filteredProperties.length === 0 ? (
-                          <Box textAlign="center" py={10}>
-                            <Text>لا توجد عقارات متاحة</Text>
-                          </Box>
-                        ) : (
-                          <SimpleGrid
-                            columns={{ base: 1, md: 2, lg: 3 }}
-                            spacing={6}
-                            w="full"
-                          >
-                            {filteredProperties.map((property) => (
+                            عرض الكل
+                          </Button>
+                        </Stack>
+                        
+                        {isMobile ? (
+                          <VStack spacing={4}>
+                            {properties.map((property) => (
                               <PropertyCard key={property._id} property={property} />
                             ))}
-                          </SimpleGrid>
+                          </VStack>
+                        ) : (
+                          <Table variant="simple">
+                            <Thead>
+                              <Tr>
+                                <Th>العنوان</Th>
+                                <Th>النوع</Th>
+                                <Th>السعر</Th>
+                                <Th>الموقع</Th>
+                                <Th>البائع</Th>
+                                <Th>الحالة</Th>
+                                <Th>الإجراءات</Th>
+                              </Tr>
+                            </Thead>
+                            <Tbody>
+                              {properties.map((property) => (
+                                <Tr key={property._id}>
+                                  <Td>{property.title}</Td>
+                                  <Td>{property.propertyType}</Td>
+                                  <Td>{property.price} أوقية</Td>
+                                  <Td>{property.location}</Td>
+                                  <Td>
+                                    <VStack align="start" spacing={1}>
+                                      <Text>{property.createdBy?.name || 'غير معروف'}</Text>
+                                      <Text fontSize="sm" color="gray.500">{property.createdBy?.email || ''}</Text>
+                                      <Text fontSize="sm" color="gray.500">{property.createdBy?.phone || ''}</Text>
+                                    </VStack>
+                                  </Td>
+                                  <Td>
+                                    <Badge colorScheme={getStatusColor(property.status)}>
+                                      {getStatusText(property.status)}
+                                    </Badge>
+                                  </Td>
+                                  <Td>
+                                    <HStack spacing={2}>
+                                      <Tooltip label="عرض">
+                                        <IconButton
+                                          icon={<Eye />}
+                                          size="sm"
+                                          variant="ghost"
+                                          onClick={() => handleViewProperty(property)}
+                                        />
+                                      </Tooltip>
+                                      <Tooltip label="رفض">
+                                        <IconButton
+                                          icon={<XCircle />}
+                                          size="sm"
+                                          variant="ghost"
+                                          colorScheme="red"
+                                          onClick={() => handleRejectProperty(property)}
+                                        />
+                                      </Tooltip>
+                                    </HStack>
+                                  </Td>
+                                </Tr>
+                              ))}
+                            </Tbody>
+                          </Table>
                         )}
                       </Stack>
                     </Box>
@@ -2438,7 +2477,7 @@ const AdminDashboard = () => {
                 </TabPanel>
                 
                 {/* Settings Tab */}
-                <TabPanel px={isMobile ? 2 : 4}>
+                <TabPanel>
                   <Tabs>
                     <TabList mb={4}>
                       <Tab>إدارة فريق العمل</Tab>             
@@ -2451,6 +2490,7 @@ const AdminDashboard = () => {
                       <Tab>إعدادات التواصل الاجتماعي</Tab>
                       <Tab>إعدادات الموقع</Tab>
                     </TabList>
+
                     <TabPanels>
                       {/* Team Members Settings */}
                       <TabPanel>
@@ -2458,33 +2498,60 @@ const AdminDashboard = () => {
                           {localSettings?.teamMembers?.map((member, index) => (
                             <TeamMemberCard key={index} member={member} index={index} />
                           ))}
-                          <Button colorScheme="blue" onClick={handleAddTeamMember}>إضافة عضو جديد</Button>
+                          <Button
+                            colorScheme="blue"
+                            onClick={handleAddTeamMember}
+                          >
+                            إضافة عضو جديد
+                          </Button>
                         </VStack>
                       </TabPanel>
-                      {/* Points Settings */}
+
+                      {/* Existing Points Settings */}
                       <TabPanel>
                         <VStack spacing={6} align="stretch">
                           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                             <FormControl>
                               <FormLabel>تكلفة النقطة</FormLabel>
-                              <Input type="number" value={localSettings?.pointCost || 0} onChange={(e) => handleSettingChange('pointCost', Number(e.target.value))} placeholder="تكلفة النقطة" />
+                              <Input
+                                type="number"
+                                value={localSettings?.pointCost || 0}
+                                onChange={(e) => handleSettingChange('pointCost', Number(e.target.value))}
+                                placeholder="تكلفة النقطة"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>النقاط لكل عقار</FormLabel>
-                              <Input type="number" value={localSettings?.pointsPerProperty || 0} onChange={(e) => handleSettingChange('pointsPerProperty', Number(e.target.value))} placeholder="النقاط لكل عقار" />
+                              <Input
+                                type="number"
+                                value={localSettings?.pointsPerProperty || 0}
+                                onChange={(e) => handleSettingChange('pointsPerProperty', Number(e.target.value))}
+                                placeholder="النقاط لكل عقار"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>الحد الأدنى لشراء النقاط</FormLabel>
-                              <Input type="number" value={localSettings?.minPointsToBuy || 0} onChange={(e) => handleSettingChange('minPointsToBuy', Number(e.target.value))} placeholder="الحد الأدنى لشراء النقاط" />
+                              <Input
+                                type="number"
+                                value={localSettings?.minPointsToBuy || 0}
+                                onChange={(e) => handleSettingChange('minPointsToBuy', Number(e.target.value))}
+                                placeholder="الحد الأدنى لشراء النقاط"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>الحد الأقصى لشراء النقاط</FormLabel>
-                              <Input type="number" value={localSettings?.maxPointsToBuy || 0} onChange={(e) => handleSettingChange('maxPointsToBuy', Number(e.target.value))} placeholder="الحد الأقصى لشراء النقاط" />
+                              <Input
+                                type="number"
+                                value={localSettings?.maxPointsToBuy || 0}
+                                onChange={(e) => handleSettingChange('maxPointsToBuy', Number(e.target.value))}
+                                placeholder="الحد الأقصى لشراء النقاط"
+                              />
                             </FormControl>
                           </SimpleGrid>
                         </VStack>
                       </TabPanel>
-                      {/* Payment Methods */}
+
+                      {/* Existing Payment Methods */}
                       <TabPanel>
                         <VStack spacing={4} align="stretch">
                           {!localSettings?.paymentMethods?.length ? (
@@ -2493,145 +2560,266 @@ const AdminDashboard = () => {
                             localSettings.paymentMethods.map((method, index) => (
                               <Box key={index} p={4} borderWidth="1px" borderRadius="lg">
                                 <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                                  <FormControl>
+                            <FormControl>
                                     <FormLabel>اختر البنك</FormLabel>
-                                    <Select value={method.bankId} onChange={(e) => handlePaymentMethodChange(index, 'bankId', e.target.value)} placeholder="اختر البنك">
+                                    <Select
+                                      value={method.bankId}
+                                      onChange={(e) => handlePaymentMethodChange(index, 'bankId', e.target.value)}
+                                      placeholder="اختر البنك"
+                                    >
                                       {staticBanks.map((bank) => (
-                                        <option key={bank.id} value={bank.id}>{bank.name}</option>
+                                        <option key={bank.id} value={bank.id}>
+                                          {bank.name}
+                                        </option>
                                       ))}
                                     </Select>
-                                  </FormControl>
-                                  <FormControl>
+                            </FormControl>
+                            <FormControl>
                                     <FormLabel>رقم الحساب</FormLabel>
-                                    <Input value={method.accountNumber} onChange={(e) => handlePaymentMethodChange(index, 'accountNumber', e.target.value)} placeholder="رقم الحساب" />
-                                  </FormControl>
-                                  <FormControl>
+                                    <Input
+                                      value={method.accountNumber}
+                                      onChange={(e) => handlePaymentMethodChange(index, 'accountNumber', e.target.value)}
+                                      placeholder="رقم الحساب"
+                                />
+                            </FormControl>
+                            <FormControl>
                                     <FormLabel>اسم صاحب الحساب</FormLabel>
-                                    <Input value={method.accountName} onChange={(e) => handlePaymentMethodChange(index, 'accountName', e.target.value)} placeholder="اسم صاحب الحساب" />
-                                  </FormControl>
-                                  <FormControl>
+                                    <Input
+                                      value={method.accountName}
+                                      onChange={(e) => handlePaymentMethodChange(index, 'accountName', e.target.value)}
+                                      placeholder="اسم صاحب الحساب"
+                                />
+                            </FormControl>
+                            <FormControl>
                                     <FormLabel>شعار البنك</FormLabel>
                                     <VStack spacing={2} align="stretch">
                                       {method.image && (
                                         <Box position="relative" width="100px" height="100px">
-                                          <Image src={method.image} alt={`${staticBanks.find(b => b.id === method.bankId)?.name} logo`} objectFit="contain" width="100%" height="100%" />
+                                          <Image
+                                            src={method.image}
+                                            alt={`${staticBanks.find(b => b.id === method.bankId)?.name} logo`}
+                                            objectFit="contain"
+                                            width="100%"
+                                            height="100%"
+                                          />
                                         </Box>
                                       )}
-                                      <Input type="file" accept="image/*" onChange={async (e) => {
-                                        const file = e.target.files[0];
-                                        if (file) {
-                                          try {
-                                            const imageUrl = await uploadToCloudinary(file);
-                                            handlePaymentMethodChange(index, 'image', imageUrl);
-                                            toast({ title: "تم رفع الصورة بنجاح", status: "success", duration: 3000, isClosable: true });
-                                          } catch (error) {
-                                            toast({ title: "خطأ", description: "فشل في رفع الصورة", status: "error", duration: 3000, isClosable: true });
+                                      <Input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={async (e) => {
+                                          const file = e.target.files[0];
+                                          if (file) {
+                                            try {
+                                              const imageUrl = await uploadToCloudinary(file);
+                                              handlePaymentMethodChange(index, 'image', imageUrl);
+                                              toast({
+                                                title: "تم رفع الصورة بنجاح",
+                                                status: "success",
+                                                duration: 3000,
+                                                isClosable: true,
+                                              });
+                                            } catch (error) {
+                                              toast({
+                                                title: "خطأ",
+                                                description: "فشل في رفع الصورة",
+                                                status: "error",
+                                                duration: 3000,
+                                                isClosable: true,
+                                              });
+                                            }
                                           }
-                                        }
-                                      }} />
+                                        }}
+                                      />
                                     </VStack>
-                                  </FormControl>
+                            </FormControl>
                                   <FormControl display="flex" alignItems="center">
                                     <FormLabel mb="0">تفعيل طريقة الدفع</FormLabel>
-                                    <Switch isChecked={method.isActive} onChange={(e) => handlePaymentMethodChange(index, 'isActive', e.target.checked)} />
-                                  </FormControl>
-                                  <Button colorScheme="red" variant="ghost" onClick={() => {
-                                    const updatedMethods = [...localSettings.paymentMethods];
-                                    updatedMethods.splice(index, 1);
-                                    setLocalSettings({ ...localSettings, paymentMethods: updatedMethods });
-                                  }}>حذف</Button>
-                                </SimpleGrid>
-                              </Box>
-                            ))
-                          )}
-                          <Button leftIcon={<Plus />} onClick={() => {
-                            const newMethod = { bankId: '', accountNumber: '', accountName: '', isActive: true };
-                            setLocalSettings({ ...localSettings, paymentMethods: [...(localSettings?.paymentMethods || []), newMethod] });
-                          }}>إضافة طريقة دفع جديدة</Button>
-                        </VStack>
+                              <Switch
+                                      isChecked={method.isActive}
+                                      onChange={(e) => handlePaymentMethodChange(index, 'isActive', e.target.checked)}
+                              />
+                            </FormControl>
+                              <Button
+                                colorScheme="red"
+                                variant="ghost"
+                                onClick={() => {
+                                  const updatedMethods = [...localSettings.paymentMethods];
+                                  updatedMethods.splice(index, 1);
+                                  setLocalSettings({
+                                    ...localSettings,
+                                    paymentMethods: updatedMethods
+                                  });
+                                }}
+                              >
+                                      حذف
+                                    </Button>
+                                  </SimpleGrid>
+                                </Box>
+                              ))
+                            )}
+                            <Button
+                              leftIcon={<Plus />}
+                              onClick={() => {
+                                const newMethod = {
+                                  bankId: '',
+                                  accountNumber: '',
+                                  accountName: '',
+                                  isActive: true
+                                };
+                                setLocalSettings({
+                                  ...localSettings,
+                                  paymentMethods: [...(localSettings?.paymentMethods || []), newMethod]
+                                });
+                              }}
+                            >
+                              إضافة طريقة دفع جديدة
+                              </Button>
+                            </VStack>
                       </TabPanel>
+
                       {/* Home Page Settings */}
                       <TabPanel>
                         <VStack spacing={6} align="stretch">
                           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                             <FormControl>
                               <FormLabel>عنوان البطل</FormLabel>
-                              <Input value={localSettings?.homePage?.heroTitle || ''} onChange={(e) => handleSettingChange('homePage.heroTitle', e.target.value)} placeholder="عنوان البطل" />
+                              <Input
+                                value={localSettings?.homePage?.heroTitle || ''}
+                                onChange={(e) => handleSettingChange('homePage.heroTitle', e.target.value)}
+                                placeholder="عنوان البطل"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>وصف البطل</FormLabel>
-                              <Textarea value={localSettings?.homePage?.heroDescription || ''} onChange={(e) => handleSettingChange('homePage.heroDescription', e.target.value)} placeholder="وصف البطل" />
+                              <Textarea
+                                value={localSettings?.homePage?.heroDescription || ''}
+                                onChange={(e) => handleSettingChange('homePage.heroDescription', e.target.value)}
+                                placeholder="وصف البطل"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>عنوان العقارات المميزة</FormLabel>
-                              <Input value={localSettings?.homePage?.featuredPropertiesTitle || ''} onChange={(e) => handleSettingChange('homePage.featuredPropertiesTitle', e.target.value)} placeholder="عنوان العقارات المميزة" />
+                              <Input
+                                value={localSettings?.homePage?.featuredPropertiesTitle || ''}
+                                onChange={(e) => handleSettingChange('homePage.featuredPropertiesTitle', e.target.value)}
+                                placeholder="عنوان العقارات المميزة"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>وصف العقارات المميزة</FormLabel>
-                              <Textarea value={localSettings?.homePage?.featuredPropertiesDescription || ''} onChange={(e) => handleSettingChange('homePage.featuredPropertiesDescription', e.target.value)} placeholder="وصف العقارات المميزة" />
+                              <Textarea
+                                value={localSettings?.homePage?.featuredPropertiesDescription || ''}
+                                onChange={(e) => handleSettingChange('homePage.featuredPropertiesDescription', e.target.value)}
+                                placeholder="وصف العقارات المميزة"
+                              />
                             </FormControl>
                           </SimpleGrid>
                         </VStack>
                       </TabPanel>
+
                       {/* About Page Settings */}
                       <TabPanel>
                         <VStack spacing={6} align="stretch">
                           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                             <FormControl>
                               <FormLabel>عنوان البطل</FormLabel>
-                              <Input value={localSettings?.aboutPage?.heroTitle || ''} onChange={(e) => handleSettingChange('aboutPage.heroTitle', e.target.value)} placeholder="عنوان البطل" />
+                              <Input
+                                value={localSettings?.aboutPage?.heroTitle || ''}
+                                onChange={(e) => handleSettingChange('aboutPage.heroTitle', e.target.value)}
+                                placeholder="عنوان البطل"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>وصف البطل</FormLabel>
-                              <Textarea value={localSettings?.aboutPage?.heroDescription || ''} onChange={(e) => handleSettingChange('aboutPage.heroDescription', e.target.value)} placeholder="وصف البطل" />
+                              <Textarea
+                                value={localSettings?.aboutPage?.heroDescription || ''}
+                                onChange={(e) => handleSettingChange('aboutPage.heroDescription', e.target.value)}
+                                placeholder="وصف البطل"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>عنوان القصة</FormLabel>
-                              <Input value={localSettings?.aboutPage?.storyTitle || ''} onChange={(e) => handleSettingChange('aboutPage.storyTitle', e.target.value)} placeholder="عنوان القصة" />
+                              <Input
+                                value={localSettings?.aboutPage?.storyTitle || ''}
+                                onChange={(e) => handleSettingChange('aboutPage.storyTitle', e.target.value)}
+                                placeholder="عنوان القصة"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>محتوى القصة</FormLabel>
-                              <Textarea value={localSettings?.aboutPage?.storyContent || ''} onChange={(e) => handleSettingChange('aboutPage.storyContent', e.target.value)} placeholder="محتوى القصة" />
+                              <Textarea
+                                value={localSettings?.aboutPage?.storyContent || ''}
+                                onChange={(e) => handleSettingChange('aboutPage.storyContent', e.target.value)}
+                                placeholder="محتوى القصة"
+                              />
                             </FormControl>
                           </SimpleGrid>
                         </VStack>
                       </TabPanel>
+
                       {/* Contact Page Settings */}
                       <TabPanel>
                         <VStack spacing={6} align="stretch">
                           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                             <FormControl>
                               <FormLabel>العنوان</FormLabel>
-                              <Input value={localSettings?.contactPage?.title || ''} onChange={(e) => handleSettingChange('contactPage.title', e.target.value)} placeholder="العنوان" />
+                              <Input
+                                value={localSettings?.contactPage?.title || ''}
+                                onChange={(e) => handleSettingChange('contactPage.title', e.target.value)}
+                                placeholder="العنوان"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>الوصف</FormLabel>
-                              <Textarea value={localSettings?.contactPage?.description || ''} onChange={(e) => handleSettingChange('contactPage.description', e.target.value)} placeholder="الوصف" />
+                              <Textarea
+                                value={localSettings?.contactPage?.description || ''}
+                                onChange={(e) => handleSettingChange('contactPage.description', e.target.value)}
+                                placeholder="الوصف"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>العنوان الفعلي</FormLabel>
-                              <Input value={localSettings?.contactPage?.address || ''} onChange={(e) => handleSettingChange('contactPage.address', e.target.value)} placeholder="العنوان الفعلي" />
+                              <Input
+                                value={localSettings?.contactPage?.address || ''}
+                                onChange={(e) => handleSettingChange('contactPage.address', e.target.value)}
+                                placeholder="العنوان الفعلي"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>رقم الهاتف</FormLabel>
-                              <Input value={localSettings?.contactPage?.phone || ''} onChange={(e) => handleSettingChange('contactPage.phone', e.target.value)} placeholder="رقم الهاتف" />
+                              <Input
+                                value={localSettings?.contactPage?.phone || ''}
+                                onChange={(e) => handleSettingChange('contactPage.phone', e.target.value)}
+                                placeholder="رقم الهاتف"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>البريد الإلكتروني</FormLabel>
-                              <Input value={localSettings?.contactPage?.email || ''} onChange={(e) => handleSettingChange('contactPage.email', e.target.value)} placeholder="البريد الإلكتروني" />
+                              <Input
+                                value={localSettings?.contactPage?.email || ''}
+                                onChange={(e) => handleSettingChange('contactPage.email', e.target.value)}
+                                placeholder="البريد الإلكتروني"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>رابط الخريطة</FormLabel>
-                              <Input value={localSettings?.contactPage?.mapEmbedUrl || ''} onChange={(e) => handleSettingChange('contactPage.mapEmbedUrl', e.target.value)} placeholder="رابط الخريطة" />
+                              <Input
+                                value={localSettings?.contactPage?.mapEmbedUrl || ''}
+                                onChange={(e) => handleSettingChange('contactPage.mapEmbedUrl', e.target.value)}
+                                placeholder="رابط الخريطة"
+                              />
                             </FormControl>
                           </SimpleGrid>
                         </VStack>
                       </TabPanel>
+
                       {/* Banner Settings */}
                       <TabPanel>
                         <VStack spacing={8}>
                           <Box>
                             <Heading size="md" mb={4}>إعدادات البانرات</Heading>
+                            
                             {/* Home Page Banners */}
                             <Box mb={8}>
                               <Heading size="sm" mb={4}>بانرات الصفحة الرئيسية</Heading>
@@ -2639,9 +2827,12 @@ const AdminDashboard = () => {
                                 {localSettings?.banners?.home && Object.entries(localSettings.banners.home).map(([key, banner]) => (
                                   <BannerCard key={key} pageType="home" bannerKey={key} banner={banner} />
                                 ))}
-                                <Button onClick={() => handleAddBanner('home')}>إضافة بانر جديد للصفحة الرئيسية</Button>
+                                <Button onClick={() => handleAddBanner('home')}>
+                                  إضافة بانر جديد للصفحة الرئيسية
+                                </Button>
                               </VStack>
                             </Box>
+
                             {/* About Page Banners */}
                             <Box mb={8}>
                               <Heading size="sm" mb={4}>بانرات صفحة من نحن</Heading>
@@ -2651,6 +2842,7 @@ const AdminDashboard = () => {
                                 )}
                               </VStack>
                             </Box>
+
                             {/* Contact Page Banners */}
                             <Box mb={8}>
                               <Heading size="sm" mb={4}>بانرات صفحة اتصال</Heading>
@@ -2663,93 +2855,120 @@ const AdminDashboard = () => {
                           </Box>
                         </VStack>
                       </TabPanel>
+
                       {/* Social Media Settings */}
                       <TabPanel>
                         <VStack spacing={6} align="stretch">
                           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                             <FormControl>
                               <FormLabel>رابط فيسبوك</FormLabel>
-                              <Input value={localSettings?.socialMedia?.facebook || ''} onChange={(e) => handleSettingChange('socialMedia.facebook', e.target.value)} placeholder="رابط فيسبوك" />
+                              <Input
+                                value={localSettings?.socialMedia?.facebook || ''}
+                                onChange={(e) => handleSettingChange('socialMedia.facebook', e.target.value)}
+                                placeholder="رابط فيسبوك"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>رابط تويتر</FormLabel>
-                              <Input value={localSettings?.socialMedia?.twitter || ''} onChange={(e) => handleSettingChange('socialMedia.twitter', e.target.value)} placeholder="رابط تويتر" />
+                              <Input
+                                value={localSettings?.socialMedia?.twitter || ''}
+                                onChange={(e) => handleSettingChange('socialMedia.twitter', e.target.value)}
+                                placeholder="رابط تويتر"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>رابط إنستغرام</FormLabel>
-                              <Input value={localSettings?.socialMedia?.instagram || ''} onChange={(e) => handleSettingChange('socialMedia.instagram', e.target.value)} placeholder="رابط إنستغرام" />
+                              <Input
+                                value={localSettings?.socialMedia?.instagram || ''}
+                                onChange={(e) => handleSettingChange('socialMedia.instagram', e.target.value)}
+                                placeholder="رابط إنستغرام"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>رابط لينكد إن</FormLabel>
-                              <Input value={localSettings?.socialMedia?.linkedin || ''} onChange={(e) => handleSettingChange('socialMedia.linkedin', e.target.value)} placeholder="رابط لينكد إن" />
+                              <Input
+                                value={localSettings?.socialMedia?.linkedin || ''}
+                                onChange={(e) => handleSettingChange('socialMedia.linkedin', e.target.value)}
+                                placeholder="رابط لينكد إن"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>رابط واتساب</FormLabel>
-                              <Input value={localSettings?.socialMedia?.whatsapp || ''} onChange={(e) => handleSettingChange('socialMedia.whatsapp', e.target.value)} placeholder="رابط واتساب" />
+                              <Input
+                                value={localSettings?.socialMedia?.whatsapp || ''}
+                                onChange={(e) => handleSettingChange('socialMedia.whatsapp', e.target.value)}
+                                placeholder="رابط واتساب"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>رابط يوتيوب</FormLabel>
-                              <Input value={localSettings?.socialMedia?.youtube || ''} onChange={(e) => handleSettingChange('socialMedia.youtube', e.target.value)} placeholder="رابط يوتيوب" />
+                              <Input
+                                value={localSettings?.socialMedia?.youtube || ''}
+                                onChange={(e) => handleSettingChange('socialMedia.youtube', e.target.value)}
+                                placeholder="رابط يوتيوب"
+                              />
                             </FormControl>
                           </SimpleGrid>
                         </VStack>
                       </TabPanel>
-                      {/* Site Settings */}
+
+                      {/* Existing Site Settings */}
                       <TabPanel>
                         <VStack spacing={6} align="stretch">
                           <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                             <FormControl>
                               <FormLabel>اسم الموقع</FormLabel>
-                              <Input value={localSettings?.siteName || ''} onChange={(e) => handleSettingChange('siteName', e.target.value)} placeholder="اسم الموقع" />
+                              <Input
+                                value={localSettings?.siteName || ''}
+                                onChange={(e) => handleSettingChange('siteName', e.target.value)}
+                                placeholder="اسم الموقع"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>وصف الموقع</FormLabel>
-                              <Input value={localSettings?.siteDescription || ''} onChange={(e) => handleSettingChange('siteDescription', e.target.value)} placeholder="وصف الموقع" />
+                              <Input
+                                value={localSettings?.siteDescription || ''}
+                                onChange={(e) => handleSettingChange('siteDescription', e.target.value)}
+                                placeholder="وصف الموقع"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>البريد الإلكتروني للاتصال</FormLabel>
-                              <Input value={localSettings?.contactEmail || ''} onChange={(e) => handleSettingChange('contactEmail', e.target.value)} placeholder="البريد الإلكتروني للاتصال" />
+                              <Input
+                                value={localSettings?.contactEmail || ''}
+                                onChange={(e) => handleSettingChange('contactEmail', e.target.value)}
+                                placeholder="البريد الإلكتروني للاتصال"
+                              />
                             </FormControl>
                             <FormControl>
                               <FormLabel>رقم الهاتف للاتصال</FormLabel>
-                              <Input value={localSettings?.contactPhone || ''} onChange={(e) => handleSettingChange('contactPhone', e.target.value)} placeholder="رقم الهاتف للاتصال" />
+                              <Input
+                                value={localSettings?.contactPhone || ''}
+                                onChange={(e) => handleSettingChange('contactPhone', e.target.value)}
+                                placeholder="رقم الهاتف للاتصال"
+                              />
                             </FormControl>
                           </SimpleGrid>
                         </VStack>
                       </TabPanel>
                     </TabPanels>
                   </Tabs>
-                  <Button colorScheme="blue" isLoading={isSavingSettings} onClick={handleSaveSettings} width="full" mt={4}>حفظ الإعدادات</Button>
+                          
+                          <Button
+                    colorScheme="blue"
+                    isLoading={isSavingSettings}
+                            onClick={() => {
+                      console.log('Save button clicked');
+                      handleSaveSettings();
+                    }}
+                    width="full"
+                    mt={4}
+                  >
+                    حفظ الإعدادات
+                          </Button>
                 </TabPanel>
               </TabPanels>
             </Tabs>
-
-            <Divider my={6} />
-
-            <Box 
-              position="sticky" 
-              bottom={0} 
-              bg={bgColor} 
-              pt={4} 
-              pb={isMobile ? 4 : 6}
-              borderTop="1px solid"
-              borderColor={borderColor}
-              mt={4}
-              mx={isMobile ? -3 : -6}
-              px={isMobile ? 3 : 6}
-            >
-              <Button
-                colorScheme="blue"
-                size={isMobile ? "md" : "lg"}
-                w={isMobile ? "100%" : "auto"}
-                isLoading={isSavingSettings}
-                loadingText="جاري الحفظ..."
-                onClick={handleSaveSettings}
-                leftIcon={<Save />}
-              >
-                حفظ الإعدادات
-              </Button>
-            </Box>
           </Box>
         </Grid>
       </MotionBox>
