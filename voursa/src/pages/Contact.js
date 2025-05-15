@@ -67,16 +67,16 @@ const Contact = () => {
   const bgColor = useColorModeValue('white', 'gray.800');
   const textColor = useColorModeValue('gray.600', 'gray.300');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
-  const accentColor = useColorModeValue('primary.500', 'primary.300');
+  const accentColor = useColorModeValue('yellow.500', 'yellow.300');
   const lightBg = useColorModeValue('gray.50', 'gray.900');
   const cardBg = useColorModeValue('white', 'gray.800');
   const headingColor = useColorModeValue('gray.800', 'white');
   const tabBg = useColorModeValue('gray.100', 'gray.700');
   const testimonialBg = useColorModeValue('gray.50', 'gray.900');
-  const tabSelectedBg = useColorModeValue('primary.500', 'primary.400');
+  const tabSelectedBg = useColorModeValue('yellow.500', 'yellow.400');
   const tabSelectedColor = useColorModeValue('white', 'white');
   const tabColor = useColorModeValue('gray.700', 'gray.300');
-  const tabBorderColor = useColorModeValue('primary.500', 'primary.400');
+  const tabBorderColor = useColorModeValue('yellow.500', 'yellow.400');
   
   const toast = useToast();
   const isMobile = useBreakpointValue({ base: true, md: false });
@@ -246,7 +246,7 @@ const Contact = () => {
               <Button
                 size={{ base: "md", md: "lg" }}
                 variant="outline"
-                colorScheme="primary"
+                colorScheme="yellow"
                 leftIcon={<MessageCircle />}
                 onClick={() => handleWhatsAppClick(settings?.contactPhone || '+22212345678')}
                 _hover={{
@@ -291,7 +291,7 @@ const Contact = () => {
                   left: 0,
                   right: 0,
                   height: "4px",
-                  bgGradient: "linear(to-r, primary.400, primary.600)",
+                  bgGradient: "linear(to-r, yellow.400, yellow.600)",
                 }}
                 _hover={{
                   transform: "translateY(-5px)",
@@ -332,7 +332,7 @@ const Contact = () => {
                   left: 0,
                   right: 0,
                   height: "4px",
-                  bgGradient: "linear(to-r, primary.400, primary.600)",
+                  bgGradient: "linear(to-r, yellow.400, yellow.600)",
                 }}
                 _hover={{
                   transform: "translateY(-5px)",
@@ -373,7 +373,7 @@ const Contact = () => {
                   left: 0,
                   right: 0,
                   height: "4px",
-                  bgGradient: "linear(to-r, primary.400, primary.600)",
+                  bgGradient: "linear(to-r, yellow.400, yellow.600)",
                 }}
                 _hover={{
                   transform: "translateY(-5px)",
@@ -414,7 +414,7 @@ const Contact = () => {
                   left: 0,
                   right: 0,
                   height: "4px",
-                  bgGradient: "linear(to-r, primary.400, primary.600)",
+                  bgGradient: "linear(to-r, yellow.400, yellow.600)",
                 }}
                 _hover={{
                   transform: "translateY(-5px)",
