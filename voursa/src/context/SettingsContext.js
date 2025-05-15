@@ -10,109 +10,100 @@ export const SettingsProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const toast = useToast();
 
-  const defaultSettings = {
-    siteName: 'وكالة بورصة العقارية',
-    siteDescription: 'أفضل وكالة عقارية في المملكة',
-    contactEmail: 'info@voursa.com',
-    contactPhone: '+222 123 456 789',
-    homePage: {
-      heroTitle: 'وكالة بورصة العقارية',
-      heroDescription: 'نقدم حلولاً عقارية متكاملة تلبي احتياجات عملائنا بأعلى معايير الجودة والشفافية',
-      featuredPropertiesTitle: 'أحدث العقارات',
-      featuredPropertiesDescription: 'اكتشف مجموعة متنوعة من العقارات المميزة في أفضل المواقع',
-      heroMedia: []
-    },
-    aboutPage: {
-      heroTitle: 'وكالة ورسة العقارية',
-      heroDescription: 'نحن نقدم حلولاً عقارية متكاملة تلبي احتياجات عملائنا بأعلى معايير الجودة والشفافية',
-      storyTitle: 'قصتنا',
-      storyContent: 'تأسست وكالة ورسة العقارية في عام 2013 بهدف تقديم خدمات عقارية متكاملة تلبي احتياجات العملاء في موريتانيا',
-      values: [],
-      teamMembers: [] 
-    },
-    contactPage: {
-      title: 'تواصل معنا',
-      description: 'نحن هنا لمساعدتك في جميع استفساراتك. لا تتردد في التواصل معنا',
-      address: 'شارع الرئيسي، نواكشوط، موريتانيا',
-      phone: '+222 123 456 789',
-      email: 'info@voursa.com',
-      socialMedia: {},
-      mapEmbedUrl: ''
-    },
-    banners: {
-      home: {
-        banner1: {
-          title: '',
-          description: '',
-          image: ''
-        }
-      },
-      about: {
-        title: '',
-        description: '',
-        image: ''
-      },
-      contact: {
-        title: '',
-        description: '',
-        image: ''
-      }
-    },
-    socialMedia: {
-      facebook: '',
-      twitter: '',
-      instagram: '',
-      linkedin: '',
-      whatsapp: '',
-      youtube: ''
-    },
-    pointCost: 0,
-    pointsPerProperty: 0,
-    minPointsToBuy: 0,
-    maxPointsToBuy: 0,
-    paymentMethods: [],
-    teamMembers: []
-  };
-
   const fetchSettings = async () => {
     try {
       setLoading(true);
       const response = await getSettings();
       if (response.success) {
-        // Merge the response settings with default settings to ensure all fields exist
-        const mergedSettings = {
-          ...defaultSettings,
-          ...response.settings,
-          homePage: {
-            ...defaultSettings.homePage,
-            ...response.settings.homePage
-          },
-          aboutPage: {
-            ...defaultSettings.aboutPage,
-            ...response.settings.aboutPage
-          },
-          contactPage: {
-            ...defaultSettings.contactPage,
-            ...response.settings.contactPage
-          },
-          banners: {
-            ...defaultSettings.banners,
-            ...response.settings.banners
-          },
-          socialMedia: {
-            ...defaultSettings.socialMedia,
-            ...response.settings.socialMedia
-          }
-        };
-        setSettings(mergedSettings);
+        setSettings(response.settings);
         setError(null);
       } else {
         setError(response.message);
-        setSettings(defaultSettings);
+        setSettings({
+          siteName: 'وكالة بورصة العقارية',
+          siteDescription: 'أفضل وكالة عقارية في المملكة',
+          contactEmail: 'info@voursa.com',
+          contactPhone: '+222 123 456 789',
+          homePage: {
+            heroTitle: 'وكالة بورصة العقارية',
+            heroDescription: 'نقدم حلولاً عقارية متكاملة تلبي احتياجات عملائنا بأعلى معايير الجودة والشفافية',
+            featuredPropertiesTitle: 'أحدث العقارات',
+            featuredPropertiesDescription: 'اكتشف مجموعة متنوعة من العقارات المميزة في أفضل المواقع',
+            heroMedia: []
+          },
+          aboutPage: {
+            heroTitle: 'وكالة ورسة العقارية',
+            heroDescription: 'نحن نقدم حلولاً عقارية متكاملة تلبي احتياجات عملائنا بأعلى معايير الجودة والشفافية',
+            storyTitle: 'قصتنا',
+            storyContent: 'تأسست وكالة ورسة العقارية في عام 2013 بهدف تقديم خدمات عقارية متكاملة تلبي احتياجات العملاء في موريتانيا',
+            values: [],
+            teamMembers: []
+          },
+          contactPage: {
+            title: 'تواصل معنا',
+            description: 'نحن هنا لمساعدتك في جميع استفساراتك. لا تتردد في التواصل معنا',
+            address: 'شارع الرئيسي، نواكشوط، موريتانيا',
+            phone: '+222 123 456 789',
+            email: 'info@voursa.com',
+            socialMedia: {},
+            mapEmbedUrl: ''
+          },
+          banners: {
+            home: {},
+            about: {},
+            contact: {}
+          },
+          socialMedia: {},
+          pointCost: 0,
+          pointsPerProperty: 0,
+          minPointsToBuy: 0,
+          maxPointsToBuy: 0,
+          paymentMethods: []
+        });
       }
     } catch (error) {
       setError(error.message);
-      setSettings(defaultSettings);
+      setSettings({
+        siteName: 'وكالة بورصة العقارية',
+        siteDescription: 'أفضل وكالة عقارية في المملكة',
+        contactEmail: 'info@voursa.com',
+        contactPhone: '+222 123 456 789',
+        homePage: {
+          heroTitle: 'وكالة بورصة العقارية',
+          heroDescription: 'نقدم حلولاً عقارية متكاملة تلبي احتياجات عملائنا بأعلى معايير الجودة والشفافية',
+          featuredPropertiesTitle: 'أحدث العقارات',
+          featuredPropertiesDescription: 'اكتشف مجموعة متنوعة من العقارات المميزة في أفضل المواقع',
+          heroMedia: []
+        },
+        aboutPage: {
+          heroTitle: 'وكالة ورسة العقارية',
+          heroDescription: 'نحن نقدم حلولاً عقارية متكاملة تلبي احتياجات عملائنا بأعلى معايير الجودة والشفافية',
+          storyTitle: 'قصتنا',
+          storyContent: 'تأسست وكالة ورسة العقارية في عام 2013 بهدف تقديم خدمات عقارية متكاملة تلبي احتياجات العملاء في موريتانيا',
+          values: [],
+          teamMembers: []
+        },
+        contactPage: {
+          title: 'تواصل معنا',
+          description: 'نحن هنا لمساعدتك في جميع استفساراتك. لا تتردد في التواصل معنا',
+          address: 'شارع الرئيسي، نواكشوط، موريتانيا',
+          phone: '+222 123 456 789',
+          email: 'info@voursa.com',
+          socialMedia: {},
+          mapEmbedUrl: ''
+        },
+        banners: {
+          home: {},
+          about: {},
+          contact: {}
+        },
+        socialMedia: {},
+        pointCost: 0,
+        pointsPerProperty: 0,
+        minPointsToBuy: 0,
+        maxPointsToBuy: 0,
+        paymentMethods: []
+      });
     } finally {
       setLoading(false);
     }
@@ -123,32 +114,7 @@ export const SettingsProvider = ({ children }) => {
       setLoading(true);
       const response = await updateSettingsApi(newSettings);
       if (response.success) {
-        // Merge the updated settings with default settings
-        const mergedSettings = {
-          ...defaultSettings,
-          ...response.data,
-          homePage: {
-            ...defaultSettings.homePage,
-            ...response.data.homePage
-          },
-          aboutPage: {
-            ...defaultSettings.aboutPage,
-            ...response.data.aboutPage
-          },
-          contactPage: {
-            ...defaultSettings.contactPage,
-            ...response.data.contactPage
-          },
-          banners: {
-            ...defaultSettings.banners,
-            ...response.data.banners
-          },
-          socialMedia: {
-            ...defaultSettings.socialMedia,
-            ...response.data.socialMedia
-          }
-        };
-        setSettings(mergedSettings);
+        setSettings(response.data);
         setError(null);
         toast({
           title: 'تم التحديث',
