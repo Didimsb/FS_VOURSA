@@ -2438,64 +2438,64 @@ const AdminDashboard = () => {
                 </TabPanel>
                 
                 {/* Settings Tab */}
-                <TabPanel px={isMobile ? 2 : 4}>
-                  <Tabs>
-                    <TabList mb={4}>
-                      <Tab>إدارة فريق العمل</Tab>             
-                      <Tab>إعدادات النقاط</Tab>
-                      <Tab>طرق الدفع</Tab>
-                      <Tab>إعدادات الصفحة الرئيسية</Tab>
-                      <Tab>إعدادات صفحة من نحن</Tab>
-                      <Tab>إعدادات صفحة الاتصال</Tab>
-                      <Tab>إعدادات البانرات</Tab>
-                      <Tab>إعدادات التواصل الاجتماعي</Tab>
-                      <Tab>إعدادات الموقع</Tab>
+                <TabPanel px={{ base: 1, md: 4 }} py={{ base: 2, md: 4 }}>
+                  <Tabs isFitted variant="enclosed" overflowX="auto">
+                    <TabList mb={4} flexWrap="wrap">
+                      <Tab fontSize={{ base: 'sm', md: 'md' }}>إدارة فريق العمل</Tab>
+                      <Tab fontSize={{ base: 'sm', md: 'md' }}>إعدادات النقاط</Tab>
+                      <Tab fontSize={{ base: 'sm', md: 'md' }}>طرق الدفع</Tab>
+                      <Tab fontSize={{ base: 'sm', md: 'md' }}>إعدادات الصفحة الرئيسية</Tab>
+                      <Tab fontSize={{ base: 'sm', md: 'md' }}>إعدادات صفحة من نحن</Tab>
+                      <Tab fontSize={{ base: 'sm', md: 'md' }}>إعدادات صفحة الاتصال</Tab>
+                      <Tab fontSize={{ base: 'sm', md: 'md' }}>إعدادات البانرات</Tab>
+                      <Tab fontSize={{ base: 'sm', md: 'md' }}>إعدادات التواصل الاجتماعي</Tab>
+                      <Tab fontSize={{ base: 'sm', md: 'md' }}>إعدادات الموقع</Tab>
                     </TabList>
                     <TabPanels>
                       {/* Team Members Settings */}
-                      <TabPanel>
-                        <VStack spacing={4}>
+                      <TabPanel px={0}>
+                        <VStack spacing={4} align="stretch">
                           {localSettings?.teamMembers?.map((member, index) => (
                             <TeamMemberCard key={index} member={member} index={index} />
                           ))}
-                          <Button colorScheme="blue" onClick={handleAddTeamMember}>إضافة عضو جديد</Button>
+                          <Button colorScheme="blue" w="full" onClick={handleAddTeamMember}>إضافة عضو جديد</Button>
                         </VStack>
                       </TabPanel>
                       {/* Points Settings */}
-                      <TabPanel>
-                        <VStack spacing={6} align="stretch">
-                          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+                      <TabPanel px={0}>
+                        <VStack spacing={4} align="stretch">
+                          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} w="full">
                             <FormControl>
                               <FormLabel>تكلفة النقطة</FormLabel>
-                              <Input type="number" value={localSettings?.pointCost || 0} onChange={(e) => handleSettingChange('pointCost', Number(e.target.value))} placeholder="تكلفة النقطة" />
+                              <Input type="number" w="full" value={localSettings?.pointCost || 0} onChange={(e) => handleSettingChange('pointCost', Number(e.target.value))} placeholder="تكلفة النقطة" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>النقاط لكل عقار</FormLabel>
-                              <Input type="number" value={localSettings?.pointsPerProperty || 0} onChange={(e) => handleSettingChange('pointsPerProperty', Number(e.target.value))} placeholder="النقاط لكل عقار" />
+                              <Input type="number" w="full" value={localSettings?.pointsPerProperty || 0} onChange={(e) => handleSettingChange('pointsPerProperty', Number(e.target.value))} placeholder="النقاط لكل عقار" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>الحد الأدنى لشراء النقاط</FormLabel>
-                              <Input type="number" value={localSettings?.minPointsToBuy || 0} onChange={(e) => handleSettingChange('minPointsToBuy', Number(e.target.value))} placeholder="الحد الأدنى لشراء النقاط" />
+                              <Input type="number" w="full" value={localSettings?.minPointsToBuy || 0} onChange={(e) => handleSettingChange('minPointsToBuy', Number(e.target.value))} placeholder="الحد الأدنى لشراء النقاط" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>الحد الأقصى لشراء النقاط</FormLabel>
-                              <Input type="number" value={localSettings?.maxPointsToBuy || 0} onChange={(e) => handleSettingChange('maxPointsToBuy', Number(e.target.value))} placeholder="الحد الأقصى لشراء النقاط" />
+                              <Input type="number" w="full" value={localSettings?.maxPointsToBuy || 0} onChange={(e) => handleSettingChange('maxPointsToBuy', Number(e.target.value))} placeholder="الحد الأقصى لشراء النقاط" />
                             </FormControl>
                           </SimpleGrid>
                         </VStack>
                       </TabPanel>
                       {/* Payment Methods */}
-                      <TabPanel>
+                      <TabPanel px={0}>
                         <VStack spacing={4} align="stretch">
                           {!localSettings?.paymentMethods?.length ? (
                             <Text color="gray.500" textAlign="center">لا توجد طرق دفع مضافة</Text>
                           ) : (
                             localSettings.paymentMethods.map((method, index) => (
-                              <Box key={index} p={4} borderWidth="1px" borderRadius="lg">
-                                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                              <Box key={index} p={{ base: 2, md: 4 }} borderWidth="1px" borderRadius="lg" w="full">
+                                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} w="full">
                                   <FormControl>
                                     <FormLabel>اختر البنك</FormLabel>
-                                    <Select value={method.bankId} onChange={(e) => handlePaymentMethodChange(index, 'bankId', e.target.value)} placeholder="اختر البنك">
+                                    <Select w="full" value={method.bankId} onChange={(e) => handlePaymentMethodChange(index, 'bankId', e.target.value)} placeholder="اختر البنك">
                                       {staticBanks.map((bank) => (
                                         <option key={bank.id} value={bank.id}>{bank.name}</option>
                                       ))}
@@ -2503,21 +2503,21 @@ const AdminDashboard = () => {
                                   </FormControl>
                                   <FormControl>
                                     <FormLabel>رقم الحساب</FormLabel>
-                                    <Input value={method.accountNumber} onChange={(e) => handlePaymentMethodChange(index, 'accountNumber', e.target.value)} placeholder="رقم الحساب" />
+                                    <Input w="full" value={method.accountNumber} onChange={(e) => handlePaymentMethodChange(index, 'accountNumber', e.target.value)} placeholder="رقم الحساب" />
                                   </FormControl>
                                   <FormControl>
                                     <FormLabel>اسم صاحب الحساب</FormLabel>
-                                    <Input value={method.accountName} onChange={(e) => handlePaymentMethodChange(index, 'accountName', e.target.value)} placeholder="اسم صاحب الحساب" />
+                                    <Input w="full" value={method.accountName} onChange={(e) => handlePaymentMethodChange(index, 'accountName', e.target.value)} placeholder="اسم صاحب الحساب" />
                                   </FormControl>
                                   <FormControl>
                                     <FormLabel>شعار البنك</FormLabel>
                                     <VStack spacing={2} align="stretch">
                                       {method.image && (
-                                        <Box position="relative" width="100px" height="100px">
-                                          <Image src={method.image} alt={`${staticBanks.find(b => b.id === method.bankId)?.name} logo`} objectFit="contain" width="100%" height="100%" />
+                                        <Box position="relative" width="100%" maxW="100px" height="100px">
+                                          <Image src={method.image} alt={`${staticBanks.find(b => b.id === method.bankId)?.name} logo`} objectFit="contain" w="full" h="full" />
                                         </Box>
                                       )}
-                                      <Input type="file" accept="image/*" onChange={async (e) => {
+                                      <Input type="file" accept="image/*" w="full" onChange={async (e) => {
                                         const file = e.target.files[0];
                                         if (file) {
                                           try {
@@ -2535,7 +2535,7 @@ const AdminDashboard = () => {
                                     <FormLabel mb="0">تفعيل طريقة الدفع</FormLabel>
                                     <Switch isChecked={method.isActive} onChange={(e) => handlePaymentMethodChange(index, 'isActive', e.target.checked)} />
                                   </FormControl>
-                                  <Button colorScheme="red" variant="ghost" onClick={() => {
+                                  <Button colorScheme="red" variant="ghost" w="full" onClick={() => {
                                     const updatedMethods = [...localSettings.paymentMethods];
                                     updatedMethods.splice(index, 1);
                                     setLocalSettings({ ...localSettings, paymentMethods: updatedMethods });
@@ -2544,108 +2544,108 @@ const AdminDashboard = () => {
                               </Box>
                             ))
                           )}
-                          <Button leftIcon={<Plus />} onClick={() => {
+                          <Button leftIcon={<Plus />} w="full" onClick={() => {
                             const newMethod = { bankId: '', accountNumber: '', accountName: '', isActive: true };
                             setLocalSettings({ ...localSettings, paymentMethods: [...(localSettings?.paymentMethods || []), newMethod] });
                           }}>إضافة طريقة دفع جديدة</Button>
                         </VStack>
                       </TabPanel>
                       {/* Home Page Settings */}
-                      <TabPanel>
-                        <VStack spacing={6} align="stretch">
-                          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+                      <TabPanel px={0}>
+                        <VStack spacing={4} align="stretch">
+                          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} w="full">
                             <FormControl>
                               <FormLabel>عنوان البطل</FormLabel>
-                              <Input value={localSettings?.homePage?.heroTitle || ''} onChange={(e) => handleSettingChange('homePage.heroTitle', e.target.value)} placeholder="عنوان البطل" />
+                              <Input w="full" value={localSettings?.homePage?.heroTitle || ''} onChange={(e) => handleSettingChange('homePage.heroTitle', e.target.value)} placeholder="عنوان البطل" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>وصف البطل</FormLabel>
-                              <Textarea value={localSettings?.homePage?.heroDescription || ''} onChange={(e) => handleSettingChange('homePage.heroDescription', e.target.value)} placeholder="وصف البطل" />
+                              <Textarea w="full" value={localSettings?.homePage?.heroDescription || ''} onChange={(e) => handleSettingChange('homePage.heroDescription', e.target.value)} placeholder="وصف البطل" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>عنوان العقارات المميزة</FormLabel>
-                              <Input value={localSettings?.homePage?.featuredPropertiesTitle || ''} onChange={(e) => handleSettingChange('homePage.featuredPropertiesTitle', e.target.value)} placeholder="عنوان العقارات المميزة" />
+                              <Input w="full" value={localSettings?.homePage?.featuredPropertiesTitle || ''} onChange={(e) => handleSettingChange('homePage.featuredPropertiesTitle', e.target.value)} placeholder="عنوان العقارات المميزة" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>وصف العقارات المميزة</FormLabel>
-                              <Textarea value={localSettings?.homePage?.featuredPropertiesDescription || ''} onChange={(e) => handleSettingChange('homePage.featuredPropertiesDescription', e.target.value)} placeholder="وصف العقارات المميزة" />
+                              <Textarea w="full" value={localSettings?.homePage?.featuredPropertiesDescription || ''} onChange={(e) => handleSettingChange('homePage.featuredPropertiesDescription', e.target.value)} placeholder="وصف العقارات المميزة" />
                             </FormControl>
                           </SimpleGrid>
                         </VStack>
                       </TabPanel>
                       {/* About Page Settings */}
-                      <TabPanel>
-                        <VStack spacing={6} align="stretch">
-                          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+                      <TabPanel px={0}>
+                        <VStack spacing={4} align="stretch">
+                          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} w="full">
                             <FormControl>
                               <FormLabel>عنوان البطل</FormLabel>
-                              <Input value={localSettings?.aboutPage?.heroTitle || ''} onChange={(e) => handleSettingChange('aboutPage.heroTitle', e.target.value)} placeholder="عنوان البطل" />
+                              <Input w="full" value={localSettings?.aboutPage?.heroTitle || ''} onChange={(e) => handleSettingChange('aboutPage.heroTitle', e.target.value)} placeholder="عنوان البطل" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>وصف البطل</FormLabel>
-                              <Textarea value={localSettings?.aboutPage?.heroDescription || ''} onChange={(e) => handleSettingChange('aboutPage.heroDescription', e.target.value)} placeholder="وصف البطل" />
+                              <Textarea w="full" value={localSettings?.aboutPage?.heroDescription || ''} onChange={(e) => handleSettingChange('aboutPage.heroDescription', e.target.value)} placeholder="وصف البطل" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>عنوان القصة</FormLabel>
-                              <Input value={localSettings?.aboutPage?.storyTitle || ''} onChange={(e) => handleSettingChange('aboutPage.storyTitle', e.target.value)} placeholder="عنوان القصة" />
+                              <Input w="full" value={localSettings?.aboutPage?.storyTitle || ''} onChange={(e) => handleSettingChange('aboutPage.storyTitle', e.target.value)} placeholder="عنوان القصة" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>محتوى القصة</FormLabel>
-                              <Textarea value={localSettings?.aboutPage?.storyContent || ''} onChange={(e) => handleSettingChange('aboutPage.storyContent', e.target.value)} placeholder="محتوى القصة" />
+                              <Textarea w="full" value={localSettings?.aboutPage?.storyContent || ''} onChange={(e) => handleSettingChange('aboutPage.storyContent', e.target.value)} placeholder="محتوى القصة" />
                             </FormControl>
                           </SimpleGrid>
                         </VStack>
                       </TabPanel>
                       {/* Contact Page Settings */}
-                      <TabPanel>
-                        <VStack spacing={6} align="stretch">
-                          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+                      <TabPanel px={0}>
+                        <VStack spacing={4} align="stretch">
+                          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} w="full">
                             <FormControl>
                               <FormLabel>العنوان</FormLabel>
-                              <Input value={localSettings?.contactPage?.title || ''} onChange={(e) => handleSettingChange('contactPage.title', e.target.value)} placeholder="العنوان" />
+                              <Input w="full" value={localSettings?.contactPage?.title || ''} onChange={(e) => handleSettingChange('contactPage.title', e.target.value)} placeholder="العنوان" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>الوصف</FormLabel>
-                              <Textarea value={localSettings?.contactPage?.description || ''} onChange={(e) => handleSettingChange('contactPage.description', e.target.value)} placeholder="الوصف" />
+                              <Textarea w="full" value={localSettings?.contactPage?.description || ''} onChange={(e) => handleSettingChange('contactPage.description', e.target.value)} placeholder="الوصف" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>العنوان الفعلي</FormLabel>
-                              <Input value={localSettings?.contactPage?.address || ''} onChange={(e) => handleSettingChange('contactPage.address', e.target.value)} placeholder="العنوان الفعلي" />
+                              <Input w="full" value={localSettings?.contactPage?.address || ''} onChange={(e) => handleSettingChange('contactPage.address', e.target.value)} placeholder="العنوان الفعلي" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>رقم الهاتف</FormLabel>
-                              <Input value={localSettings?.contactPage?.phone || ''} onChange={(e) => handleSettingChange('contactPage.phone', e.target.value)} placeholder="رقم الهاتف" />
+                              <Input w="full" value={localSettings?.contactPage?.phone || ''} onChange={(e) => handleSettingChange('contactPage.phone', e.target.value)} placeholder="رقم الهاتف" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>البريد الإلكتروني</FormLabel>
-                              <Input value={localSettings?.contactPage?.email || ''} onChange={(e) => handleSettingChange('contactPage.email', e.target.value)} placeholder="البريد الإلكتروني" />
+                              <Input w="full" value={localSettings?.contactPage?.email || ''} onChange={(e) => handleSettingChange('contactPage.email', e.target.value)} placeholder="البريد الإلكتروني" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>رابط الخريطة</FormLabel>
-                              <Input value={localSettings?.contactPage?.mapEmbedUrl || ''} onChange={(e) => handleSettingChange('contactPage.mapEmbedUrl', e.target.value)} placeholder="رابط الخريطة" />
+                              <Input w="full" value={localSettings?.contactPage?.mapEmbedUrl || ''} onChange={(e) => handleSettingChange('contactPage.mapEmbedUrl', e.target.value)} placeholder="رابط الخريطة" />
                             </FormControl>
                           </SimpleGrid>
                         </VStack>
                       </TabPanel>
                       {/* Banner Settings */}
-                      <TabPanel>
-                        <VStack spacing={8}>
+                      <TabPanel px={0}>
+                        <VStack spacing={4} align="stretch">
                           <Box>
                             <Heading size="md" mb={4}>إعدادات البانرات</Heading>
                             {/* Home Page Banners */}
                             <Box mb={8}>
                               <Heading size="sm" mb={4}>بانرات الصفحة الرئيسية</Heading>
-                              <VStack spacing={4}>
+                              <VStack spacing={4} align="stretch">
                                 {localSettings?.banners?.home && Object.entries(localSettings.banners.home).map(([key, banner]) => (
                                   <BannerCard key={key} pageType="home" bannerKey={key} banner={banner} />
                                 ))}
-                                <Button onClick={() => handleAddBanner('home')}>إضافة بانر جديد للصفحة الرئيسية</Button>
+                                <Button w="full" onClick={() => handleAddBanner('home')}>إضافة بانر جديد للصفحة الرئيسية</Button>
                               </VStack>
                             </Box>
                             {/* About Page Banners */}
                             <Box mb={8}>
                               <Heading size="sm" mb={4}>بانرات صفحة من نحن</Heading>
-                              <VStack spacing={4}>
+                              <VStack spacing={4} align="stretch">
                                 {localSettings?.banners?.about && (
                                   <BannerCard pageType="about" bannerKey="about" banner={localSettings.banners.about} />
                                 )}
@@ -2654,7 +2654,7 @@ const AdminDashboard = () => {
                             {/* Contact Page Banners */}
                             <Box mb={8}>
                               <Heading size="sm" mb={4}>بانرات صفحة اتصال</Heading>
-                              <VStack spacing={4}>
+                              <VStack spacing={4} align="stretch">
                                 {localSettings?.banners?.contact && (
                                   <BannerCard pageType="contact" bannerKey="contact" banner={localSettings.banners.contact} />
                                 )}
@@ -2664,62 +2664,62 @@ const AdminDashboard = () => {
                         </VStack>
                       </TabPanel>
                       {/* Social Media Settings */}
-                      <TabPanel>
-                        <VStack spacing={6} align="stretch">
-                          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+                      <TabPanel px={0}>
+                        <VStack spacing={4} align="stretch">
+                          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} w="full">
                             <FormControl>
                               <FormLabel>رابط فيسبوك</FormLabel>
-                              <Input value={localSettings?.socialMedia?.facebook || ''} onChange={(e) => handleSettingChange('socialMedia.facebook', e.target.value)} placeholder="رابط فيسبوك" />
+                              <Input w="full" value={localSettings?.socialMedia?.facebook || ''} onChange={(e) => handleSettingChange('socialMedia.facebook', e.target.value)} placeholder="رابط فيسبوك" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>رابط تويتر</FormLabel>
-                              <Input value={localSettings?.socialMedia?.twitter || ''} onChange={(e) => handleSettingChange('socialMedia.twitter', e.target.value)} placeholder="رابط تويتر" />
+                              <Input w="full" value={localSettings?.socialMedia?.twitter || ''} onChange={(e) => handleSettingChange('socialMedia.twitter', e.target.value)} placeholder="رابط تويتر" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>رابط إنستغرام</FormLabel>
-                              <Input value={localSettings?.socialMedia?.instagram || ''} onChange={(e) => handleSettingChange('socialMedia.instagram', e.target.value)} placeholder="رابط إنستغرام" />
+                              <Input w="full" value={localSettings?.socialMedia?.instagram || ''} onChange={(e) => handleSettingChange('socialMedia.instagram', e.target.value)} placeholder="رابط إنستغرام" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>رابط لينكد إن</FormLabel>
-                              <Input value={localSettings?.socialMedia?.linkedin || ''} onChange={(e) => handleSettingChange('socialMedia.linkedin', e.target.value)} placeholder="رابط لينكد إن" />
+                              <Input w="full" value={localSettings?.socialMedia?.linkedin || ''} onChange={(e) => handleSettingChange('socialMedia.linkedin', e.target.value)} placeholder="رابط لينكد إن" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>رابط واتساب</FormLabel>
-                              <Input value={localSettings?.socialMedia?.whatsapp || ''} onChange={(e) => handleSettingChange('socialMedia.whatsapp', e.target.value)} placeholder="رابط واتساب" />
+                              <Input w="full" value={localSettings?.socialMedia?.whatsapp || ''} onChange={(e) => handleSettingChange('socialMedia.whatsapp', e.target.value)} placeholder="رابط واتساب" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>رابط يوتيوب</FormLabel>
-                              <Input value={localSettings?.socialMedia?.youtube || ''} onChange={(e) => handleSettingChange('socialMedia.youtube', e.target.value)} placeholder="رابط يوتيوب" />
+                              <Input w="full" value={localSettings?.socialMedia?.youtube || ''} onChange={(e) => handleSettingChange('socialMedia.youtube', e.target.value)} placeholder="رابط يوتيوب" />
                             </FormControl>
                           </SimpleGrid>
                         </VStack>
                       </TabPanel>
                       {/* Site Settings */}
-                      <TabPanel>
-                        <VStack spacing={6} align="stretch">
-                          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+                      <TabPanel px={0}>
+                        <VStack spacing={4} align="stretch">
+                          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} w="full">
                             <FormControl>
                               <FormLabel>اسم الموقع</FormLabel>
-                              <Input value={localSettings?.siteName || ''} onChange={(e) => handleSettingChange('siteName', e.target.value)} placeholder="اسم الموقع" />
+                              <Input w="full" value={localSettings?.siteName || ''} onChange={(e) => handleSettingChange('siteName', e.target.value)} placeholder="اسم الموقع" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>وصف الموقع</FormLabel>
-                              <Input value={localSettings?.siteDescription || ''} onChange={(e) => handleSettingChange('siteDescription', e.target.value)} placeholder="وصف الموقع" />
+                              <Input w="full" value={localSettings?.siteDescription || ''} onChange={(e) => handleSettingChange('siteDescription', e.target.value)} placeholder="وصف الموقع" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>البريد الإلكتروني للاتصال</FormLabel>
-                              <Input value={localSettings?.contactEmail || ''} onChange={(e) => handleSettingChange('contactEmail', e.target.value)} placeholder="البريد الإلكتروني للاتصال" />
+                              <Input w="full" value={localSettings?.contactEmail || ''} onChange={(e) => handleSettingChange('contactEmail', e.target.value)} placeholder="البريد الإلكتروني للاتصال" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>رقم الهاتف للاتصال</FormLabel>
-                              <Input value={localSettings?.contactPhone || ''} onChange={(e) => handleSettingChange('contactPhone', e.target.value)} placeholder="رقم الهاتف للاتصال" />
+                              <Input w="full" value={localSettings?.contactPhone || ''} onChange={(e) => handleSettingChange('contactPhone', e.target.value)} placeholder="رقم الهاتف للاتصال" />
                             </FormControl>
                           </SimpleGrid>
                         </VStack>
                       </TabPanel>
                     </TabPanels>
                   </Tabs>
-                  <Button colorScheme="blue" isLoading={isSavingSettings} onClick={handleSaveSettings} width="full" mt={4}>حفظ الإعدادات</Button>
+                  <Button colorScheme="blue" isLoading={isSavingSettings} w="full" onClick={handleSaveSettings} mt={4}>حفظ الإعدادات</Button>
                 </TabPanel>
               </TabPanels>
             </Tabs>
