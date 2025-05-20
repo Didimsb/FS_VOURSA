@@ -18,9 +18,11 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 // CORS configuration with multiple origins support
-const allowedOrigins = process.env.FRONTEND_URL 
-  ? [process.env.FRONTEND_URL] 
-  : ['http://localhost:3000', 'https://voursa.vercel.app','https://agencevoursa.com'];
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://voursa.vercel.app',
+  'https://agencevoursa.com'
+];
 
 app.use(cors({
   origin: function(origin, callback) {
