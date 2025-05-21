@@ -85,13 +85,6 @@ const SellerLogin = ({ admin = false }) => {
   const featureBg = useColorModeValue('primary.50', 'primary.900');
   const featureTextColor = useColorModeValue('primary.700', 'primary.200');
   
-  const handleWhatsAppClick = () => {
-    // Format the phone number for WhatsApp
-    const phone = '+22212345678'; // Replace with the owner's phone number
-    const formattedPhone = phone.replace(/\D/g, '');
-    window.open(`https://wa.me/${formattedPhone}?text=مرحباً، أرغب في أن أصبح بائعاً على منصتكم`, '_blank');
-  };
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -390,14 +383,14 @@ const SellerLogin = ({ admin = false }) => {
                   ليس لديك حساب؟
                 </AlertTitle>
                 <AlertDescription maxWidth="sm">
-                  تواصل مع مالك المنصة عبر واتساب للحصول على حساب
+                  قم بإنشاء حساب جديد للوصول إلى المنصة
                 </AlertDescription>
                 <Button
-                  leftIcon={<MessageCircle />}
-                  colorScheme="green"
+                  leftIcon={<User />}
+                  colorScheme="blue"
                   size="md"
                   mt={4}
-                  onClick={handleWhatsAppClick}
+                  onClick={() => navigate('/register')}
                   _hover={{
                     transform: "translateY(-3px)",
                     boxShadow: "md",
@@ -405,7 +398,7 @@ const SellerLogin = ({ admin = false }) => {
                   transition="all 0.3s ease"
                   rounded="lg"
                 >
-                  تواصل عبر واتساب
+                  إنشاء حساب جديد
                 </Button>
               </Alert>
             </VStack>

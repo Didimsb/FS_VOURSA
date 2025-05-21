@@ -11,6 +11,7 @@ import PropertyDetail from './pages/PropertyDetail';
 import SellerDashboard from './pages/SellerDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import SellerLogin from './pages/SellerLogin';
+import Register from './pages/Register';
 import theme from './theme';
 import { ChakraProvider, CSSReset } from '@chakra-ui/react';
 
@@ -76,6 +77,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/property/:id" element={<PropertyDetail />} />
             <Route path="/login" element={<SellerLogin />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/seller-login" element={<SellerLogin />} />
             <Route path="/admin/login" element={<SellerLogin admin={true} />} />
             

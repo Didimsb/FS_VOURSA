@@ -13,7 +13,8 @@ cloudinary.config({
 // Register user
 exports.registerUser = async (req, res) => {
   try {
-    const { name, email, password, phone } = req.body;
+    console.log('Registration request body:', req.body);
+    const { name, email, password, phone, whatsapp } = req.body;
 
     // Check if user already exists
     let user = await User.findOne({ email });
@@ -29,10 +30,25 @@ exports.registerUser = async (req, res) => {
       name,
       email,
       password,
-      phone
+      phone,
+      whatsapp,
+      role: 'seller',
+      isApproved: false
     });
 
-    await user.save();
+    console.log('New user object before save:', user);
+
+    try {
+      await user.save();
+      console.log('User saved successfully:', user);
+    } catch (saveError) {
+      console.error('Error saving user:', saveError);
+      return res.status(500).json({
+        success: false,
+        message: 'حدث خطأ أثناء التسجيل',
+        error: saveError.message
+      });
+    }
 
     // Generate token
     const token = user.generateAuthToken();
@@ -45,10 +61,12 @@ exports.registerUser = async (req, res) => {
         name: user.name,
         email: user.email,
         phone: user.phone,
+        whatsapp: user.whatsapp,
         role: user.role
       }
     });
   } catch (error) {
+    console.error('Registration error:', error);
     res.status(500).json({
       success: false,
       message: 'حدث خطأ أثناء التسجيل',
@@ -88,6 +106,14 @@ exports.loginUser = async (req, res) => {
       });
     }
 
+    // Check if user is approved (skip for admin and superadmin)
+    if (user.role === 'seller' && !user.isApproved) {
+      return res.status(403).json({
+        success: false,
+        message: 'حسابك قيد المراجعة. سيتم إعلامك عند الموافقة.'
+      });
+    }
+
     // Update last login
     user.lastLogin = Date.now();
     await user.save();
@@ -103,7 +129,8 @@ exports.loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         phone: user.phone,
-        role: user.role
+        role: user.role,
+        isApproved: user.isApproved
       }
     });
   } catch (error) {

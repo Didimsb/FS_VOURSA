@@ -41,6 +41,10 @@ const userSchema = new mongoose.Schema({
     enum: ['admin', 'superadmin', 'seller'],
     default: 'seller'
   },
+  isApproved: {
+    type: Boolean,
+    default: false
+  },
   company: {
     type: String,
     default: ''

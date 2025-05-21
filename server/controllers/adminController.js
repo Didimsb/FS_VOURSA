@@ -232,6 +232,7 @@ const updateUser = asyncHandler(async (req, res) => {
   user.role = req.body.role || user.role;
   user.phone = req.body.phone || user.phone;
   user.whatsapp = req.body.whatsapp || user.whatsapp;
+  user.isApproved = req.body.isApproved !== undefined ? req.body.isApproved : user.isApproved;
 
   if (req.body.password) {
     user.password = req.body.password;
@@ -247,7 +248,8 @@ const updateUser = asyncHandler(async (req, res) => {
       email: updatedUser.email,
       role: updatedUser.role,
       phone: updatedUser.phone,
-      whatsapp: updatedUser.whatsapp
+      whatsapp: updatedUser.whatsapp,
+      isApproved: updatedUser.isApproved
     }
   });
 });
@@ -388,6 +390,70 @@ const getStats = async (req, res) => {
   }
 };
 
+// @desc    Get pending users
+// @route   GET /api/admin/pending-users
+// @access  Private/Admin
+const getPendingUsers = asyncHandler(async (req, res) => {
+  const users = await User.find({ 
+    role: 'seller',
+    isApproved: false 
+  }).select('-password');
+  
+  res.json({
+    success: true,
+    users
+  });
+});
+
+// @desc    Approve user
+// @route   PUT /api/admin/users/:id/approve
+// @access  Private/Admin
+const approveUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    res.status(404);
+    throw new Error('المستخدم غير موجود');
+  }
+
+  if (user.role !== 'seller') {
+    res.status(400);
+    throw new Error('يمكن الموافقة فقط على حسابات البائعين');
+  }
+
+  user.isApproved = true;
+  await user.save();
+
+  res.json({
+    success: true,
+    message: 'تمت الموافقة على المستخدم بنجاح',
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      isApproved: user.isApproved
+    }
+  });
+});
+
+// Reject user
+const rejectUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'المستخدم غير موجود' });
+    }
+
+    // Delete the user
+    await User.findByIdAndDelete(req.params.userId);
+
+    res.json({ success: true, message: 'تم رفض المستخدم بنجاح' });
+  } catch (error) {
+    res.status(500).json({ message: 'حدث خطأ أثناء رفض المستخدم' });
+  }
+};
+
 module.exports = {
   loginAdmin,
   getAdminProfile,
@@ -399,5 +465,8 @@ module.exports = {
   deleteUser,
   getPointsTransactions,
   updatePointsTransaction,
-  getStats
+  getStats,
+  getPendingUsers,
+  approveUser,
+  rejectUser,
 }; 

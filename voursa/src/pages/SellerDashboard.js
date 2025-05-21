@@ -223,84 +223,89 @@ const SellerDashboard = () => {
   // Add province-district mapping
   const provinceDistricts = {
     'ولاية نواكشوط الشمالية': [
-      'مقاطعة تفرغ زينة',
       'مقاطعة دار النعيم',
       'مقاطعة تيارت',
-      'مقاطعة لكصر'
+      'مقاطعة توجنين'
     ],
     'ولاية نواكشوط الغربية': [
-      'مقاطعة تفرغ زينة',
       'مقاطعة لكصر',
-      'مقاطعة تيارت'
+      'مقاطعة السبخة',
+      'مقاطعة تفرغ زينة'
     ],
     'ولاية نواكشوط الجنوبية': [
-      'مقاطعة الرياض',
       'مقاطعة عرفات',
-      'مقاطعة لكصر'
+      'مقاطعة الميناء',
+      'مقاطعة الرياض'
     ],
     'ولاية الحوض الشرقي': [
-      'مقاطعة النعمة',
-      'مقاطعة أمبرة',
+      'مقاطعة امورج',
       'مقاطعة باسكنو',
-      'مقاطعة بومديد',
-      'مقاطعة جكني'
+      'مقاطعة جكني',
+      'مقاطعة النعمة',
+      'مقاطعة ولاتة',
+      'مقاطعة تمبدغة'
     ],
     'ولاية الحوض الغربي': [
-      'مقاطعة ألاك',
-      'مقاطعة كيفة',
-      'مقاطعة المجرية',
-      'مقاطعة بوكادوم',
-      'مقاطعة ولاتة'
+      'مقاطعة العيون',
+      'مقاطعة كوبني',
+      'مقاطعة تامشكط',
+      'مقاطعة الطينطان'
     ],
     'ولاية العصابة': [
-      'مقاطعة كيفة',
-      'مقاطعة كانكوصة',
+      'مقاطعة باركيول',
       'مقاطعة بومديد',
-      'مقاطعة بوكي',
-      'مقاطعة كرو'
+      'مقاطعة كرو',
+      'مقاطعة كنكوصة',
+      'مقاطعة كيفة'
     ],
     'ولاية كوركول': [
-      'مقاطعة كيفة',
-      'مقاطعة كوركول',
+      'مقاطعة كيهيدي',
+      'مقاطعة امبود',
+      'مقاطعة مقامه',
       'مقاطعة مونكل'
     ],
     'ولاية البراكنة': [
       'مقاطعة ألاك',
+      'مقاطعة بابابي',
       'مقاطعة بوكي',
-      'مقاطعة البراكنة'
+      'مقاطعة امباني',
+      'مقاطعة مقطع لحجار'
     ],
     'ولاية الترارزة': [
-      'مقاطعة روصو',
       'مقاطعة بوتلميت',
-      'مقاطعة ترارزة'
+      'مقاطعة كرمسين',
+      'مقاطعة المذرذره',
+      'مقاطعة واد الناقة',
+      'مقاطعة الركيز',
+      'مقاطعة روصو'
     ],
     'ولاية آدرار': [
       'مقاطعة أطار',
       'مقاطعة شنقيط',
-      'مقاطعة وادان',
-      'مقاطعة أوجفت'
-    ],
-    'ولاية تيرس زمور': [
-      'مقاطعة الزويرات',
-      'مقاطعة فديرك',
-      'مقاطعة بير أم اكرين'
+      'مقاطعة أوجفت',
+      'مقاطعة وادان'
     ],
     'ولاية داخلة نواذيبو': [
       'مقاطعة نواذيبو',
-      'مقاطعة بئر أم اكرين',
-      'مقاطعة داخلة'
+      'مقاطعة الشامي'
     ],
     'ولاية تكانت': [
-      'مقاطعة تجكجة',
-      'مقاطعة تكانت'
+      'مقاطعة المجرية',
+      'مقاطعة تيشيت',
+      'مقاطعة تجكجة'
     ],
     'ولاية غيديماغا': [
-      'مقاطعة سيلبابي',
-      'مقاطعة غيديماغا'
+      'مقاطعة ولد ينج',
+      'مقاطعة سيليبابي'
+    ],
+    'ولاية تيرس زمور': [
+      'مقاطعة بير أم اكرين',
+      'مقاطعة فديرك',
+      'مقاطعة الزويرات',
     ],
     'ولاية إينشيري': [
       'مقاطعة أكجوجت',
-      'مقاطعة تمشكط'
+      'مقاطعة بنشاب'
     ]
   };
 
@@ -637,22 +642,11 @@ const SellerDashboard = () => {
   };
 
   const handleSaveNewProperty = async () => {
-    if (!isFormValid()) {
-      toast({
-        title: "خطأ",
-        description: "يرجى ملء جميع الحقول المطلوبة",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-    
     try {
       // Check points balance first
       const balanceResponse = await getPointsBalance();
       if (balanceResponse.balance < settings?.costPerProperty) {
-    toast({
+        toast({
           title: "نقاط غير كافية",
           description: `تحتاج إلى ${settings?.costPerProperty} نقطة لإضافة عقار جديد. رصيدك الحالي: ${balanceResponse.balance}`,
           status: "error",
@@ -667,14 +661,46 @@ const SellerDashboard = () => {
       // Create FormData for the entire request
       const formData = new FormData();
       
+      // Debug log before processing
+      console.log('Original newProperty:', newProperty);
+      
       // Add all property data
       Object.keys(newProperty).forEach(key => {
         if (key === 'features') {
           formData.append(key, JSON.stringify(newProperty[key]));
         } else if (key === 'type') {
-          // Map 'type' to 'propertyType' for the server
-          formData.append('propertyType', newProperty[key]);
-        } else if (key !== 'mainPhoto' && key !== 'additionalMedia') {
+          // Map property type to backend enum values
+          const propertyTypeMap = {
+            'شقة': 'شقة',
+            'فيلا': 'فيلا',
+            'أرض': 'أرض',
+            'مكتب': 'مكتب',
+            'متجر': 'متجر',
+            'مصنع': 'مصنع',
+            'مصنع للايجار': 'مصنع للايجار',
+            'شقة للايجار': 'شقة للايجار',
+            'أرض للايجار': 'أرض للايجار',
+            'فيلا للايجار': 'فيلا للايجار',
+            'مكتب للايجار': 'مكتب للايجار',
+            'متجر للايجار': 'متجر للايجار'
+          };
+          
+          const mappedPropertyType = propertyTypeMap[newProperty.type] || 'شقة';
+          console.log('Mapping property type:', { original: newProperty.type, mapped: mappedPropertyType });
+          formData.append('propertyType', mappedPropertyType);
+        } else if (key === 'status') {
+          // Map status to backend enum values
+          const statusMap = {
+            'للايجار': 'للايجار',
+            'للبيع': 'للبيع',
+            'مؤجر': 'مؤجر',
+            'بيع': 'بيع'
+          };
+          
+          const mappedStatus = statusMap[newProperty.status] || 'للبيع';
+          console.log('Mapping status:', { original: newProperty.status, mapped: mappedStatus });
+          formData.append('status', mappedStatus);
+        } else if (key !== 'mainPhoto' && key !== 'additionalMedia' && key !== 'propertyType') {
           formData.append(key, newProperty[key]);
         }
       });
@@ -691,9 +717,14 @@ const SellerDashboard = () => {
         });
       }
 
-      // Add user role and status
+      // Add user role
       formData.append('userRole', user.role);
-      formData.append('status', 'للبيع');
+
+      // Debug log to see what's being sent
+      console.log('Final FormData contents:');
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+      }
 
       // Make a single API call that handles both property creation and points deduction
       const response = await axiosInstance.post('/properties', formData, {
@@ -711,47 +742,39 @@ const SellerDashboard = () => {
           description: "تم إضافة العقار بنجاح وهو قيد المراجعة",
           status: "success",
           duration: 3000,
-      isClosable: true,
-    });
+          isClosable: true,
+        });
     
-    // Reset form
-    setNewProperty({
-      title: '',
+        // Reset form
+        setNewProperty({
+          title: '',
           description: '',
-      price: '',
-      location: '',
+          price: '',
+          location: '',
           type: '',
           bedrooms: '',
           bathrooms: '',
           area: '',
-      features: [],
+          features: [],
           mainPhoto: null,
           additionalMedia: [],
           province: '',
-          district: ''
-    });
+          district: '',
+          status: ''
+        });
         setMainPhotoPreview(null);
-    setAdditionalMediaPreviews([]);
+        setAdditionalMediaPreviews([]);
         setAdditionalMediaFiles([]);
-    onAddPropertyClose();
+        onAddPropertyClose();
       }
     } catch (error) {
       console.error('Error saving property:', error);
-      let errorMessage = "حدث خطأ أثناء حفظ العقار";
-      
-      if (error.response) {
-        errorMessage = error.response.data.message || errorMessage;
-      } else if (error.request) {
-        errorMessage = "لم يتم استلام رد من الخادم. يرجى المحاولة مرة أخرى";
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-      
+      console.error('Error details:', error.response?.data);
       toast({
-        title: "خطأ",
-        description: errorMessage,
+        title: "خطأ في الإضافة",
+        description: error.response?.data?.message || "حدث خطأ أثناء إضافة العقار",
         status: "error",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       });
     } finally {
@@ -1270,6 +1293,56 @@ const SellerDashboard = () => {
 
     fetchStats();
   }, [user._id]);
+
+  const propertyTypes = [
+    'شقة',
+    'فيلا',
+    'أرض',
+    'مكتب',
+    'متجر',
+    'مصنع',
+    'شقة للايجار',
+    'فيلا للايجار',
+    'أرض للايجار',
+    'مكتب للايجار',
+    'متجر للايجار',
+    'مصنع للايجار'
+  ];
+
+  const propertyStatuses = {
+    'شقة': ['للبيع', 'بيع'],
+    'فيلا': ['للبيع', 'بيع'],
+    'أرض': ['للبيع', 'بيع'],
+    'مكتب': ['للبيع', 'بيع'],
+    'متجر': ['للبيع', 'بيع'],
+    'مصنع': ['للبيع', 'بيع'],
+    'شقة للايجار': ['للايجار', 'مؤجر'],
+    'فيلا للايجار': ['للايجار', 'مؤجر'],
+    'أرض للايجار': ['للايجار', 'مؤجر'],
+    'مكتب للايجار': ['للايجار', 'مؤجر'],
+    'متجر للايجار': ['للايجار', 'مؤجر'],
+    'مصنع للايجار': ['للايجار', 'مؤجر']
+  };
+
+  const handlePropertyTypeChange = (e) => {
+    const selectedType = e.target.value;
+    let defaultStatus = 'للبيع';
+    
+    // Set default status based on property type
+    if (selectedType.includes('للايجار')) {
+      defaultStatus = 'للايجار';
+    }
+    
+    setNewProperty(prev => {
+      const updated = {
+        ...prev,
+        type: selectedType,
+        status: defaultStatus
+      };
+      console.log('Property type changed:', updated);
+      return updated;
+    });
+  };
 
   return (
     <Box>
@@ -2380,13 +2453,14 @@ const SellerDashboard = () => {
                 
                 <FormControl isRequired>
                   <FormLabel>نوع العقار</FormLabel>
-                  <Select placeholder="اختر نوع العقار" value={newProperty.type} onChange={(e) => setNewProperty({ ...newProperty, type: e.target.value })}>
-                    <option value="فيلا">فيلا</option>
-                    <option value="شقة">شقة</option>
-                    <option value="أرض">أرض</option>
-                    <option value="مكتب">مكتب</option>
-                    <option value="متجر">متجر</option>
-                    <option value="مصنع">مصنع</option>
+                  <Select
+                    value={newProperty.type}
+                    onChange={handlePropertyTypeChange}
+                    placeholder="اختر نوع العقار"
+                  >
+                    {propertyTypes.map((type) => (
+                      <option key={type} value={type}>{type}</option>
+                    ))}
                   </Select>
                 </FormControl>
 

@@ -11,8 +11,16 @@ import {
   VStack,
   Spinner,
   Center,
+  Icon,
+  Flex,
+  Wrap,
+  WrapItem,
+  Tooltip,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
+import { FaHome, FaBuilding, FaStore, FaIndustry, FaWarehouse, FaLandmark } from 'react-icons/fa';
+import { MdApartment, MdBusiness, MdFactory } from 'react-icons/md';
+import { GiOfficeChair } from 'react-icons/gi';
 import Hero from '../components/Hero';
 import PropertyCard from '../components/PropertyCard';
 import BannerSlider from '../components/BannerSlider';
@@ -22,6 +30,21 @@ import { getAllProperties } from '../services/PropertyService';
 
 const MotionBox = motion(Box);
 
+const propertyTypeIcons = {
+  'شقة': MdApartment,
+  'فيلا': FaHome,
+  'أرض': FaLandmark,
+  'مكتب': MdBusiness,
+  'متجر': FaStore,
+  'مصنع': FaIndustry,
+  'مصنع للايجار': MdFactory,
+  'شقة للايجار': MdApartment,
+  'أرض للايجار': FaLandmark,
+  'فيلا للايجار': FaHome,
+  'مكتب للايجار': GiOfficeChair,
+  'متجر للايجار': FaStore
+};
+
 const Home = () => {
   const { settings, loading: settingsLoading } = useSettings();
   const [properties, setProperties] = useState([]);
@@ -29,9 +52,11 @@ const Home = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [filters, setFilters] = useState({});
+  const [selectedPropertyType, setSelectedPropertyType] = useState(null);
   const textColor = useColorModeValue('gray.600', 'gray.300');
   const bgColor = useColorModeValue('white', 'gray.800');
   const containerBg = useColorModeValue('gray.50', 'gray.900');
+  const hoverBg = useColorModeValue('yellow.50', 'yellow.900');
 
   const fetchProperties = async (pageNum = 1, currentFilters = {}) => {
     try {
@@ -123,6 +148,15 @@ const Home = () => {
     fetchProperties(nextPage, filters);
   };
 
+  const handlePropertyTypeClick = (type) => {
+    setSelectedPropertyType(type === selectedPropertyType ? null : type);
+    setFilters(prev => ({
+      ...prev,
+      propertyType: type === selectedPropertyType ? null : type
+    }));
+    setPage(1);
+  };
+
   if (settingsLoading) {
     return (
       <Box bg={containerBg} minH="100vh" display="flex" alignItems="center" justifyContent="center">
@@ -154,6 +188,34 @@ const Home = () => {
             <Text fontSize="lg" color={textColor}>
               {settings?.homePage?.featuredPropertiesDescription || 'اكتشف مجموعة متنوعة من العقارات المميزة في أفضل المواقع'}
             </Text>
+          </Box>
+
+          {/* Property Type Filter */}
+          <Box mb={8}>
+            <Heading size="md" mb={4} textAlign="center">اختر نوع العقار</Heading>
+            <Wrap spacing={4} justify="center">
+              {Object.entries(propertyTypeIcons).map(([type, IconComponent]) => (
+                <WrapItem key={type}>
+                  <Tooltip label={type} placement="top">
+                    <Button
+                      size="lg"
+                      variant={selectedPropertyType === type ? "solid" : "outline"}
+                      colorScheme="yellow"
+                      leftIcon={<Icon as={IconComponent} />}
+                      onClick={() => handlePropertyTypeClick(type)}
+                      _hover={{
+                        bg: hoverBg,
+                        transform: 'translateY(-2px)',
+                        boxShadow: 'lg'
+                      }}
+                      transition="all 0.2s"
+                    >
+                      {type}
+                    </Button>
+                  </Tooltip>
+                </WrapItem>
+              ))}
+            </Wrap>
           </Box>
 
           {loading && page === 1 ? (

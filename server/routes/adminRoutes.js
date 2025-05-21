@@ -11,8 +11,10 @@ router.get('/profile', protect, isAdmin, adminController.getAdminProfile);
 
 // User management routes
 router.get('/users', protect, isAdmin, adminController.getAllUsers);
+router.get('/pending-users', protect, isAdmin, adminController.getPendingUsers);
 router.post('/users', protect, isAdmin, adminController.createUser);
 router.put('/users/:id', protect, isAdmin, adminController.updateUser);
+router.put('/users/:id/approve', protect, isAdmin, adminController.approveUser);
 router.delete('/users/:id', protect, isAdmin, adminController.deleteUser);
 
 // Points transactions routes
@@ -21,5 +23,14 @@ router.put('/points-transactions/:id', protect, isAdmin, adminController.updateP
 
 // Add new route for admin statistics
 router.get('/stats', protect, isAdmin, adminController.getStats);
+
+// Get pending users
+router.get('/users/pending', protect, isAdmin, adminController.getPendingUsers);
+
+// Approve user
+router.put('/users/:userId/approve', protect, isAdmin, adminController.approveUser);
+
+// Reject user
+router.put('/users/:userId/reject', protect, isAdmin, adminController.rejectUser);
 
 module.exports = router; 

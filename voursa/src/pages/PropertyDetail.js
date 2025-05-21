@@ -59,6 +59,36 @@ import Footer from '../components/Footer';
 
 const MotionBox = motion(Box);
 
+const getStatusColor = (status) => {
+  switch (status) {
+    case 'للبيع':
+      return 'blue';
+    case 'بيع':
+      return 'green';
+    case 'للايجار':
+      return 'purple';
+    case 'مؤجر':
+      return 'orange';
+    default:
+      return 'gray';
+  }
+};
+
+const getStatusText = (status) => {
+  switch (status) {
+    case 'للبيع':
+      return 'للبيع';
+    case 'بيع':
+      return 'تم البيع';
+    case 'للايجار':
+      return 'للايجار';
+    case 'مؤجر':
+      return 'تم التأجير';
+    default:
+      return status;
+  }
+};
+
 const PropertyDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -226,8 +256,8 @@ const PropertyDetail = () => {
           <GridItem p={6}>
             <Stack spacing={6}>
               <Box>
-                <Badge colorScheme={property.status === 'للبيع' ? 'green' : 'red'} mb={2}>
-                  {property.status}
+                <Badge colorScheme={getStatusColor(property.status)}>
+                  {getStatusText(property.status)}
                 </Badge>
                 <Heading size="lg" mb={2}>
                   {property.title}

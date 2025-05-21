@@ -671,6 +671,63 @@ const AdminDashboard = () => {
 
   // Update the UserCard component to use the handlers
   const UserCard = ({ user }) => {
+    const toast = useToast();
+    const [loading, setLoading] = useState(false);
+
+    const handleApprove = async () => {
+      setLoading(true);
+      try {
+        const response = await axiosInstance.put(`/admin/users/${user._id}/approve`);
+        if (response.data.success) {
+          toast({
+            title: 'تمت الموافقة على المستخدم',
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+          });
+          // Refresh user list
+          fetchUsers();
+        }
+      } catch (error) {
+        toast({
+          title: 'خطأ',
+          description: error.response?.data?.message || 'حدث خطأ أثناء الموافقة على المستخدم',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const handleReject = async () => {
+      setLoading(true);
+      try {
+        const response = await axiosInstance.put(`/admin/users/${user._id}/reject`);
+        if (response.data.success) {
+          toast({
+            title: 'تم رفض المستخدم',
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+          });
+          // Refresh user list
+          fetchUsers();
+        }
+      } catch (error) {
+        toast({
+          title: 'خطأ',
+          description: error.response?.data?.message || 'حدث خطأ أثناء رفض المستخدم',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
     return (
       <Box
         w="full"
@@ -684,9 +741,14 @@ const AdminDashboard = () => {
             <VStack align="start" spacing={1}>
               <Text fontSize="lg" fontWeight="bold">{user.name}</Text>
               <Text color="gray.500">رقم الهاتف: {user.phone}</Text>
-              <Badge colorScheme={user.role === 'admin' ? 'purple' : user.role === 'superadmin' ? 'red' : 'blue'}>
-                {user.role === 'admin' ? 'مدير' : user.role === 'superadmin' ? 'مدير أعلى' : 'بائع'}
-              </Badge>
+              <HStack>
+                <Badge colorScheme={user.role === 'admin' ? 'purple' : user.role === 'superadmin' ? 'red' : 'blue'}>
+                  {user.role === 'admin' ? 'مدير' : user.role === 'superadmin' ? 'مدير أعلى' : 'بائع'}
+                </Badge>
+                {!user.isApproved && (
+                  <Badge colorScheme="yellow">في انتظار الموافقة</Badge>
+                )}
+              </HStack>
             </VStack>
           </HStack>
           
@@ -719,14 +781,33 @@ const AdminDashboard = () => {
               colorScheme="blue"
               onClick={() => handleEditUser(user)}
             />
-            {user.isActive ? (
-            <IconButton
-              icon={<Ban />}
-              size="sm"
-              variant="ghost"
-              colorScheme="red"
-              onClick={() => handleBanUser(user)}
-            />
+            {!user.isApproved ? (
+              <>
+                <IconButton
+                  icon={<CheckCircle />}
+                  size="sm"
+                  variant="ghost"
+                  colorScheme="green"
+                  onClick={handleApprove}
+                  isLoading={loading}
+                />
+                <IconButton
+                  icon={<XCircle />}
+                  size="sm"
+                  variant="ghost"
+                  colorScheme="red"
+                  onClick={handleReject}
+                  isLoading={loading}
+                />
+              </>
+            ) : user.isActive ? (
+              <IconButton
+                icon={<Ban />}
+                size="sm"
+                variant="ghost"
+                colorScheme="red"
+                onClick={() => handleBanUser(user)}
+              />
             ) : (
               <IconButton
                 icon={<CheckCircle />}
@@ -2736,11 +2817,11 @@ const AdminDashboard = () => {
 
       {/* Add Points Modal */}
       <Modal isOpen={isOpen} onClose={onClose} size="xl">
-        <ModalOverlay />
-        <ModalContent>
+              <ModalOverlay />
+              <ModalContent>
           <ModalHeader>إضافة نقاط</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
+                <ModalCloseButton />
+                <ModalBody>
             <VStack spacing={6}>
               <FormControl>
                 <FormLabel>عدد النقاط</FormLabel>
@@ -2802,12 +2883,12 @@ const AdminDashboard = () => {
                 />
               </FormControl>
             </VStack>
-          </ModalBody>
+                </ModalBody>
           
-          <ModalFooter>
+                <ModalFooter>
             <Button variant="ghost" mr={3} onClick={onClose}>
-              إلغاء
-            </Button>
+                    إلغاء
+                  </Button>
             <Button
               colorScheme="primary"
               isDisabled={!selectedPaymentMethod || !paymentScreenshot}
@@ -2823,9 +2904,9 @@ const AdminDashboard = () => {
             >
               إضافة النقاط
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
 
       {/* View Transaction Modal */}
       <Modal isOpen={isViewTransactionOpen} onClose={onViewTransactionClose} size="xl">
@@ -2897,7 +2978,7 @@ const AdminDashboard = () => {
                 <Box>
                   <Text fontWeight="bold" fontSize="lg" mb={4}>الإجراءات</Text>
                   <HStack spacing={4}>
-                    <Button
+                  <Button
                       leftIcon={<CheckCircle size={20} />}
                       colorScheme="green"
                       onClick={() => {
@@ -2906,8 +2987,8 @@ const AdminDashboard = () => {
                       }}
                     >
                       موافقة
-                    </Button>
-                    <Button
+                  </Button>
+                  <Button
                       leftIcon={<XCircle size={20} />}
                       colorScheme="red"
                       onClick={() => {
@@ -2916,7 +2997,7 @@ const AdminDashboard = () => {
                       }}
                     >
                       رفض
-                    </Button>
+                  </Button>
                   </HStack>
                 </Box>
               </VStack>
@@ -2965,8 +3046,8 @@ const AdminDashboard = () => {
           <ModalFooter borderTopWidth="1px" pt={4}>
             <Button variant="ghost" mr={3} onClick={onApproveTransactionClose}>
               إلغاء
-            </Button>
-            <Button
+                  </Button>
+                  <Button
               leftIcon={<CheckCircle size={20} />}
               colorScheme="green"
               onClick={handleConfirmApprove}
@@ -3017,14 +3098,14 @@ const AdminDashboard = () => {
           <ModalFooter borderTopWidth="1px" pt={4}>
             <Button variant="ghost" mr={3} onClick={onRejectTransactionClose}>
               إلغاء
-            </Button>
-            <Button
+                  </Button>
+                  <Button
               leftIcon={<XCircle size={20} />}
               colorScheme="red"
               onClick={handleConfirmReject}
             >
               تأكيد الرفض
-            </Button>
+                  </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -3203,7 +3284,7 @@ const AdminDashboard = () => {
               onEditUserClose();
             }}>
               حفظ التغييرات
-            </Button>
+                </Button>
             <Button variant="ghost" onClick={onEditUserClose}>
               إلغاء
             </Button>
@@ -3270,10 +3351,10 @@ const AdminDashboard = () => {
                               borderRadius="lg"
                             />
                           )}
-                        </Box>
+            </Box>
                       ))}
                     </SimpleGrid>
-                  </Box>
+          </Box>
                 )}
                 
                 <VStack align="stretch" spacing={4}>
