@@ -977,7 +977,7 @@ const SellerDashboard = () => {
             aria-label="تعديل"
             onClick={() => handleEditProperty(property)}
           />
-          {property.status !== 'بيع' && (
+          {property.status !== 'بيع' && property.status !== 'مؤجر' && (
             <Tooltip label="تحديد كمباع">
               <IconButton
                 icon={<Icon as={FaDollarSign} />}
@@ -1759,7 +1759,7 @@ const SellerDashboard = () => {
                                           aria-label="تعديل"
                                           onClick={() => handleEditProperty(property)}
                                         />
-                                        {property.status !== 'بيع' && (
+                                        {property.status !== 'بيع' && property.status !== 'مؤجر' && (
                                           <Tooltip label="تحديد كمباع">
                                             <IconButton
                                               icon={<Icon as={FaDollarSign} />}
@@ -1901,7 +1901,7 @@ const SellerDashboard = () => {
                                           aria-label="تعديل"
                                           onClick={() => handleEditProperty(property)}
                                         />
-                                        {property.status !== 'بيع' && (
+                                        {property.status !== 'بيع' && property.status !== 'مؤجر' && (
                                           <Tooltip label="تحديد كمباع">
                                             <IconButton
                                               icon={<Icon as={FaDollarSign} />}
