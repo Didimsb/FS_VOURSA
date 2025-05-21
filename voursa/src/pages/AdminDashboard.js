@@ -285,6 +285,68 @@ const AdminDashboard = () => {
     });
   };
   
+  const handleApprove = async (user) => {
+    try {
+      const response = await axiosInstance.put(`/admin/users/${user._id}/approve`);
+      if (response.data.success) {
+        setUsers(prevUsers => 
+          prevUsers.map(u => 
+            u._id === user._id 
+              ? { ...u, isApproved: true } 
+              : u
+          )
+        );
+        
+        toast({
+          title: "تمت الموافقة",
+          description: `تمت الموافقة على المستخدم ${user.name} بنجاح`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء الموافقة على المستخدم",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleReject = async (user) => {
+    try {
+      const response = await axiosInstance.put(`/admin/users/${user._id}/reject`);
+      if (response.data.success) {
+        setUsers(prevUsers => 
+          prevUsers.map(u => 
+            u._id === user._id 
+              ? { ...u, isApproved: false, isActive: false } 
+              : u
+          )
+        );
+        
+        toast({
+          title: "تم الرفض",
+          description: `تم رفض المستخدم ${user.name}`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "خطأ",
+        description: "حدث خطأ أثناء رفض المستخدم",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+  
   // Update the settings management functions to only update local state
   const handleSettingChange = (setting, value) => {
     setLocalSettings(prev => {
@@ -2195,7 +2257,7 @@ const AdminDashboard = () => {
                                 <Th>المستخدم</Th>
                                 <Th>الدور</Th>
                                 <Th>الحالة</Th>
-                                <Th>التاريخ</Th>
+                                <Th>حالة الموافقة</Th>
                                 <Th>الإجراءات</Th>
                               </Tr>
                             </Thead>
@@ -2229,7 +2291,11 @@ const AdminDashboard = () => {
                                       {user.isActive ? 'نشط' : 'محظور'}
                                     </Badge>
                                   </Td>
-                                  <Td>{user.date}</Td>
+                                  <Td>
+                                    <Badge colorScheme={user.isApproved ? 'green' : 'yellow'}>
+                                      {user.isApproved ? 'تمت الموافقة' : 'في انتظار الموافقة'}
+                                    </Badge>
+                                  </Td>
                                   <Td>
                                     <HStack spacing={2}>
                                       <Tooltip label="عرض">
@@ -2255,16 +2321,37 @@ const AdminDashboard = () => {
                                           }}
                                         />
                                       </Tooltip>
-                                      {user.isActive ? (
-                                      <Tooltip label="حظر">
-                                        <IconButton
-                                          icon={<Ban />}
-                                          size="sm"
-                                          variant="ghost"
-                                          colorScheme="red"
-                                          onClick={() => handleBanUser(user)}
-                                        />
-                                      </Tooltip>
+                                      {!user.isApproved ? (
+                                        <>
+                                          <Tooltip label="موافقة">
+                                            <IconButton
+                                              icon={<CheckCircle />}
+                                              size="sm"
+                                              variant="ghost"
+                                              colorScheme="green"
+                                              onClick={() => handleApprove(user)}
+                                            />
+                                          </Tooltip>
+                                          <Tooltip label="رفض">
+                                            <IconButton
+                                              icon={<XCircle />}
+                                              size="sm"
+                                              variant="ghost"
+                                              colorScheme="red"
+                                              onClick={() => handleReject(user)}
+                                            />
+                                          </Tooltip>
+                                        </>
+                                      ) : user.isActive ? (
+                                        <Tooltip label="حظر">
+                                          <IconButton
+                                            icon={<Ban />}
+                                            size="sm"
+                                            variant="ghost"
+                                            colorScheme="red"
+                                            onClick={() => handleBanUser(user)}
+                                          />
+                                        </Tooltip>
                                       ) : (
                                         <Tooltip label="إلغاء الحظر">
                                           <IconButton
