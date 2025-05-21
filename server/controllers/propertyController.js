@@ -106,7 +106,7 @@ exports.createProperty = async (req, res) => {
       images: images,
       createdBy: req.user.id,
       userRole: req.user.role,
-      status: req.body.propertyType === 'rental' ? 'للايجار' : 'للبيع'
+      status: req.body.propertyType.includes('للايجار') ? 'للايجار' : 'للبيع'
     });
 
     // Deduct points from user (skip for admin users)
