@@ -107,8 +107,16 @@ export const AuthProvider = ({ children }) => {
         
         if (adminResponse.data.success) {
           const { token, admin } = adminResponse.data;
+          console.log('Storing admin token and user data:', { token, admin });
+          
+          // Set token in axios headers
+          axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          
+          // Store token and user data
           localStorage.setItem('token', token);
           localStorage.setItem('user', JSON.stringify(admin));
+          
+          // Update state
           setUser(admin);
           
           // Redirect based on role
@@ -139,8 +147,16 @@ export const AuthProvider = ({ children }) => {
         
         if (sellerResponse.data.success) {
           const { token, user } = sellerResponse.data;
+          console.log('Storing seller token and user data:', { token, user });
+          
+          // Set token in axios headers
+          axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          
+          // Store token and user data
           localStorage.setItem('token', token);
           localStorage.setItem('user', JSON.stringify(user));
+          
+          // Update state
           setUser(user);
           
           // Redirect seller to their dashboard
