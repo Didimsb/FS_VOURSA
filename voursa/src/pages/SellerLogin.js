@@ -91,7 +91,20 @@ const SellerLogin = ({ admin = false }) => {
     setIsLoading(true);
     
     try {
+      // Prevent default form submission
+      e.preventDefault();
+      
+      // Validate inputs
+      if (!email || !password) {
+        setError('الرجاء إدخال البريد الإلكتروني وكلمة المرور');
+        setIsLoading(false);
+        return;
+      }
+
+      console.log('Attempting login with:', { email });
+      
       const result = await login(email, password);
+      console.log('Login result:', result);
       
       if (result.success) {
         toast({
@@ -123,6 +136,12 @@ const SellerLogin = ({ admin = false }) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Form submit handler
+  const onSubmit = (e) => {
+    e.preventDefault();
+    handleSubmit(e);
   };
   
   const features = [
@@ -293,7 +312,7 @@ const SellerLogin = ({ admin = false }) => {
                 </Alert>
               )}
               
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={onSubmit} noValidate>
                 <VStack spacing={5}>
                   <FormControl isRequired>
                     <FormLabel color={headingColor}>البريد الإلكتروني</FormLabel>

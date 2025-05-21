@@ -142,12 +142,7 @@ export const AuthProvider = ({ children }) => {
           localStorage.setItem('token', token);
           localStorage.setItem('user', JSON.stringify(user));
           setUser(user);
-          
-          // Redirect seller to their dashboard
-          if (user.role === 'seller') {
-            navigate('/seller-dashboard', { replace: true });
-          }
-          return { success: true };
+          return { success: true, role: 'seller' };
         } else {
           const errorMessage = sellerResponse.data.message || 'فشل تسجيل الدخول';
           console.error('Seller login failed:', errorMessage);
