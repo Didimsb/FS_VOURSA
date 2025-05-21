@@ -149,16 +149,25 @@ export const AuthProvider = ({ children }) => {
           }
           return { success: true };
         } else {
-          throw new Error(sellerResponse.data.message || 'فشل تسجيل الدخول');
+          const errorMessage = sellerResponse.data.message || 'فشل تسجيل الدخول';
+          setError(errorMessage);
+          return { success: false, error: errorMessage };
         }
       } catch (sellerError) {
         console.error('Seller login error:', sellerError.message);
         if (sellerError.response) {
           console.log('Seller login error response:', sellerError.response.status, sellerError.response.data);
+          const errorMessage = sellerError.response.data.message || 'فشل تسجيل الدخول';
+          setError(errorMessage);
+          return { success: false, error: errorMessage };
         } else if (sellerError.request) {
           console.log('Seller login no response received:', sellerError.request);
+          setError('فشل الاتصال بالخادم - يرجى التحقق من اتصالك بالإنترنت');
+          return { success: false, error: 'فشل الاتصال بالخادم - يرجى التحقق من اتصالك بالإنترنت' };
+        } else {
+          setError(sellerError.message || 'فشل تسجيل الدخول - خطأ غير معروف');
+          return { success: false, error: sellerError.message || 'فشل تسجيل الدخول - خطأ غير معروف' };
         }
-        throw sellerError;
       }
     } catch (err) {
       console.error('Login error:', err);
