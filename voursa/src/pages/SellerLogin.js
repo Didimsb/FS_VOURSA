@@ -91,9 +91,6 @@ const SellerLogin = ({ admin = false }) => {
     setIsLoading(true);
     
     try {
-      // Prevent default form submission
-      e.preventDefault();
-      
       // Validate inputs
       if (!email || !password) {
         setError('الرجاء إدخال البريد الإلكتروني وكلمة المرور');
@@ -119,20 +116,25 @@ const SellerLogin = ({ admin = false }) => {
           title: "فشل تسجيل الدخول",
           description: result.error,
           status: "error",
-          duration: 5000,
+          duration: 8000,
           isClosable: true,
         });
+        // Prevent navigation on error
+        return;
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError(err.message || 'فشل تسجيل الدخول');
+      const errorMessage = err.message || 'فشل تسجيل الدخول';
+      setError(errorMessage);
       toast({
         title: "فشل تسجيل الدخول",
-        description: err.message || 'فشل تسجيل الدخول',
+        description: errorMessage,
         status: "error",
-        duration: 5000,
+        duration: 8000,
         isClosable: true,
       });
+      // Prevent navigation on error
+      return;
     } finally {
       setIsLoading(false);
     }
@@ -305,10 +307,24 @@ const SellerLogin = ({ admin = false }) => {
               </VStack>
               
               {error && (
-                <Alert status="error" rounded="lg">
-                  <AlertIcon />
-                  <AlertTitle>خطأ!</AlertTitle>
-                  <AlertDescription>{error}</AlertDescription>
+                <Alert 
+                  status="error" 
+                  variant="solid" 
+                  rounded="lg"
+                  mb={4}
+                  flexDirection="column"
+                  alignItems="center"
+                  justifyContent="center"
+                  textAlign="center"
+                  p={4}
+                >
+                  <AlertIcon boxSize="24px" mr={0} />
+                  <AlertTitle mt={4} mb={1} fontSize="lg">
+                    خطأ في تسجيل الدخول
+                  </AlertTitle>
+                  <AlertDescription maxWidth="sm">
+                    {error}
+                  </AlertDescription>
                 </Alert>
               )}
               

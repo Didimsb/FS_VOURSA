@@ -178,22 +178,21 @@ export const AuthProvider = ({ children }) => {
           stack: sellerError.stack
         });
         
+        let errorMessage;
         if (sellerError.response) {
-          const errorMessage = sellerError.response.data.message || 'فشل تسجيل الدخول';
+          errorMessage = sellerError.response.data.message || 'فشل تسجيل الدخول';
           console.error('Server error response:', sellerError.response.data);
-          setError(errorMessage);
-          return { success: false, error: errorMessage };
         } else if (sellerError.request) {
           console.error('No response received:', sellerError.request);
-          const errorMessage = 'فشل الاتصال بالخادم - يرجى التحقق من اتصالك بالإنترنت';
-          setError(errorMessage);
-          return { success: false, error: errorMessage };
+          errorMessage = 'فشل الاتصال بالخادم - يرجى التحقق من اتصالك بالإنترنت';
         } else {
           console.error('Unknown error:', sellerError);
-          const errorMessage = sellerError.message || 'فشل تسجيل الدخول - خطأ غير معروف';
-          setError(errorMessage);
-          return { success: false, error: errorMessage };
+          errorMessage = sellerError.message || 'فشل تسجيل الدخول - خطأ غير معروف';
         }
+        
+        // Set error state and return error
+        setError(errorMessage);
+        return { success: false, error: errorMessage };
       }
     } catch (err) {
       console.error('Unexpected login error:', {
