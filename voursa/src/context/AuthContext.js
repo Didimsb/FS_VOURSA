@@ -89,13 +89,14 @@ export const AuthProvider = ({ children }) => {
       
       // Validate input
       if (!username || !password) {
+        console.error('Login attempt with empty credentials');
         setError('الرجاء إدخال البريد الإلكتروني وكلمة المرور');
         return { success: false, error: 'الرجاء إدخال البريد الإلكتروني وكلمة المرور' };
       }
       
       // First try admin login
       try {
-        console.log('Trying admin login with API URL:', process.env.REACT_APP_API_URL);
+        console.log('Attempting admin login for:', username);
         
         const adminResponse = await axiosInstance.post('/admin/login', {
           email: username,
@@ -117,18 +118,17 @@ export const AuthProvider = ({ children }) => {
           return { success: true };
         }
       } catch (adminError) {
-        console.log('Admin login failed:', adminError.message);
-        if (adminError.response) {
-          console.log('Admin login error response:', adminError.response.status, adminError.response.data);
-        } else if (adminError.request) {
-          console.log('Admin login no response received:', adminError.request);
-        }
+        console.error('Admin login failed:', {
+          message: adminError.message,
+          response: adminError.response?.data,
+          status: adminError.response?.status
+        });
         // Don't throw here, continue to seller login
       }
       
       // If admin login fails, try seller login
       try {
-        console.log('Trying seller login with API URL:', process.env.REACT_APP_API_URL);
+        console.log('Attempting seller login for:', username);
         
         const sellerResponse = await axiosInstance.post('/users/login', {
           email: username,
@@ -150,34 +150,45 @@ export const AuthProvider = ({ children }) => {
           return { success: true };
         } else {
           const errorMessage = sellerResponse.data.message || 'فشل تسجيل الدخول';
+          console.error('Seller login failed:', errorMessage);
           setError(errorMessage);
           return { success: false, error: errorMessage };
         }
       } catch (sellerError) {
-        console.error('Seller login error:', sellerError.message);
+        console.error('Seller login error:', {
+          message: sellerError.message,
+          response: sellerError.response?.data,
+          status: sellerError.response?.status,
+          stack: sellerError.stack
+        });
+        
         if (sellerError.response) {
-          console.log('Seller login error response:', sellerError.response.status, sellerError.response.data);
           const errorMessage = sellerError.response.data.message || 'فشل تسجيل الدخول';
+          console.error('Server error response:', sellerError.response.data);
           setError(errorMessage);
           return { success: false, error: errorMessage };
         } else if (sellerError.request) {
-          console.log('Seller login no response received:', sellerError.request);
+          console.error('No response received:', sellerError.request);
           setError('فشل الاتصال بالخادم - يرجى التحقق من اتصالك بالإنترنت');
           return { success: false, error: 'فشل الاتصال بالخادم - يرجى التحقق من اتصالك بالإنترنت' };
         } else {
+          console.error('Unknown error:', sellerError);
           setError(sellerError.message || 'فشل تسجيل الدخول - خطأ غير معروف');
           return { success: false, error: sellerError.message || 'فشل تسجيل الدخول - خطأ غير معروف' };
         }
       }
     } catch (err) {
-      console.error('Login error:', err);
-      let errorMessage;
+      console.error('Unexpected login error:', {
+        message: err.message,
+        stack: err.stack,
+        response: err.response?.data,
+        status: err.response?.status
+      });
       
+      let errorMessage;
       if (err.response) {
-        console.error('Error response data:', err.response.data);
         errorMessage = err.response?.data?.message || 'فشل تسجيل الدخول - خطأ في الاستجابة';
       } else if (err.request) {
-        console.error('Error request:', err.request);
         errorMessage = 'فشل الاتصال بالخادم - يرجى التحقق من اتصالك بالإنترنت';
       } else {
         errorMessage = err.message || 'فشل تسجيل الدخول - خطأ غير معروف';

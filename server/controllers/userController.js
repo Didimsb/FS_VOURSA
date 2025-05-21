@@ -81,10 +81,18 @@ exports.loginUser = async (req, res) => {
     const { email, password } = req.body;
     console.log('Login attempt for email:', email);
 
+    if (!email || !password) {
+      console.error('Login attempt with missing credentials');
+      return res.status(400).json({
+        success: false,
+        message: 'الرجاء إدخال البريد الإلكتروني وكلمة المرور'
+      });
+    }
+
     // Check if user exists and explicitly select the password field
     const user = await User.findOne({ email }).select('+password');
     if (!user) {
-      console.log('User not found:', email);
+      console.error('Login failed: User not found:', email);
       return res.status(400).json({
         success: false,
         message: 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
@@ -93,7 +101,7 @@ exports.loginUser = async (req, res) => {
 
     // Check if password exists
     if (!user.password) {
-      console.log('No password found for user:', email);
+      console.error('Login failed: No password found for user:', email);
       return res.status(400).json({
         success: false,
         message: 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
@@ -103,7 +111,7 @@ exports.loginUser = async (req, res) => {
     // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      console.log('Password mismatch for user:', email);
+      console.error('Login failed: Password mismatch for user:', email);
       return res.status(400).json({
         success: false,
         message: 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
@@ -112,7 +120,7 @@ exports.loginUser = async (req, res) => {
 
     // Check if user is approved (skip for admin and superadmin)
     if (user.role === 'seller' && !user.isApproved) {
-      console.log('Unapproved seller login attempt:', email);
+      console.error('Login failed: Unapproved seller login attempt:', email);
       return res.status(403).json({
         success: false,
         message: 'حسابك قيد المراجعة. سيتم إعلامك عند الموافقة.'
@@ -121,7 +129,7 @@ exports.loginUser = async (req, res) => {
 
     // Check if user is active
     if (!user.isActive) {
-      console.log('Inactive user login attempt:', email);
+      console.error('Login failed: Inactive user login attempt:', email);
       return res.status(403).json({
         success: false,
         message: 'حسابك معطل. يرجى التواصل مع الإدارة.'
@@ -134,7 +142,12 @@ exports.loginUser = async (req, res) => {
 
     // Generate token
     const token = user.generateAuthToken();
-    console.log('Login successful for user:', email);
+    console.log('Login successful for user:', {
+      email: user.email,
+      role: user.role,
+      isApproved: user.isApproved,
+      isActive: user.isActive
+    });
 
     res.status(200).json({
       success: true,
@@ -150,7 +163,11 @@ exports.loginUser = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Login error:', {
+      message: error.message,
+      stack: error.stack,
+      email: req.body.email
+    });
     res.status(500).json({
       success: false,
       message: 'حدث خطأ أثناء تسجيل الدخول',
