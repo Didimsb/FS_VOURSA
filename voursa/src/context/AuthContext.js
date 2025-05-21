@@ -169,12 +169,14 @@ export const AuthProvider = ({ children }) => {
           return { success: false, error: errorMessage };
         } else if (sellerError.request) {
           console.error('No response received:', sellerError.request);
-          setError('فشل الاتصال بالخادم - يرجى التحقق من اتصالك بالإنترنت');
-          return { success: false, error: 'فشل الاتصال بالخادم - يرجى التحقق من اتصالك بالإنترنت' };
+          const errorMessage = 'فشل الاتصال بالخادم - يرجى التحقق من اتصالك بالإنترنت';
+          setError(errorMessage);
+          return { success: false, error: errorMessage };
         } else {
           console.error('Unknown error:', sellerError);
-          setError(sellerError.message || 'فشل تسجيل الدخول - خطأ غير معروف');
-          return { success: false, error: sellerError.message || 'فشل تسجيل الدخول - خطأ غير معروف' };
+          const errorMessage = sellerError.message || 'فشل تسجيل الدخول - خطأ غير معروف';
+          setError(errorMessage);
+          return { success: false, error: errorMessage };
         }
       }
     } catch (err) {

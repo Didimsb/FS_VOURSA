@@ -90,26 +90,39 @@ const SellerLogin = ({ admin = false }) => {
     setError('');
     setIsLoading(true);
     
-    const result = await login(email, password);
-    
-    if (result.success) {
-      toast({
-        title: "تم تسجيل الدخول بنجاح",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-    } else {
-      setError(result.error || 'فشل تسجيل الدخول');
+    try {
+      const result = await login(email, password);
+      
+      if (result.success) {
+        toast({
+          title: "تم تسجيل الدخول بنجاح",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      } else {
+        setError(result.error || 'فشل تسجيل الدخول');
+        toast({
+          title: "فشل تسجيل الدخول",
+          description: result.error,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError(err.message || 'فشل تسجيل الدخول');
       toast({
         title: "فشل تسجيل الدخول",
-        description: result.error,
+        description: err.message || 'فشل تسجيل الدخول',
         status: "error",
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       });
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
   
   const features = [
