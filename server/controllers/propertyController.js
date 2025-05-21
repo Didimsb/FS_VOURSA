@@ -735,11 +735,32 @@ exports.markAsRented = async (req, res) => {
     const { propertyId } = req.params;
     const { customerName, customerPhone, agreedPrice } = req.body;
 
-    const property = await Property.findById(propertyId);
+    // Validate propertyId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(propertyId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'معرف العقار غير صالح'
+      });
+    }
+
+    // Validate input
+    if (!customerName || !customerPhone || !agreedPrice) {
+      return res.status(400).json({
+        success: false,
+        message: 'جميع الحقول مطلوبة'
+      });
+    }
+
+    // Check if property exists and belongs to the seller
+    const property = await Property.findOne({
+      _id: propertyId,
+      createdBy: req.user._id
+    });
+
     if (!property) {
       return res.status(404).json({
         success: false,
-        message: 'العقار غير موجود'
+        message: 'العقار غير موجود أو لا تملك صلاحية التعديل عليه'
       });
     }
 
@@ -755,8 +776,9 @@ exports.markAsRented = async (req, res) => {
     const customer = await Customer.create({
       name: customerName,
       phone: customerPhone,
-      property: propertyId,
       agreedPrice: agreedPrice,
+      property: propertyId,
+      seller: req.user._id,
       type: 'rental'
     });
 
@@ -764,11 +786,13 @@ exports.markAsRented = async (req, res) => {
     property.status = 'مؤجر';
     await property.save();
 
-    res.json({
+    res.status(200).json({
       success: true,
       message: 'تم تحديث حالة العقار بنجاح',
-      property,
-      customer
+      data: {
+        property,
+        customer
+      }
     });
   } catch (error) {
     console.error('Error marking property as rented:', error);
