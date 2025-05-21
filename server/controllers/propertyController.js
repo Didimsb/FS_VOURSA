@@ -677,4 +677,104 @@ exports.getSellerStats = async (req, res) => {
       message: 'حدث خطأ أثناء جلب إحصائيات البائع'
     });
   }
+};
+
+// Mark Property as Sold
+exports.markAsSold = async (req, res) => {
+  try {
+    const { propertyId } = req.params;
+    const { customerName, customerPhone, agreedPrice } = req.body;
+
+    const property = await Property.findById(propertyId);
+    if (!property) {
+      return res.status(404).json({
+        success: false,
+        message: 'العقار غير موجود'
+      });
+    }
+
+    // Check if property is for sale
+    if (property.status !== 'للبيع') {
+      return res.status(400).json({
+        success: false,
+        message: 'لا يمكن تحديد عقار للبيع إلا إذا كان حالته "للبيع"'
+      });
+    }
+
+    // Create customer record
+    const customer = await Customer.create({
+      name: customerName,
+      phone: customerPhone,
+      property: propertyId,
+      agreedPrice: agreedPrice,
+      type: 'sale'
+    });
+
+    // Update property status
+    property.status = 'بيع';
+    await property.save();
+
+    res.json({
+      success: true,
+      message: 'تم تحديث حالة العقار بنجاح',
+      property,
+      customer
+    });
+  } catch (error) {
+    console.error('Error marking property as sold:', error);
+    res.status(500).json({
+      success: false,
+      message: 'حدث خطأ أثناء تحديث حالة العقار'
+    });
+  }
+};
+
+// Mark Property as Rented
+exports.markAsRented = async (req, res) => {
+  try {
+    const { propertyId } = req.params;
+    const { customerName, customerPhone, agreedPrice } = req.body;
+
+    const property = await Property.findById(propertyId);
+    if (!property) {
+      return res.status(404).json({
+        success: false,
+        message: 'العقار غير موجود'
+      });
+    }
+
+    // Check if property is for rent
+    if (property.status !== 'للايجار') {
+      return res.status(400).json({
+        success: false,
+        message: 'لا يمكن تحديد عقار كمؤجر إلا إذا كان حالته "للايجار"'
+      });
+    }
+
+    // Create customer record
+    const customer = await Customer.create({
+      name: customerName,
+      phone: customerPhone,
+      property: propertyId,
+      agreedPrice: agreedPrice,
+      type: 'rental'
+    });
+
+    // Update property status
+    property.status = 'مؤجر';
+    await property.save();
+
+    res.json({
+      success: true,
+      message: 'تم تحديث حالة العقار بنجاح',
+      property,
+      customer
+    });
+  } catch (error) {
+    console.error('Error marking property as rented:', error);
+    res.status(500).json({
+      success: false,
+      message: 'حدث خطأ أثناء تحديث حالة العقار'
+    });
+  }
 }; 

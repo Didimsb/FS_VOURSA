@@ -41,12 +41,20 @@ const PropertyCard = ({ property }) => {
         />
         <Box position="absolute" top={4} right={4} zIndex={1}>
           <Badge
-            colorScheme={property.status === 'للبيع' ? 'green' : 'red'}
+            colorScheme={
+              property.status === 'للبيع' ? 'blue' :
+              property.status === 'بيع' ? 'green' :
+              property.status === 'للايجار' ? 'purple' :
+              property.status === 'مؤجر' ? 'orange' : 'gray'
+            }
             px={2}
             py={1}
             borderRadius="md"
           >
-            {property.status === 'للبيع' ? 'للبيع' : 'تم البيع'}
+            {property.status === 'للبيع' ? 'للبيع' :
+             property.status === 'بيع' ? 'تم البيع' :
+             property.status === 'للايجار' ? 'للايجار' :
+             property.status === 'مؤجر' ? 'تم التأجير' : property.status}
           </Badge>
         </Box>
       </Box>

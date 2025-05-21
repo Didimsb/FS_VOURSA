@@ -11,7 +11,8 @@ const {
   rejectProperty,
   markPropertyAsSold,
   getSellerCustomers,
-  getSellerStats
+  getSellerStats,
+  markAsRented
 } = require('../controllers/propertyController');
 const { protect, isAdmin } = require('../middleware/auth');
 const multer = require('multer');
@@ -69,6 +70,7 @@ router.put('/:id', protect, upload.fields([
 router.delete('/:id', protect, deleteProperty);
 router.put('/:id/reject', protect, isAdmin, rejectProperty);
 router.post('/:propertyId/sold', protect, markPropertyAsSold);
+router.post('/:propertyId/rented', protect, markAsRented);
 router.get('/seller/customers', protect, getSellerCustomers);
 router.get('/seller/stats', protect, getSellerStats);
 

@@ -1207,12 +1207,13 @@ const SellerDashboard = () => {
 
   const handleMarkSold = async () => {
     try {
-      const response = await axiosInstance.post(`/properties/${selectedProperty._id}/sold`, saleDetails);
+      const endpoint = selectedProperty.status === 'للايجار' ? 'rented' : 'sold';
+      const response = await axiosInstance.post(`/properties/${selectedProperty._id}/${endpoint}`, saleDetails);
 
       if (response.data.success) {
         toast({
           title: 'تم بنجاح',
-          description: 'تم تسجيل عملية البيع بنجاح',
+          description: `تم تسجيل عملية ${selectedProperty.status === 'للايجار' ? 'التأجير' : 'البيع'} بنجاح`,
           status: 'success',
           duration: 3000,
           isClosable: true,
@@ -1227,10 +1228,10 @@ const SellerDashboard = () => {
         fetchProperties(); // Refresh the properties list
       }
     } catch (error) {
-      console.error('Error marking property as sold:', error);
+      console.error('Error marking property:', error);
       toast({
         title: 'خطأ',
-        description: error.response?.data?.message || 'حدث خطأ أثناء تسجيل عملية البيع',
+        description: error.response?.data?.message || 'حدث خطأ أثناء تسجيل العملية',
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -3293,11 +3294,13 @@ const SellerDashboard = () => {
           </ModalContent>
         </Modal>
 
-        {/* Mark as Sold Modal */}
+        {/* Mark as Sold/Rented Modal */}
         <Modal isOpen={isMarkSoldModalOpen} onClose={() => setIsMarkSoldModalOpen(false)}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>تسجيل عملية البيع</ModalHeader>
+            <ModalHeader>
+              {selectedProperty?.status === 'للايجار' ? 'تسجيل عملية التأجير' : 'تسجيل عملية البيع'}
+            </ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <VStack spacing={4}>
@@ -3307,15 +3310,19 @@ const SellerDashboard = () => {
                   <Text>السعر: {selectedProperty?.price?.toLocaleString('ar-SA')} ريال</Text>
                 </Box>
                 <FormControl isRequired>
-                  <FormLabel>اسم المشتري</FormLabel>
+                  <FormLabel>
+                    {selectedProperty?.status === 'للايجار' ? 'اسم المستأجر' : 'اسم المشتري'}
+                  </FormLabel>
                   <Input
                     value={saleDetails.customerName}
                     onChange={(e) => setSaleDetails({ ...saleDetails, customerName: e.target.value })}
-                    placeholder="أدخل اسم المشتري"
+                    placeholder={`أدخل اسم ${selectedProperty?.status === 'للايجار' ? 'المستأجر' : 'المشتري'}`}
                   />
                 </FormControl>
                 <FormControl isRequired>
-                  <FormLabel>رقم هاتف المشتري</FormLabel>
+                  <FormLabel>
+                    {selectedProperty?.status === 'للايجار' ? 'رقم هاتف المستأجر' : 'رقم هاتف المشتري'}
+                  </FormLabel>
                   <Input
                     value={saleDetails.customerPhone}
                     onChange={(e) => setSaleDetails({ ...saleDetails, customerPhone: e.target.value })}
@@ -3323,19 +3330,21 @@ const SellerDashboard = () => {
                   />
                 </FormControl>
                 <FormControl isRequired>
-                  <FormLabel>سعر البيع المتفق عليه</FormLabel>
+                  <FormLabel>
+                    {selectedProperty?.status === 'للايجار' ? 'قيمة الإيجار المتفق عليها' : 'سعر البيع المتفق عليه'}
+                  </FormLabel>
                   <Input
                     type="number"
                     value={saleDetails.agreedPrice}
                     onChange={(e) => setSaleDetails({ ...saleDetails, agreedPrice: e.target.value })}
-                    placeholder="أدخل سعر البيع"
+                    placeholder={`أدخل ${selectedProperty?.status === 'للايجار' ? 'قيمة الإيجار' : 'سعر البيع'}`}
                   />
                 </FormControl>
               </VStack>
             </ModalBody>
             <ModalFooter>
               <Button colorScheme="blue" mr={3} onClick={handleMarkSold}>
-                تأكيد البيع
+                {selectedProperty?.status === 'للايجار' ? 'تأكيد التأجير' : 'تأكيد البيع'}
               </Button>
               <Button variant="ghost" onClick={() => setIsMarkSoldModalOpen(false)}>
                 إلغاء
