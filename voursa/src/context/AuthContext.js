@@ -126,76 +126,52 @@ export const AuthProvider = ({ children }) => {
           return { success: true };
         }
       } catch (adminError) {
-        console.error('Admin login failed:', {
+        // Log admin login failure but don't throw error
+        console.log('Admin login failed, continuing with seller login:', {
           message: adminError.message,
           response: adminError.response?.data,
           status: adminError.response?.status
         });
-        // Don't throw here, continue to seller login
+        // Continue with seller login
       }
       
-      // If admin login fails, try seller login
-      try {
-        console.log('Attempting seller login for:', username);
+      // Try seller login
+      console.log('Attempting seller login for:', username);
+      
+      const sellerResponse = await axiosInstance.post('/users/login', {
+        email: username,
+        password: password
+      });
+      
+      console.log('Seller login response:', sellerResponse.data);
+      
+      if (sellerResponse.data.success) {
+        const { token, user } = sellerResponse.data;
+        console.log('Storing seller token and user data:', { token, user });
         
-        const sellerResponse = await axiosInstance.post('/users/login', {
-          email: username,
-          password: password
-        });
+        // Set token in axios headers
+        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         
-        console.log('Seller login response:', sellerResponse.data);
+        // Store token and user data
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
         
-        if (sellerResponse.data.success) {
-          const { token, user } = sellerResponse.data;
-          console.log('Storing seller token and user data:', { token, user });
-          
-          // Set token in axios headers
-          axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-          
-          // Store token and user data
-          localStorage.setItem('token', token);
-          localStorage.setItem('user', JSON.stringify(user));
-          
-          // Update state
-          setUser(user);
-          
-          // Redirect seller to their dashboard
-          if (user.role === 'seller') {
-            navigate('/seller-dashboard', { replace: true });
-          }
-          return { success: true };
-        } else {
-          const errorMessage = sellerResponse.data.message || 'فشل تسجيل الدخول';
-          console.error('Seller login failed:', errorMessage);
-          setError(errorMessage);
-          return { success: false, error: errorMessage };
+        // Update state
+        setUser(user);
+        
+        // Redirect seller to their dashboard
+        if (user.role === 'seller') {
+          navigate('/seller-dashboard', { replace: true });
         }
-      } catch (sellerError) {
-        console.error('Seller login error:', {
-          message: sellerError.message,
-          response: sellerError.response?.data,
-          status: sellerError.response?.status,
-          stack: sellerError.stack
-        });
-        
-        let errorMessage;
-        if (sellerError.response) {
-          errorMessage = sellerError.response.data.message || 'فشل تسجيل الدخول';
-          console.error('Server error response:', sellerError.response.data);
-        } else if (sellerError.request) {
-          console.error('No response received:', sellerError.request);
-          errorMessage = 'فشل الاتصال بالخادم - يرجى التحقق من اتصالك بالإنترنت';
-        } else {
-          console.error('Unknown error:', sellerError);
-          errorMessage = sellerError.message || 'فشل تسجيل الدخول - خطأ غير معروف';
-        }
-        
-        // Set error state and return error
+        return { success: true };
+      } else {
+        const errorMessage = sellerResponse.data.message || 'فشل تسجيل الدخول';
+        console.error('Seller login failed:', errorMessage);
         setError(errorMessage);
         return { success: false, error: errorMessage };
       }
     } catch (err) {
-      console.error('Unexpected login error:', {
+      console.error('Login error:', {
         message: err.message,
         stack: err.stack,
         response: err.response?.data,
