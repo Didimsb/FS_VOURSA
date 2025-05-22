@@ -94,6 +94,8 @@ export const AuthProvider = ({ children }) => {
         return { success: false, error: 'الرجاء إدخال البريد الإلكتروني وكلمة المرور' };
       }
       
+      let isAdmin = false;
+      
       // First try admin login
       try {
         console.log('Attempting admin login for:', username);
@@ -106,60 +108,70 @@ export const AuthProvider = ({ children }) => {
         
         if (adminResponse.data.success) {
           const { token, admin } = adminResponse.data;
-          console.log('Storing admin data:', { token, admin });
+          
+          // Check if user is admin or superadmin
+          if (admin.role === 'admin' || admin.role === 'superadmin') {
+            isAdmin = true;
+            console.log('Storing admin data:', { token, admin });
+            
+            // Set token in axios headers
+            axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            
+            // Store token and user data
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(admin));
+            
+            // Update state
+            setUser(admin);
+            
+            // Redirect to admin dashboard
+            navigate('/admin/dashboard', { replace: true });
+            return { success: true };
+          } else {
+            console.log('User is not admin or superadmin, continuing with seller login');
+          }
+        }
+      } catch (adminError) {
+        // Log admin login failure but don't throw error
+        console.log('Admin login failed, continuing with seller login:', {
+          message: adminError.message,
+          response: adminError.response?.data
+        });
+      }
+      
+      // If not admin or superadmin, try seller login
+      if (!isAdmin) {
+        console.log('Attempting seller login for:', username);
+        const sellerResponse = await axiosInstance.post('/users/login', {
+          email: username,
+          password: password
+        });
+        
+        console.log('Seller login response:', sellerResponse.data);
+        
+        if (sellerResponse.data.success) {
+          const { token, user } = sellerResponse.data;
+          console.log('Storing seller data:', { token, user });
           
           // Set token in axios headers
           axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
           
           // Store token and user data
           localStorage.setItem('token', token);
-          localStorage.setItem('user', JSON.stringify(admin));
+          localStorage.setItem('user', JSON.stringify(user));
           
           // Update state
-          setUser(admin);
+          setUser(user);
           
-          // Redirect to admin dashboard
-          navigate('/admin/dashboard', { replace: true });
+          // Redirect to seller dashboard
+          navigate('/seller-dashboard', { replace: true });
           return { success: true };
+        } else {
+          const errorMessage = sellerResponse.data.message || 'فشل تسجيل الدخول';
+          console.error('Seller login failed:', errorMessage);
+          setError(errorMessage);
+          return { success: false, error: errorMessage };
         }
-      } catch (adminError) {
-        console.log('Admin login failed, trying seller login:', {
-          message: adminError.message,
-          response: adminError.response?.data
-        });
-      }
-      
-      // If admin login fails, try seller login
-      console.log('Attempting seller login for:', username);
-      const sellerResponse = await axiosInstance.post('/users/login', {
-        email: username,
-        password: password
-      });
-      
-      console.log('Seller login response:', sellerResponse.data);
-      
-      if (sellerResponse.data.success) {
-        const { token, user } = sellerResponse.data;
-        console.log('Storing seller data:', { token, user });
-        
-        // Set token in axios headers
-        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        
-        // Store token and user data
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(user));
-        
-        // Update state
-        setUser(user);
-        
-        // Redirect to seller dashboard
-        navigate('/seller-dashboard', { replace: true });
-        return { success: true };
-      } else {
-        const errorMessage = sellerResponse.data.message || 'فشل تسجيل الدخول';
-        console.error('Seller login failed:', errorMessage);
-        setError(errorMessage);
-        return { success: false, error: errorMessage };
       }
     } catch (err) {
       console.error('Login error:', {
