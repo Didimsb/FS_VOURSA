@@ -152,34 +152,55 @@ export const AuthProvider = ({ children }) => {
           
           if (sellerResponse.data.success) {
             const { token, user } = sellerResponse.data;
-            console.log('Storing seller data:', { token, user });
+            console.log('Received seller data:', { token, user });
+            
+            if (!token || !user) {
+              console.error('Missing token or user data in response');
+              throw new Error('Invalid login response');
+            }
             
             // Set token in axios headers
             axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            console.log('Set axios header with token');
             
-            // Store token and user data
-            localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(user));
-            
-            // Update state
-            setUser(user);
-            
-            // Wait for state update
-            await new Promise(resolve => setTimeout(resolve, 100));
-            
-            // Check if data was stored correctly
-            const storedToken = localStorage.getItem('token');
-            const storedUser = JSON.parse(localStorage.getItem('user'));
-            console.log('Stored token:', storedToken);
-            console.log('Stored user:', storedUser);
-            
-            if (!storedToken || !storedUser) {
-              throw new Error('Failed to store login data');
+            try {
+              // Store token and user data
+              localStorage.setItem('token', token);
+              localStorage.setItem('user', JSON.stringify(user));
+              console.log('Stored data in localStorage');
+              
+              // Verify storage
+              const storedToken = localStorage.getItem('token');
+              const storedUser = JSON.parse(localStorage.getItem('user'));
+              console.log('Verified stored data:', { storedToken, storedUser });
+              
+              if (!storedToken || !storedUser) {
+                throw new Error('Failed to verify stored data');
+              }
+              
+              // Update state
+              setUser(user);
+              console.log('Updated user state');
+              
+              // Wait for state update
+              await new Promise(resolve => setTimeout(resolve, 100));
+              
+              // Final verification
+              const finalToken = localStorage.getItem('token');
+              const finalUser = JSON.parse(localStorage.getItem('user'));
+              console.log('Final verification:', { finalToken, finalUser });
+              
+              if (!finalToken || !finalUser) {
+                throw new Error('Data lost after state update');
+              }
+              
+              // Redirect to seller dashboard
+              navigate('/seller-dashboard', { replace: true });
+              return { success: true };
+            } catch (storageError) {
+              console.error('Storage error:', storageError);
+              throw new Error('Failed to store login data: ' + storageError.message);
             }
-            
-            // Redirect to seller dashboard
-            navigate('/seller-dashboard', { replace: true });
-            return { success: true };
           } else {
             const errorMessage = sellerResponse.data.message || 'فشل تسجيل الدخول';
             console.error('Seller login failed:', errorMessage);
@@ -189,7 +210,8 @@ export const AuthProvider = ({ children }) => {
         } catch (sellerError) {
           console.error('Seller login error:', {
             message: sellerError.message,
-            response: sellerError.response?.data
+            response: sellerError.response?.data,
+            stack: sellerError.stack
           });
           
           let errorMessage;
@@ -200,7 +222,7 @@ export const AuthProvider = ({ children }) => {
           } else if (sellerError.message === 'Network Error') {
             errorMessage = 'فشل الاتصال بالخادم - يرجى التحقق من اتصالك بالإنترنت';
           } else {
-            errorMessage = 'فشل تسجيل الدخول - يرجى المحاولة مرة أخرى';
+            errorMessage = sellerError.message || 'فشل تسجيل الدخول - يرجى المحاولة مرة أخرى';
           }
           
           setError(errorMessage);
