@@ -164,6 +164,19 @@ export const AuthProvider = ({ children }) => {
             // Update state
             setUser(user);
             
+            // Wait for state update
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // Check if data was stored correctly
+            const storedToken = localStorage.getItem('token');
+            const storedUser = JSON.parse(localStorage.getItem('user'));
+            console.log('Stored token:', storedToken);
+            console.log('Stored user:', storedUser);
+            
+            if (!storedToken || !storedUser) {
+              throw new Error('Failed to store login data');
+            }
+            
             // Redirect to seller dashboard
             navigate('/seller-dashboard', { replace: true });
             return { success: true };

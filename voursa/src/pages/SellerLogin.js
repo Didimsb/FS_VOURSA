@@ -87,6 +87,7 @@ const SellerLogin = ({ admin = false }) => {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
     setError('');
     setIsLoading(true);
     
@@ -104,6 +105,17 @@ const SellerLogin = ({ admin = false }) => {
       console.log('Login result:', result);
       
       if (result.success) {
+        // Wait for state update
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Check if user data is available
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        console.log('Stored user after login:', storedUser);
+        
+        if (!storedUser) {
+          throw new Error('Failed to store user data');
+        }
+        
         toast({
           title: "تم تسجيل الدخول بنجاح",
           status: "success",
@@ -119,7 +131,7 @@ const SellerLogin = ({ admin = false }) => {
           duration: 8000,
           isClosable: true,
         });
-        // Prevent navigation on error
+        setIsLoading(false);
         return;
       }
     } catch (err) {
@@ -133,10 +145,8 @@ const SellerLogin = ({ admin = false }) => {
         duration: 8000,
         isClosable: true,
       });
-      // Prevent navigation on error
-      return;
-    } finally {
       setIsLoading(false);
+      return;
     }
   };
 
