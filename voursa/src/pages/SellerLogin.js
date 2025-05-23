@@ -140,9 +140,10 @@ const SellerLogin = ({ admin = false }) => {
     }
   };
 
-  // Form submit handler
+  // Form submit handler with preventDefault
   const onSubmit = (e) => {
     e.preventDefault();
+    e.stopPropagation();
     handleSubmit(e);
   };
   
