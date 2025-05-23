@@ -159,15 +159,22 @@ export const AuthProvider = ({ children }) => {
               throw new Error('Invalid login response');
             }
             
-            // Set token in axios headers
-            axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            console.log('Set axios header with token');
-            
             try {
-              // Store token and user data
+              // Store token and user data first
               localStorage.setItem('token', token);
               localStorage.setItem('user', JSON.stringify(user));
               console.log('Stored data in localStorage');
+              
+              // Set token in axios headers
+              axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+              console.log('Set axios header with token');
+              
+              // Update state
+              setUser(user);
+              console.log('Updated user state');
+              
+              // Wait for state update
+              await new Promise(resolve => setTimeout(resolve, 100));
               
               // Verify storage
               const storedToken = localStorage.getItem('token');
@@ -178,27 +185,16 @@ export const AuthProvider = ({ children }) => {
                 throw new Error('Failed to verify stored data');
               }
               
-              // Update state
-              setUser(user);
-              console.log('Updated user state');
-              
-              // Wait for state update
-              await new Promise(resolve => setTimeout(resolve, 100));
-              
-              // Final verification
-              const finalToken = localStorage.getItem('token');
-              const finalUser = JSON.parse(localStorage.getItem('user'));
-              console.log('Final verification:', { finalToken, finalUser });
-              
-              if (!finalToken || !finalUser) {
-                throw new Error('Data lost after state update');
-              }
-              
               // Redirect to seller dashboard
               navigate('/seller-dashboard', { replace: true });
               return { success: true };
             } catch (storageError) {
               console.error('Storage error:', storageError);
+              // Clear any partial data
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+              delete axiosInstance.defaults.headers.common['Authorization'];
+              setUser(null);
               throw new Error('Failed to store login data: ' + storageError.message);
             }
           } else {
@@ -213,6 +209,12 @@ export const AuthProvider = ({ children }) => {
             response: sellerError.response?.data,
             stack: sellerError.stack
           });
+          
+          // Clear any partial data
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          delete axiosInstance.defaults.headers.common['Authorization'];
+          setUser(null);
           
           let errorMessage;
           if (sellerError.response?.data?.message) {
