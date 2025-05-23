@@ -89,16 +89,14 @@ export const AuthProvider = ({ children }) => {
       
       // Validate input
       if (!username || !password) {
-        console.error('Login attempt with empty credentials');
         setError('الرجاء إدخال البريد الإلكتروني وكلمة المرور');
         return { success: false, error: 'الرجاء إدخال البريد الإلكتروني وكلمة المرور' };
       }
       
-      let isAdmin = false;
-      
       // First try admin login
       try {
-        console.log('Attempting admin login for:', username);
+        console.log('Trying admin login with API URL:', process.env.REACT_APP_API_URL);
+        
         const adminResponse = await axiosInstance.post('/admin/login', {
           email: username,
           password: password
@@ -108,141 +106,69 @@ export const AuthProvider = ({ children }) => {
         
         if (adminResponse.data.success) {
           const { token, admin } = adminResponse.data;
+          localStorage.setItem('token', token);
+          localStorage.setItem('user', JSON.stringify(admin));
+          setUser(admin);
           
-          // Check if user is admin or superadmin
+          // Redirect based on role
           if (admin.role === 'admin' || admin.role === 'superadmin') {
-            isAdmin = true;
-            console.log('Storing admin data:', { token, admin });
-            
-            // Set token in axios headers
-            axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            
-            // Store token and user data
-            localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(admin));
-            
-            // Update state
-            setUser(admin);
-            
-            // Redirect to admin dashboard
             navigate('/admin/dashboard', { replace: true });
-            return { success: true };
-          } else {
-            console.log('User is not admin or superadmin, continuing with seller login');
           }
+          return { success: true };
         }
       } catch (adminError) {
-        // Log admin login failure but don't throw error
-        console.log('Admin login failed, continuing with seller login:', {
-          message: adminError.message,
-          response: adminError.response?.data
-        });
+        console.log('Admin login failed:', adminError.message);
+        if (adminError.response) {
+          console.log('Admin login error response:', adminError.response.status, adminError.response.data);
+        } else if (adminError.request) {
+          console.log('Admin login no response received:', adminError.request);
+        }
+        // Don't throw here, continue to seller login
       }
       
-      // If not admin or superadmin, try seller login
-      if (!isAdmin) {
-        console.log('Attempting seller login for:', username);
-        try {
-          const sellerResponse = await axiosInstance.post('/users/login', {
-            email: username,
-            password: password
-          });
+      // If admin login fails, try seller login
+      try {
+        console.log('Trying seller login with API URL:', process.env.REACT_APP_API_URL);
+        
+        const sellerResponse = await axiosInstance.post('/users/login', {
+          email: username,
+          password: password
+        });
+        
+        console.log('Seller login response:', sellerResponse.data);
+        
+        if (sellerResponse.data.success) {
+          const { token, user } = sellerResponse.data;
+          localStorage.setItem('token', token);
+          localStorage.setItem('user', JSON.stringify(user));
+          setUser(user);
           
-          console.log('Seller login response:', sellerResponse.data);
-          
-          if (sellerResponse.data.success) {
-            const { token, user } = sellerResponse.data;
-            console.log('Received seller data:', { token, user });
-            
-            if (!token || !user) {
-              console.error('Missing token or user data in response');
-              throw new Error('Invalid login response');
-            }
-            
-            try {
-              // Store token and user data first
-              localStorage.setItem('token', token);
-              localStorage.setItem('user', JSON.stringify(user));
-              console.log('Stored data in localStorage');
-              
-              // Set token in axios headers
-              axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-              console.log('Set axios header with token');
-              
-              // Update state
-              setUser(user);
-              console.log('Updated user state');
-              
-              // Wait for state update
-              await new Promise(resolve => setTimeout(resolve, 100));
-              
-              // Verify storage
-              const storedToken = localStorage.getItem('token');
-              const storedUser = JSON.parse(localStorage.getItem('user'));
-              console.log('Verified stored data:', { storedToken, storedUser });
-              
-              if (!storedToken || !storedUser) {
-                throw new Error('Failed to verify stored data');
-              }
-              
-              // Redirect to seller dashboard
-              navigate('/seller-dashboard', { replace: true });
-              return { success: true };
-            } catch (storageError) {
-              console.error('Storage error:', storageError);
-              // Clear any partial data
-              localStorage.removeItem('token');
-              localStorage.removeItem('user');
-              delete axiosInstance.defaults.headers.common['Authorization'];
-              setUser(null);
-              throw new Error('Failed to store login data: ' + storageError.message);
-            }
-          } else {
-            const errorMessage = sellerResponse.data.message || 'فشل تسجيل الدخول';
-            console.error('Seller login failed:', errorMessage);
-            setError(errorMessage);
-            return { success: false, error: errorMessage };
+          // Redirect seller to their dashboard
+          if (user.role === 'seller') {
+            navigate('/seller-dashboard', { replace: true });
           }
-        } catch (sellerError) {
-          console.error('Seller login error:', {
-            message: sellerError.message,
-            response: sellerError.response?.data,
-            stack: sellerError.stack
-          });
-          
-          // Clear any partial data
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          delete axiosInstance.defaults.headers.common['Authorization'];
-          setUser(null);
-          
-          let errorMessage;
-          if (sellerError.response?.data?.message) {
-            errorMessage = sellerError.response.data.message;
-          } else if (sellerError.response?.data?.error) {
-            errorMessage = sellerError.response.data.error;
-          } else if (sellerError.message === 'Network Error') {
-            errorMessage = 'فشل الاتصال بالخادم - يرجى التحقق من اتصالك بالإنترنت';
-          } else {
-            errorMessage = sellerError.message || 'فشل تسجيل الدخول - يرجى المحاولة مرة أخرى';
-          }
-          
-          setError(errorMessage);
-          return { success: false, error: errorMessage };
+          return { success: true };
+        } else {
+          throw new Error(sellerResponse.data.message || 'فشل تسجيل الدخول');
         }
+      } catch (sellerError) {
+        console.error('Seller login error:', sellerError.message);
+        if (sellerError.response) {
+          console.log('Seller login error response:', sellerError.response.status, sellerError.response.data);
+        } else if (sellerError.request) {
+          console.log('Seller login no response received:', sellerError.request);
+        }
+        throw sellerError;
       }
     } catch (err) {
-      console.error('Login error:', {
-        message: err.message,
-        stack: err.stack,
-        response: err.response?.data,
-        status: err.response?.status
-      });
-      
+      console.error('Login error:', err);
       let errorMessage;
+      
       if (err.response) {
+        console.error('Error response data:', err.response.data);
         errorMessage = err.response?.data?.message || 'فشل تسجيل الدخول - خطأ في الاستجابة';
       } else if (err.request) {
+        console.error('Error request:', err.request);
         errorMessage = 'فشل الاتصال بالخادم - يرجى التحقق من اتصالك بالإنترنت';
       } else {
         errorMessage = err.message || 'فشل تسجيل الدخول - خطأ غير معروف';

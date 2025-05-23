@@ -85,76 +85,38 @@ const SellerLogin = ({ admin = false }) => {
   const featureBg = useColorModeValue('primary.50', 'primary.900');
   const featureTextColor = useColorModeValue('primary.700', 'primary.200');
   
+  const handleWhatsAppClick = () => {
+    // Format the phone number for WhatsApp
+    const phone = '+22212345678'; // Replace with the owner's phone number
+    const formattedPhone = phone.replace(/\D/g, '');
+    window.open(`https://wa.me/${formattedPhone}?text=مرحباً، أرغب في أن أصبح بائعاً على منصتكم`, '_blank');
+  };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    e.stopPropagation();
     setError('');
     setIsLoading(true);
     
-    try {
-      // Validate inputs
-      if (!email || !password) {
-        setError('الرجاء إدخال البريد الإلكتروني وكلمة المرور');
-        setIsLoading(false);
-        return;
-      }
-
-      console.log('Attempting login with:', { email });
-      
-      const result = await login(email, password);
-      console.log('Login result:', result);
-      
-      if (result.success) {
-        // Wait for state update
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
-        // Check if user data is available
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-        console.log('Stored user after login:', storedUser);
-        
-        if (!storedUser) {
-          throw new Error('Failed to store user data');
-        }
-        
-        toast({
-          title: "تم تسجيل الدخول بنجاح",
-          status: "success",
-          duration: 3000,
-          isClosable: true,
-        });
-      } else {
-        setError(result.error || 'فشل تسجيل الدخول');
-        toast({
-          title: "فشل تسجيل الدخول",
-          description: result.error,
-          status: "error",
-          duration: 8000,
-          isClosable: true,
-        });
-        setIsLoading(false);
-        return;
-      }
-    } catch (err) {
-      console.error('Login error:', err);
-      const errorMessage = err.message || 'فشل تسجيل الدخول';
-      setError(errorMessage);
+    const result = await login(email, password);
+    
+    if (result.success) {
       toast({
-        title: "فشل تسجيل الدخول",
-        description: errorMessage,
-        status: "error",
-        duration: 8000,
+        title: "تم تسجيل الدخول بنجاح",
+        status: "success",
+        duration: 3000,
         isClosable: true,
       });
-      setIsLoading(false);
-      return;
+    } else {
+      setError(result.error || 'فشل تسجيل الدخول');
+      toast({
+        title: "فشل تسجيل الدخول",
+        description: result.error,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
-  };
-
-  // Form submit handler with preventDefault
-  const onSubmit = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    handleSubmit(e);
+    setIsLoading(false);
   };
   
   const features = [
@@ -318,30 +280,14 @@ const SellerLogin = ({ admin = false }) => {
               </VStack>
               
               {error && (
-                <Alert 
-                  status="error" 
-                  variant="solid" 
-                  rounded="lg"
-                  mb={4}
-                  flexDirection="column"
-                  alignItems="center"
-                  justifyContent="center"
-                  textAlign="center"
-                  p={4}
-                  bg="red.500"
-                  color="white"
-                >
-                  <AlertIcon boxSize="24px" mr={0} />
-                  <AlertTitle mt={4} mb={1} fontSize="lg">
-                    خطأ في تسجيل الدخول
-                  </AlertTitle>
-                  <AlertDescription maxWidth="sm">
-                    {error}
-                  </AlertDescription>
+                <Alert status="error" rounded="lg">
+                  <AlertIcon />
+                  <AlertTitle>خطأ!</AlertTitle>
+                  <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
               
-              <form onSubmit={onSubmit} noValidate>
+              <form onSubmit={handleSubmit}>
                 <VStack spacing={5}>
                   <FormControl isRequired>
                     <FormLabel color={headingColor}>البريد الإلكتروني</FormLabel>
@@ -420,11 +366,6 @@ const SellerLogin = ({ admin = false }) => {
                       bg: "green.700",
                     }}
                     transition="all 0.3s ease"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleSubmit(e);
-                    }}
                   >
                     تسجيل الدخول
                   </Button>
@@ -449,14 +390,14 @@ const SellerLogin = ({ admin = false }) => {
                   ليس لديك حساب؟
                 </AlertTitle>
                 <AlertDescription maxWidth="sm">
-                  قم بإنشاء حساب جديد للوصول إلى المنصة
+                  تواصل مع مالك المنصة عبر واتساب للحصول على حساب
                 </AlertDescription>
                 <Button
-                  leftIcon={<User />}
-                  colorScheme="blue"
+                  leftIcon={<MessageCircle />}
+                  colorScheme="green"
                   size="md"
                   mt={4}
-                  onClick={() => navigate('/register')}
+                  onClick={handleWhatsAppClick}
                   _hover={{
                     transform: "translateY(-3px)",
                     boxShadow: "md",
@@ -464,7 +405,7 @@ const SellerLogin = ({ admin = false }) => {
                   transition="all 0.3s ease"
                   rounded="lg"
                 >
-                  إنشاء حساب جديد
+                  تواصل عبر واتساب
                 </Button>
               </Alert>
             </VStack>
