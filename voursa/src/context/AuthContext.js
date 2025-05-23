@@ -179,7 +179,17 @@ export const AuthProvider = ({ children }) => {
             response: sellerError.response?.data
           });
           
-          const errorMessage = sellerError.response?.data?.message || 'فشل تسجيل الدخول';
+          let errorMessage;
+          if (sellerError.response?.data?.message) {
+            errorMessage = sellerError.response.data.message;
+          } else if (sellerError.response?.data?.error) {
+            errorMessage = sellerError.response.data.error;
+          } else if (sellerError.message === 'Network Error') {
+            errorMessage = 'فشل الاتصال بالخادم - يرجى التحقق من اتصالك بالإنترنت';
+          } else {
+            errorMessage = 'فشل تسجيل الدخول - يرجى المحاولة مرة أخرى';
+          }
+          
           setError(errorMessage);
           return { success: false, error: errorMessage };
         }

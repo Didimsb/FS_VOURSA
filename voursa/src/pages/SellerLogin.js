@@ -318,6 +318,8 @@ const SellerLogin = ({ admin = false }) => {
                   justifyContent="center"
                   textAlign="center"
                   p={4}
+                  bg="red.500"
+                  color="white"
                 >
                   <AlertIcon boxSize="24px" mr={0} />
                   <AlertTitle mt={4} mb={1} fontSize="lg">
