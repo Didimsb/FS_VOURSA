@@ -408,6 +408,11 @@ const SellerLogin = ({ admin = false }) => {
                       bg: "green.700",
                     }}
                     transition="all 0.3s ease"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleSubmit(e);
+                    }}
                   >
                     تسجيل الدخول
                   </Button>
