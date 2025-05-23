@@ -71,7 +71,7 @@ router.delete('/:id', protect, deleteProperty);
 router.put('/:id/reject', protect, isAdmin, rejectProperty);
 router.post('/:propertyId/sold', protect, markPropertyAsSold);
 router.post('/:propertyId/rented', protect, markAsRented);
-router.get('/seller/customers', protect, getSellerCustomers);
-router.get('/seller/stats', protect, getSellerStats);
+router.get('/seller/customers', protect, isAdmin, getSellerCustomers);
+router.get('/seller/stats', protect, isAdmin, getSellerStats);
 
 module.exports = router; 
