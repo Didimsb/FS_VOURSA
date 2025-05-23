@@ -1940,6 +1940,12 @@ const SellerDashboard = () => {
                     >
                       <Stack spacing={6}>
                         <Heading size="md">قائمة العملاء</Heading>
+                        {/* DEBUG LOGS ON PAGE */}
+                        <Box bg="gray.100" p={3} borderRadius="md" fontSize="sm" color="red.600">
+                          <div>DEBUG: customers.length = {customers.length}</div>
+                          <div>DEBUG: error = {error ? error : 'none'}</div>
+                          <div>DEBUG: customers = <pre style={{whiteSpace: 'pre-wrap', direction: 'ltr'}}>{JSON.stringify(customers, null, 2)}</pre></div>
+                        </Box>
                         
                         {isLoading ? (
                           <Center>
