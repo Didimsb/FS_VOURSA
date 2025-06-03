@@ -11,6 +11,7 @@ import PropertyDetail from './pages/PropertyDetail';
 import SellerDashboard from './pages/SellerDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import SellerLogin from './pages/SellerLogin';
+import AdminLogin from './pages/AdminLogin';
 import Register from './pages/Register';
 import theme from './theme';
 import { ChakraProvider, CSSReset } from '@chakra-ui/react';
@@ -42,7 +43,10 @@ const ProtectedRoute = ({ children, role }) => {
 
   // Kullanıcı yoksa login sayfasına yönlendir
   if (!user) {
-    return <Navigate to="/login" replace />;
+    if (role === 'admin') {
+      return <Navigate to="/admin/login" replace />;
+    }
+    return <Navigate to="/seller-login" replace />;
   }
 
   // Kullanıcı varsa rol kontrolü yap
@@ -76,10 +80,9 @@ function App() {
             <Route path="/about" element={<AboutUs />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/property/:id" element={<PropertyDetail />} />
-            <Route path="/login" element={<SellerLogin />} />
-            <Route path="/register" element={<Register />} />
             <Route path="/seller-login" element={<SellerLogin />} />
-            <Route path="/admin/login" element={<SellerLogin admin={true} />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/register" element={<Register />} />
             
             {/* Seller Routes */}
             <Route

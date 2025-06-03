@@ -117,68 +117,57 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    console.log('Form data before validation:', formData);
-    
     if (!validateForm()) {
-      console.log('Form validation failed:', errors);
       return;
     }
 
-    setLoading(true);
     try {
-      // Format WhatsApp number before sending
-      const formattedWhatsapp = formData.whatsapp.startsWith('+') 
-        ? formData.whatsapp 
-        : `+${formData.whatsapp}`;
-      
-      // Ensure WhatsApp number starts with +222
-      const finalWhatsapp = formattedWhatsapp.startsWith('+222') 
-        ? formattedWhatsapp 
-        : `+222${formattedWhatsapp.replace(/^\+/, '')}`;
-      
-      console.log('Sending registration request with data:', {
-        ...formData,
-        whatsapp: finalWhatsapp
-      });
-
-      const response = await axiosInstance.post('/users/register', {
-        name: formData.name,
+      // Check if user exists and was added by admin
+      const checkResponse = await axiosInstance.post('/users/check-admin-added', {
         email: formData.email,
-        password: formData.password,
-        phone: formData.phone,
-        whatsapp: finalWhatsapp,
-        role: 'seller',
-        isApproved: false
+        phone: formData.phone
       });
 
-      console.log('Registration response:', response.data);
+      if (checkResponse.data.exists && checkResponse.data.isAdminAdded) {
+        // If user exists and was added by admin, proceed with registration
+        const response = await axiosInstance.post('/users/register', {
+          ...formData,
+          isAdminAdded: true
+        });
 
-      toast({
-        title: 'تم التسجيل بنجاح',
-        description: 'سيتم مراجعة طلبك من قبل الإدارة',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-
-      navigate('/login');
+        if (response.data.success) {
+          toast({
+            title: "تم التسجيل بنجاح",
+            description: "يرجى انتظار موافقة المدير",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+          navigate('/seller-login');
+        }
+      } else {
+        // Normal registration flow
+        const response = await axiosInstance.post('/users/register', formData);
+        
+        if (response.data.success) {
+          toast({
+            title: "تم التسجيل بنجاح",
+            description: "يرجى انتظار موافقة المدير",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+          navigate('/seller-login');
+        }
+      }
     } catch (error) {
-      console.error('Registration error details:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-        headers: error.response?.headers
-      });
-      
       toast({
-        title: 'خطأ في التسجيل',
-        description: error.response?.data?.message || 'حدث خطأ أثناء التسجيل',
-        status: 'error',
+        title: "خطأ في التسجيل",
+        description: error.response?.data?.message || "حدث خطأ أثناء التسجيل",
+        status: "error",
         duration: 5000,
         isClosable: true,
       });
-    } finally {
-      setLoading(false);
     }
   };
 

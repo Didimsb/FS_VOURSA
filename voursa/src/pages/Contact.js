@@ -57,7 +57,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useSettings } from '../context/SettingsContext';
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { FaFacebook, FaTwitter, FaInstagram, FaTiktok } from 'react-icons/fa';
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
@@ -507,13 +507,13 @@ const Contact = () => {
                           />
                         </Link>
                       )}
-                      {member.social?.linkedin && (
-                        <Link href={member.social.linkedin} isExternal>
+                      {member.social?.tiktok && (
+                        <Link href={member.social.tiktok} isExternal>
                           <IconButton
-                            aria-label="LinkedIn"
-                            icon={<FaLinkedin />}
+                            aria-label="TikTok"
+                            icon={<FaTiktok />}
                             size="md"
-                            colorScheme="linkedin"
+                            colorScheme="blackAlpha"
                             variant="ghost"
                           />
                         </Link>

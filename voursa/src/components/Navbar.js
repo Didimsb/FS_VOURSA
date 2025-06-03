@@ -154,7 +154,7 @@ const Navbar = () => {
             ) : (
               <Button
                 as={RouterLink}
-                to="/login"
+                to="/seller-login"
                 variant={'solid'}
                 colorScheme={'yellow'}
                 size={'sm'}
@@ -215,7 +215,7 @@ const Navbar = () => {
               ) : (
                 <Button
                   as={RouterLink}
-                  to="/login"
+                  to="/seller-login"
                   variant={'solid'}
                   colorScheme={'yellow'}
                   size={'sm'}

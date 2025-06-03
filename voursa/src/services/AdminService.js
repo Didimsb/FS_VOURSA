@@ -149,6 +149,15 @@ export const changePassword = async (currentPassword, newPassword) => {
   }
 };
 
+export const approveSeller = async (userId) => {
+  try {
+    const response = await axiosInstance.put(`/admin/users/${userId}/approve-seller`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error;
+  }
+};
+
 export default {
   getAllUsers,
   createUser,
@@ -165,5 +174,6 @@ export default {
   deductPoints,
   getAdminProfile,
   updateAdminProfile,
-  changePassword
+  changePassword,
+  approveSeller
 };

@@ -201,7 +201,7 @@ const uploadToCloudinary = async (file) => {
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState(0);
-  const { user, logout, addUser, updateUser, deleteUser, getUsers } = useAuth();
+  const { user, logout, addUser, updateUser, deleteUser, getUsers, approveSeller } = useAuth();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
@@ -260,7 +260,7 @@ const AdminDashboard = () => {
       facebook: '',
       twitter: '',
       instagram: '',
-      linkedin: '',
+      tiktok: '',
       whatsapp: '',
       youtube: ''
     },
@@ -790,6 +790,37 @@ const AdminDashboard = () => {
       }
     };
 
+    const handleApproveSeller = async (user) => {
+      try {
+        const response = await approveSeller(user._id);
+        if (response.success) {
+          setUsers(prevUsers => 
+            prevUsers.map(u => 
+              u._id === user._id 
+                ? { ...u, isApproved: true } 
+                : u
+            )
+          );
+          
+          toast({
+            title: "تمت الموافقة",
+            description: `تمت الموافقة على البائع ${user.name} بنجاح`,
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+      } catch (error) {
+        toast({
+          title: "خطأ",
+          description: error.response?.data?.message || "حدث خطأ أثناء الموافقة على البائع",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    };
+
     return (
       <Box
         w="full"
@@ -843,6 +874,18 @@ const AdminDashboard = () => {
               colorScheme="blue"
               onClick={() => handleEditUser(user)}
             />
+            {user.role === 'seller' && !user.isApproved && (
+              <Tooltip label="موافقة على البائع">
+                <IconButton
+                  icon={<CheckCircle />}
+                  size="sm"
+                  variant="ghost"
+                  colorScheme="green"
+                  onClick={() => handleApproveSeller(user)}
+                  isLoading={loading}
+                />
+              </Tooltip>
+            )}
             {!user.isApproved ? (
               <>
                 <IconButton
@@ -850,7 +893,7 @@ const AdminDashboard = () => {
                   size="sm"
                   variant="ghost"
                   colorScheme="green"
-                  onClick={handleApprove}
+                  onClick={() => handleApprove(user)}
                   isLoading={loading}
                 />
                 <IconButton
@@ -1549,40 +1592,17 @@ const AdminDashboard = () => {
   };
 
   const handleTeamMemberSocialChange = (index, platform, value) => {
-    setLocalSettings(prev => {
-      const newTeamMembers = [...(prev.teamMembers || [])];
-      newTeamMembers[index] = {
-        ...newTeamMembers[index],
-        social: {
-          ...(newTeamMembers[index]?.social || {}),
-          [platform]: value
-        }
-      };
-      return {
-        ...prev,
-        teamMembers: newTeamMembers
-      };
-    });
-  };
-
-  const handleAddTeamMember = () => {
     setLocalSettings(prev => ({
       ...prev,
-      teamMembers: [
-        ...(prev.teamMembers || []),
-        {
-          name: '',
-          position: '',
-          bio: '',
-          image: '',
+      teamMembers: prev.teamMembers.map((member, i) => 
+        i === index ? {
+          ...member,
           social: {
-            facebook: '',
-            twitter: '',
-            instagram: '',
-            linkedin: ''
+            ...member.social,
+            [platform]: value
           }
-        }
-      ]
+        } : member
+      )
     }));
   };
 
@@ -1686,6 +1706,13 @@ const AdminDashboard = () => {
             <Input
               value={member.social?.instagram || ''}
               onChange={(e) => handleTeamMemberSocialChange(index, 'instagram', e.target.value)}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>تيك توك</FormLabel>
+            <Input
+              value={member.social?.tiktok || ''}
+              onChange={(e) => handleTeamMemberSocialChange(index, 'tiktok', e.target.value)}
             />
           </FormControl>
           <FormControl>
@@ -1896,6 +1923,73 @@ const AdminDashboard = () => {
     
     return matchesSearch && matchesStatus;
   });
+
+  // Add new state for the add team member modal
+  const { isOpen: isAddTeamMemberOpen, onOpen: onAddTeamMemberOpen, onClose: onAddTeamMemberClose } = useDisclosure();
+  const [newTeamMember, setNewTeamMember] = useState({
+    name: '',
+    position: '',
+    bio: '',
+    image: '',
+    social: {
+      facebook: '',
+      twitter: '',
+      instagram: '',
+      tiktok: ''
+    }
+  });
+
+  // Update handleAddTeamMember to open modal
+  const handleAddTeamMember = () => {
+    onAddTeamMemberOpen();
+  };
+
+  // Add handler for submitting new team member
+  const handleAddTeamMemberSubmit = () => {
+    setLocalSettings(prev => ({
+      ...prev,
+      teamMembers: [
+        ...(prev.teamMembers || []),
+        newTeamMember
+      ]
+    }));
+    
+    // Reset form
+    setNewTeamMember({
+      name: '',
+      position: '',
+      bio: '',
+      image: '',
+      social: {
+        facebook: '',
+        twitter: '',
+        instagram: '',
+        tiktok: ''
+      }
+    });
+    
+    onAddTeamMemberClose();
+  };
+
+  // Add handler for new team member image upload
+  const handleNewTeamMemberImageUpload = async (file) => {
+    try {
+      const imageUrl = await uploadToCloudinary(file);
+      setNewTeamMember(prev => ({
+        ...prev,
+        image: imageUrl
+      }));
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast({
+        title: 'خطأ في رفع الصورة',
+        description: 'فشل في رفع صورة العضو',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
   return (
     <Container maxW="container.xl" py={isMobile ? 4 : 10} px={isMobile ? 2 : 4}>
@@ -2848,8 +2942,8 @@ const AdminDashboard = () => {
                               <Input w="full" value={localSettings?.socialMedia?.instagram || ''} onChange={(e) => handleSettingChange('socialMedia.instagram', e.target.value)} placeholder="رابط إنستغرام" />
                             </FormControl>
                             <FormControl>
-                              <FormLabel>رابط لينكد إن</FormLabel>
-                              <Input w="full" value={localSettings?.socialMedia?.linkedin || ''} onChange={(e) => handleSettingChange('socialMedia.linkedin', e.target.value)} placeholder="رابط لينكد إن" />
+                              <FormLabel>رابط تيك توك</FormLabel>
+                              <Input w="full" value={localSettings?.socialMedia?.tiktok || ''} onChange={(e) => handleSettingChange('socialMedia.tiktok', e.target.value)} placeholder="رابط تيك توك" />
                             </FormControl>
                             <FormControl>
                               <FormLabel>رابط واتساب</FormLabel>
@@ -3630,6 +3724,116 @@ const AdminDashboard = () => {
               إضافة
             </Button>
             <Button variant="ghost" onClick={onAddUserClose}>
+              إلغاء
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Add Team Member Modal */}
+      <Modal isOpen={isAddTeamMemberOpen} onClose={onAddTeamMemberClose} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>إضافة عضو جديد</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <VStack spacing={4}>
+              <FormControl>
+                <FormLabel>الاسم</FormLabel>
+                <Input
+                  value={newTeamMember.name}
+                  onChange={(e) => setNewTeamMember(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="أدخل الاسم"
+                />
+              </FormControl>
+              
+              <FormControl>
+                <FormLabel>المنصب</FormLabel>
+                <Input
+                  value={newTeamMember.position}
+                  onChange={(e) => setNewTeamMember(prev => ({ ...prev, position: e.target.value }))}
+                  placeholder="أدخل المنصب"
+                />
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>السيرة الذاتية</FormLabel>
+                <Textarea
+                  value={newTeamMember.bio}
+                  onChange={(e) => setNewTeamMember(prev => ({ ...prev, bio: e.target.value }))}
+                  placeholder="أدخل السيرة الذاتية"
+                />
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>الصورة</FormLabel>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      handleNewTeamMemberImageUpload(e.target.files[0]);
+                    }
+                  }}
+                />
+              </FormControl>
+
+              <SimpleGrid columns={2} spacing={4} w="full">
+                <FormControl>
+                  <FormLabel>فيسبوك</FormLabel>
+                  <Input
+                    value={newTeamMember.social.facebook}
+                    onChange={(e) => setNewTeamMember(prev => ({
+                      ...prev,
+                      social: { ...prev.social, facebook: e.target.value }
+                    }))}
+                    placeholder="رابط فيسبوك"
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>تويتر</FormLabel>
+                  <Input
+                    value={newTeamMember.social.twitter}
+                    onChange={(e) => setNewTeamMember(prev => ({
+                      ...prev,
+                      social: { ...prev.social, twitter: e.target.value }
+                    }))}
+                    placeholder="رابط تويتر"
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>انستغرام</FormLabel>
+                  <Input
+                    value={newTeamMember.social.instagram}
+                    onChange={(e) => setNewTeamMember(prev => ({
+                      ...prev,
+                      social: { ...prev.social, instagram: e.target.value }
+                    }))}
+                    placeholder="رابط انستغرام"
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>تيك توك</FormLabel>
+                  <Input
+                    value={newTeamMember.social.tiktok}
+                    onChange={(e) => setNewTeamMember(prev => ({
+                      ...prev,
+                      social: { ...prev.social, tiktok: e.target.value }
+                    }))}
+                    placeholder="رابط تيك توك"
+                  />
+                </FormControl>
+              </SimpleGrid>
+            </VStack>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={handleAddTeamMemberSubmit}>
+              إضافة
+            </Button>
+            <Button variant="ghost" onClick={onAddTeamMemberClose}>
               إلغاء
             </Button>
           </ModalFooter>

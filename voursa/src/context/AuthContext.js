@@ -18,14 +18,15 @@ export const AuthProvider = ({ children }) => {
     const checkAuthAndRedirect = async () => {
       const token = localStorage.getItem('token');
       const storedUser = JSON.parse(localStorage.getItem('user'));
+      const loginError = localStorage.getItem('loginError');
       
-      console.log('Token:', token);
-      console.log('Stored User:', storedUser);
+      if (loginError) {
+        console.log('Previous login error:', JSON.parse(loginError));
+      }
       
       if (!token || !storedUser) {
-        console.log('No token or stored user found');
         setUser(null);
-        setLoading(false); // Set loading to false if no token or user
+        setLoading(false);
         return;
       }
       
@@ -55,7 +56,11 @@ export const AuthProvider = ({ children }) => {
           }
         }
       } catch (error) {
-        console.error('Auth check failed:', error);
+        localStorage.setItem('loginError', JSON.stringify({
+          message: `Auth check failed: ${error.message}`,
+          timestamp: new Date().toISOString()
+        }));
+        
         // Clear invalid auth data
         localStorage.removeItem('token');
         localStorage.removeItem('user');
@@ -71,107 +76,113 @@ export const AuthProvider = ({ children }) => {
           }
         }
       } finally {
-        // Set loading to false after a short delay to prevent flashing
-        setTimeout(() => {
         setLoading(false);
-        }, 500);
       }
     };
 
     checkAuthAndRedirect();
-  }, [navigate]);
+  }, []);
 
   // Login fonksiyonu
-  const login = async (username, password) => {
+  const login = async (username, password, role) => {
     try {
       setLoading(true);
       setError(null);
       
+      // Clear previous error logs
+      localStorage.removeItem('loginError');
+      
       // Validate input
       if (!username || !password) {
-        setError('الرجاء إدخال البريد الإلكتروني وكلمة المرور');
-        return { success: false, error: 'الرجاء إدخال البريد الإلكتروني وكلمة المرور' };
+        const errorMsg = 'الرجاء إدخال البريد الإلكتروني وكلمة المرور';
+        localStorage.setItem('loginError', JSON.stringify({
+          message: errorMsg,
+          timestamp: new Date().toISOString()
+        }));
+        setError(errorMsg);
+        return { success: false, error: errorMsg };
       }
-      
-      // First try admin login
-      try {
-        console.log('Trying admin login with API URL:', process.env.REACT_APP_API_URL);
-        
-        const adminResponse = await axiosInstance.post('/admin/login', {
+
+      let response;
+      if (role === 'admin') {
+        // Admin login
+        response = await axiosInstance.post('/admin/login', {
           email: username,
           password: password
         });
         
-        console.log('Admin login response:', adminResponse.data);
-        
-        if (adminResponse.data.success) {
-          const { token, admin } = adminResponse.data;
+        if (response.data.success) {
+          const { token, admin } = response.data;
           localStorage.setItem('token', token);
           localStorage.setItem('user', JSON.stringify(admin));
           setUser(admin);
           
-          // Redirect based on role
-          if (admin.role === 'admin' || admin.role === 'superadmin') {
-            navigate('/admin/dashboard', { replace: true });
-          }
+          // Set auth header
+          axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          
+          // Redirect to admin dashboard
+          navigate('/admin/dashboard', { replace: true });
           return { success: true };
         }
-      } catch (adminError) {
-        console.log('Admin login failed:', adminError.message);
-        if (adminError.response) {
-          console.log('Admin login error response:', adminError.response.status, adminError.response.data);
-        } else if (adminError.request) {
-          console.log('Admin login no response received:', adminError.request);
-        }
-        // Don't throw here, continue to seller login
-      }
-      
-      // If admin login fails, try seller login
-      try {
-        console.log('Trying seller login with API URL:', process.env.REACT_APP_API_URL);
-        
-        const sellerResponse = await axiosInstance.post('/users/login', {
+      } else if (role === 'seller') {
+        // Seller login
+        response = await axiosInstance.post('/users/login', {
           email: username,
           password: password
         });
         
-        console.log('Seller login response:', sellerResponse.data);
-        
-        if (sellerResponse.data.success) {
-          const { token, user } = sellerResponse.data;
+        if (response.data.success) {
+          const { token, user } = response.data;
+          
+          // Validate user data
+          if (!user || !user.role) {
+            throw new Error('Invalid user data received from server');
+          }
+          
           localStorage.setItem('token', token);
           localStorage.setItem('user', JSON.stringify(user));
           setUser(user);
           
-          // Redirect seller to their dashboard
-          if (user.role === 'seller') {
-            navigate('/seller-dashboard', { replace: true });
-          }
+          // Set auth header
+          axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          
+          // Redirect to seller dashboard
+          navigate('/seller-dashboard', { replace: true });
           return { success: true };
-        } else {
-          throw new Error(sellerResponse.data.message || 'فشل تسجيل الدخول');
         }
-      } catch (sellerError) {
-        console.error('Seller login error:', sellerError.message);
-        if (sellerError.response) {
-          console.log('Seller login error response:', sellerError.response.status, sellerError.response.data);
-        } else if (sellerError.request) {
-          console.log('Seller login no response received:', sellerError.request);
-        }
-        throw sellerError;
       }
+
+      // If we get here, login failed
+      const errorMsg = response?.data?.message || 'فشل تسجيل الدخول';
+      localStorage.setItem('loginError', JSON.stringify({
+        message: `Login failed: ${errorMsg}`,
+        response: response?.data,
+        timestamp: new Date().toISOString()
+      }));
+      throw new Error(errorMsg);
+      
     } catch (err) {
-      console.error('Login error:', err);
       let errorMessage;
       
       if (err.response) {
-        console.error('Error response data:', err.response.data);
         errorMessage = err.response?.data?.message || 'فشل تسجيل الدخول - خطأ في الاستجابة';
+        localStorage.setItem('loginError', JSON.stringify({
+          message: `Response error: ${errorMessage}`,
+          details: err.response.data,
+          timestamp: new Date().toISOString()
+        }));
       } else if (err.request) {
-        console.error('Error request:', err.request);
         errorMessage = 'فشل الاتصال بالخادم - يرجى التحقق من اتصالك بالإنترنت';
+        localStorage.setItem('loginError', JSON.stringify({
+          message: `Network error: ${errorMessage}`,
+          timestamp: new Date().toISOString()
+        }));
       } else {
         errorMessage = err.message || 'فشل تسجيل الدخول - خطأ غير معروف';
+        localStorage.setItem('loginError', JSON.stringify({
+          message: `Unknown error: ${errorMessage}`,
+          timestamp: new Date().toISOString()
+        }));
       }
       
       setError(errorMessage);
@@ -250,6 +261,15 @@ export const AuthProvider = ({ children }) => {
     return await AdminService.getAllUsers();
   };
 
+  const approveSeller = async (userId) => {
+    try {
+      const response = await AdminService.approveSeller(userId);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const value = {
     user,
     loading,
@@ -265,7 +285,8 @@ export const AuthProvider = ({ children }) => {
     addUser,
     updateUser,
     deleteUser,
-    getUsers
+    getUsers,
+    approveSeller
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

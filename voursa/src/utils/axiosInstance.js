@@ -5,7 +5,7 @@ const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000, // 10 seconds timeout
+  timeout: 300000, // 5 minutes timeout for property uploads
 });
 
 // Add a request interceptor
@@ -32,7 +32,12 @@ axiosInstance.interceptors.response.use(
       if (error.response.status === 401) {
         // Handle unauthorized access
         localStorage.removeItem('token');
-        window.location.href = '/login';
+        // Redirect to appropriate login page based on current route
+        if (window.location.pathname.startsWith('/admin')) {
+          window.location.href = '/admin/login';
+        } else {
+          window.location.href = '/seller-login';
+        }
       } else if (error.response.status === 500) {
         // Handle server errors
         console.error('Server Error:', error.response.data);

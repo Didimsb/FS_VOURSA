@@ -134,7 +134,7 @@ const settingsSchema = new mongoose.Schema({
         instagram: String,
         facebook: String,
         twitter: String,
-        linkedin: String
+        tiktok: String
       }
     }],
     stats: [{
@@ -330,10 +330,10 @@ const settingsSchema = new mongoose.Schema({
       required: true
     },
     social: {
+      instagram: String,
       facebook: String,
       twitter: String,
-      instagram: String,
-      linkedin: String
+      tiktok: String
     }
   }]
 }, {

@@ -73,7 +73,7 @@ import {
   MessageCircle,
 } from 'lucide-react';
 import { useSettings } from '../context/SettingsContext';
-import { FaFacebook, FaTwitter, FaInstagram } from 'react-icons/fa';
+import { FaFacebook, FaTwitter, FaInstagram, FaTiktok } from 'react-icons/fa';
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
@@ -182,7 +182,7 @@ const AboutUs = () => {
         instagram: '#',
         facebook: '#',
         twitter: '#',
-        linkedin: '#',
+        tiktok: '#',
       },
     },
     {
@@ -194,7 +194,7 @@ const AboutUs = () => {
         instagram: '#',
         facebook: '#',
         twitter: '#',
-        linkedin: '#',
+        tiktok: '#',
       },
     },
     {
@@ -206,7 +206,7 @@ const AboutUs = () => {
         instagram: '#',
         facebook: '#',
         twitter: '#',
-        linkedin: '#',
+        tiktok: '#',
       },
     },
     {
@@ -218,7 +218,7 @@ const AboutUs = () => {
         instagram: '#',
         facebook: '#',
         twitter: '#',
-        linkedin: '#',
+        tiktok: '#',
       },
     },
   ];
@@ -746,6 +746,24 @@ const AboutUs = () => {
                         colorScheme="yellow"
                         as="a"
                         href={member.social.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        _hover={{
+                          transform: "translateY(-3px)",
+                          boxShadow: "md",
+                          bg: "yellow.50"
+                        }}
+                        transition="all 0.3s ease"
+                      />
+                    )}
+                    {member.social?.tiktok && (
+                      <IconButton
+                        icon={<FaTiktok />}
+                        aria-label="TikTok"
+                        variant="ghost"
+                        colorScheme="yellow"
+                        as="a"
+                        href={member.social.tiktok}
                         target="_blank"
                         rel="noopener noreferrer"
                         _hover={{

@@ -117,7 +117,7 @@ import { UserIcon } from 'lucide-react';
 import Footer from '../components/Footer';
 import { getPointsBalance, purchasePoints, deductPointsForProperty, getPointsTransactions } from '../services/PointsService';
 import { useSettings } from '../context/SettingsContext';
-import { createProperty } from '../services/PropertyService';
+import { createProperty, getAllProperties, getPropertyById, updateProperty, deleteProperty, getProperty } from '../services/PropertyService';
 import axios from 'axios';
 import axiosInstance from '../utils/axiosInstance';
 
@@ -355,14 +355,37 @@ const SellerDashboard = () => {
   const fetchPointsBalance = async () => {
     try {
       const response = await getPointsBalance();
+      console.log('Points balance response:', response); // Debug log
+      
       if (response && response.credits !== undefined) {
-        setPointsBalance(response.credits);
-        setCredits(response.credits);
+        const credits = parseInt(response.credits, 10);
+        if (!isNaN(credits)) {
+          setPointsBalance(credits);
+          setCredits(credits);
+          console.log('Updated credits:', credits); // Debug log
+        } else {
+          console.error('Invalid credits value:', response.credits);
+          toast({
+            title: "خطأ في قيمة النقاط",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+      } else {
+        console.error('Invalid response format:', response);
+        toast({
+          title: "خطأ في تنسيق البيانات",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
       }
     } catch (error) {
       console.error('Error fetching points balance:', error);
       toast({
         title: "خطأ في جلب رصيد النقاط",
+        description: error.message,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -415,11 +438,37 @@ const SellerDashboard = () => {
   };
 
   useEffect(() => {
-    fetchSellerProperties();
-    fetchLatestProperties();
-    fetchPointsBalance();
-    fetchPointsTransactions();
-  }, []);
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        await Promise.all([
+          fetchPointsBalance(),
+          fetchSellerProperties(),
+          fetchPointsTransactions()
+        ]);
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+        toast({
+          title: "خطأ في تحميل البيانات",
+          description: error.message,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [user._id]); // Add user._id as dependency to refetch when user changes
+
+  // Add effect to refetch points balance after successful purchase
+  useEffect(() => {
+    if (isPaymentSubmittedOpen) {
+      fetchPointsBalance();
+    }
+  }, [isPaymentSubmittedOpen]);
   
   // Add effect to fetch customers when the customers tab is selected
   useEffect(() => {
@@ -1244,11 +1293,13 @@ const SellerDashboard = () => {
     try {
       setIsLoading(true);
       console.log('Fetching customers for seller:', user._id);
+      
+      // Use the correct endpoint from propertyRoutes.js
       const response = await axiosInstance.get(`/properties/seller/customers?sellerId=${user._id}`);
       console.log('Customers API Response:', response);
       
       if (response.data && response.data.success) {
-        setCustomers(response.data.customers);
+        setCustomers(response.data.customers || []);
         console.log('Customers state updated:', response.data.customers);
       } else {
         console.error('Invalid response format:', response.data);
@@ -1262,6 +1313,13 @@ const SellerDashboard = () => {
       setIsLoading(false);
     }
   };
+
+  // Update the useEffect to fetch customers when the tab is active
+  useEffect(() => {
+    if (activeTab === 2) { // 2 is the index for the customers tab
+      fetchCustomers();
+    }
+  }, [activeTab, user._id]); // Add user._id as dependency
 
   const [stats, setStats] = useState({
     totalProperties: 0,
@@ -1940,12 +1998,7 @@ const SellerDashboard = () => {
                     >
                       <Stack spacing={6}>
                         <Heading size="md">قائمة العملاء</Heading>
-                        {/* DEBUG LOGS ON PAGE */}
-                        <Box bg="gray.100" p={3} borderRadius="md" fontSize="sm" color="red.600">
-                          <div>DEBUG: customers.length = {customers.length}</div>
-                          <div>DEBUG: error = {error ? error : 'none'}</div>
-                          <div>DEBUG: customers = <pre style={{whiteSpace: 'pre-wrap', direction: 'ltr'}}>{JSON.stringify(customers, null, 2)}</pre></div>
-                        </Box>
+                        
                         
                         {isLoading ? (
                           <Center>

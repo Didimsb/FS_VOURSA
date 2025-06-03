@@ -39,14 +39,14 @@ import {
   Eye,
   EyeOff,
 } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
 const MotionVStack = motion(VStack);
 
-const SellerLogin = () => {
+const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -61,8 +61,8 @@ const SellerLogin = () => {
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
-      if (user.role === 'seller') {
-        navigate('/seller-dashboard');
+      if (user.role === 'admin' || user.role === 'superadmin') {
+        navigate('/admin/dashboard');
       }
     }
   }, [user, navigate]);
@@ -86,7 +86,7 @@ const SellerLogin = () => {
     setError('');
     setIsLoading(true);
     
-    const result = await login(email, password, 'seller');
+    const result = await login(email, password, 'admin');
     
     if (result.success) {
       toast({
@@ -111,18 +111,18 @@ const SellerLogin = () => {
   const features = [
     {
       icon: Shield,
-      title: 'حماية كاملة',
-      description: 'نضمن حماية بياناتك وعملياتك',
+      title: 'حماية متقدمة',
+      description: 'نظام حماية متكامل للبيانات والعمليات',
     },
     {
       icon: Award,
-      title: 'دعم احترافي',
-      description: 'فريق دعم متخصص لمساعدتك',
+      title: 'إدارة كاملة',
+      description: 'تحكم كامل في النظام والمستخدمين',
     },
     {
       icon: Star,
-      title: 'مميزات حصرية',
-      description: 'وصول إلى أدوات متقدمة للبائعين',
+      title: 'تقارير وإحصائيات',
+      description: 'تقارير تفصيلية وإحصائيات متقدمة',
     },
   ];
   
@@ -160,7 +160,7 @@ const SellerLogin = () => {
           >
             <VStack align="start" spacing={4}>
               <Badge colorScheme="primary" fontSize="md" px={3} py={1} rounded="full">
-                لوحة تحكم البائع
+                لوحة تحكم المدير
               </Badge>
               <Heading
                 as="h1"
@@ -168,10 +168,10 @@ const SellerLogin = () => {
                 color={headingColor}
                 lineHeight="shorter"
               >
-                مرحباً بك في لوحة تحكم البائع
+                مرحباً بك في لوحة تحكم المدير
               </Heading>
               <Text fontSize="lg" color={textColor} maxW="md">
-                قم بإدارة عقاراتك وعملياتك بسهولة وأمان
+                قم بإدارة النظام والمستخدمين بسهولة وأمان
               </Text>
             </VStack>
             
@@ -218,13 +218,13 @@ const SellerLogin = () => {
             <HStack spacing={4} mt={4}>
               <Icon as={CheckCircle} color="green.500" />
               <Text color={textColor}>
-                إدارة العقارات بسهولة
+                نظام إدارة متكامل
               </Text>
             </HStack>
             <HStack spacing={4}>
               <Icon as={CheckCircle} color="green.500" />
               <Text color={textColor}>
-                متابعة العملاء والطلبات
+                تحكم كامل في المستخدمين والعقارات
               </Text>
             </HStack>
           </MotionVStack>
@@ -258,7 +258,7 @@ const SellerLogin = () => {
             >
               <VStack spacing={2} textAlign="center" mb={4}>
                 <Badge colorScheme="primary" fontSize="md" px={3} py={1} rounded="full" mb={2}>
-                  تسجيل دخول البائع
+                  تسجيل دخول المدير
                 </Badge>
                 <Heading size="xl" color={headingColor}>
                   مرحباً بعودتك!
@@ -357,15 +357,6 @@ const SellerLogin = () => {
                   </Button>
                 </VStack>
               </form>
-              
-              <Divider my={4} />
-              
-              <Text textAlign="center" color={textColor}>
-                ليس لديك حساب؟{' '}
-                <Link to="/register" style={{ color: accentColor, fontWeight: 'bold' }}>
-                  إنشاء حساب جديد
-                </Link>
-              </Text>
             </VStack>
           </MotionBox>
         </SimpleGrid>
@@ -374,4 +365,4 @@ const SellerLogin = () => {
   );
 };
 
-export default SellerLogin; 
+export default AdminLogin; 

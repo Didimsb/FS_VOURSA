@@ -13,7 +13,8 @@ const {
   getAllUsers,
   createUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  checkAdminAdded
 } = require('../controllers/userController');
 
 // Configure multer for file uploads
@@ -59,5 +60,7 @@ router.get('/admin/users', protect, isAdmin, getAllUsers);
 router.post('/admin/users', protect, isAdmin, createUser);
 router.put('/admin/users/:id', protect, isAdmin, updateUser);
 router.delete('/admin/users/:id', protect, isAdmin, deleteUser);
+
+router.post('/check-admin-added', checkAdminAdded);
 
 module.exports = router; 

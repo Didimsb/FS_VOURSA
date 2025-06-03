@@ -49,7 +49,7 @@ export const getSettings = async () => {
           facebook: member?.social?.facebook || '',
           twitter: member?.social?.twitter || '',
           instagram: member?.social?.instagram || '',
-          linkedin: member?.social?.linkedin || ''
+          tiktok: member?.social?.tiktok || ''
         }
       })) || [],
       socialMedia: settings?.socialMedia || {},

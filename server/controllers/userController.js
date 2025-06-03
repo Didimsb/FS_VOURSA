@@ -498,4 +498,38 @@ exports.deleteUser = async (req, res) => {
       error: error.message
     });
   }
+};
+
+// Check if user exists and was added by admin
+exports.checkAdminAdded = async (req, res) => {
+  try {
+    const { email, phone } = req.body;
+
+    // Check if user exists with this email or phone
+    const user = await User.findOne({
+      $or: [
+        { email: email },
+        { phone: phone }
+      ]
+    });
+
+    if (user) {
+      // Check if user was added by admin
+      return res.json({
+        exists: true,
+        isAdminAdded: user.isAdminAdded || false
+      });
+    }
+
+    return res.json({
+      exists: false,
+      isAdminAdded: false
+    });
+  } catch (error) {
+    console.error('Error checking admin added user:', error);
+    res.status(500).json({
+      success: false,
+      message: 'حدث خطأ أثناء التحقق من المستخدم'
+    });
+  }
 }; 
