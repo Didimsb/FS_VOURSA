@@ -196,23 +196,29 @@ const Home = () => {
             <Wrap spacing={4} justify="center">
               {Object.entries(propertyTypeIcons).map(([type, IconComponent]) => (
                 <WrapItem key={type}>
-                  <Tooltip label={type} placement="top">
-                    <Button
-                      size="lg"
-                      variant={selectedPropertyType === type ? "solid" : "outline"}
-                      colorScheme="yellow"
-                      leftIcon={<Icon as={IconComponent} />}
-                      onClick={() => handlePropertyTypeClick(type)}
-                      _hover={{
-                        bg: hoverBg,
-                        transform: 'translateY(-2px)',
-                        boxShadow: 'lg'
-                      }}
-                      transition="all 0.2s"
-                    >
-                      {type}
-                    </Button>
-                  </Tooltip>
+                  <VStack spacing={2}>
+                    <Tooltip label={type} placement="top">
+                      <Button
+                        size="lg"
+                        variant={selectedPropertyType === type ? "solid" : "outline"}
+                        colorScheme="yellow"
+                        borderRadius="full"
+                        minW={16}
+                        h={16}
+                        p={0}
+                        onClick={() => handlePropertyTypeClick(type)}
+                        _hover={{
+                          // bg: hoverBg,
+                          transform: 'translateY(-2px)',
+                          boxShadow: 'lg'
+                        }}
+                        transition="all 0.2s"
+                      >
+                        <Icon as={IconComponent} boxSize={7} />
+                      </Button>
+                    </Tooltip>
+                    <Text fontSize="sm" textAlign="center">{type}</Text>
+                  </VStack>
                 </WrapItem>
               ))}
             </Wrap>
@@ -222,34 +228,31 @@ const Home = () => {
             <Center py={10}>
               <Spinner size="xl" color="yellow.500" />
             </Center>
-          ) : properties.length === 0 ? (
-            <Center py={10}>
-              <Text fontSize="xl" color="gray.500">
-                لا توجد عقارات متاحة
-              </Text>
-            </Center>
+          ) : properties && properties.length > 0 ? (
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
+              {properties.map(property => (
+                <PropertyCard key={property._id} property={property} />
+              ))}
+            </SimpleGrid>
           ) : (
-            <>
-              <SimpleGrid columns={{ base: 1, md: 2, lg: 3, xl: 4 }} spacing={6}>
-                {properties.map((property) => (
-                  <PropertyCard key={property._id} property={property} />
-                ))}
-              </SimpleGrid>
-
-              {hasMore && (
-                <Center mt={8}>
-                  <Button
-                    colorScheme="yellow"
-                    size="lg"
-                    onClick={handleLoadMore}
-                    isLoading={loading && page > 1}
-                  >
-                    عرض المزيد
-                  </Button>
-                </Center>
-              )}
-            </>
+            <Text textAlign="center" fontSize="xl" color={textColor}>
+              {settings?.homePage?.noPropertiesMessage || 'لا توجد عقارات مميزة متاحة حالياً.'}
+            </Text>
           )}
+
+          {hasMore && !loading && properties && properties.length > 0 && (
+            <Center mt={8}>
+              <Button
+                onClick={handleLoadMore}
+                isLoading={loading}
+                loadingText="تحميل المزيد..."
+                colorScheme="yellow"
+              >
+                تحميل المزيد
+              </Button>
+            </Center>
+          )}
+
         </MotionBox>
       </Container>
       <Footer />

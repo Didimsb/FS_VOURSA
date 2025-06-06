@@ -110,7 +110,14 @@ const AboutUs = () => {
   const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [1, 1, 1, 0]);
   
-  const isMobile = useBreakpointValue({ base: true, md: false });
+  const containerPadding = useBreakpointValue({ base: 2, sm: 4, md: 6, lg: 8 });
+  const headingSize = useBreakpointValue({ base: 'lg', sm: 'xl', md: '2xl' });
+  const textSize = useBreakpointValue({ base: 'sm', sm: 'md', md: 'lg' });
+  const gridColumns = useBreakpointValue({ base: 1, sm: 2, md: 3, lg: 4 });
+  const spacing = useBreakpointValue({ base: 3, sm: 4, md: 6, lg: 8 });
+  const sectionPadding = useBreakpointValue({ base: 6, sm: 8, md: 12, lg: 16 });
+  const cardPadding = useBreakpointValue({ base: 3, sm: 4, md: 6 });
+  const iconSize = useBreakpointValue({ base: 5, sm: 6, md: 8 });
   
   const badgeControls = useAnimation();
   
@@ -255,7 +262,7 @@ const AboutUs = () => {
       {/* Banner Section */}
       <Box
         position="relative"
-        h={{ base: '40vh', md: '50vh' }}
+        h={{ base: '40vh', sm: '45vh', md: '50vh', lg: '60vh' }}
         bgImage={`url('${settings?.banners?.about?.image || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'}')`}
         bgSize="cover"
         bgPosition="center"
@@ -270,17 +277,26 @@ const AboutUs = () => {
           opacity: 0.5,
         }}
       >
-        <Container maxW="container.xl" position="relative" zIndex={1} h="full">
+        <Container maxW="container.xl" px={containerPadding} position="relative" zIndex={1} h="full">
           <Flex direction="column" justify="center" align="center" h="full" textAlign="center" color="white">
             <Heading
               as="h1"
-              size="2xl"
-              mb={4}
+              size={headingSize}
+              mb={{ base: 2, sm: 3, md: 4 }}
               textShadow="2px 2px 4px rgba(0,0,0,0.5)"
+              px={{ base: 2, sm: 4 }}
+              lineHeight="shorter"
             >
               {settings?.banners?.about?.title || 'عن وكالة ورسة'}
             </Heading>
-            <Text fontSize="xl" maxW="3xl" mx="auto" textShadow="1px 1px 2px rgba(0,0,0,0.5)">
+            <Text 
+              fontSize={textSize} 
+              maxW={{ base: '100%', sm: '90%', md: '3xl' }} 
+              mx="auto" 
+              textShadow="1px 1px 2px rgba(0,0,0,0.5)"
+              px={{ base: 2, sm: 4 }}
+              lineHeight="tall"
+            >
               {settings?.banners?.about?.description || 'نحن نقدم حلولاً عقارية متكاملة تلبي احتياجات عملائنا بأعلى معايير الجودة والشفافية'}
             </Text>
           </Flex>
@@ -288,9 +304,9 @@ const AboutUs = () => {
       </Box>
       
       {/* Stats Section */}
-      <Box py={16} bg={lightBg}>
-        <Container maxW="container.xl">
-          <SimpleGrid columns={{ base: 2, md: 4 }} spacing={8}>
+      <Box py={sectionPadding} bg={lightBg}>
+        <Container maxW="container.xl" px={containerPadding}>
+          <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={spacing}>
             {stats.map((stat, index) => (
               <MotionBox
                 key={index}
@@ -303,12 +319,12 @@ const AboutUs = () => {
               >
                 <VStack
                   bg={cardBg}
-                  p={6}
+                  p={cardPadding}
                   rounded="xl"
                   boxShadow="lg"
                   borderWidth="1px"
                   borderColor={borderColor}
-                  spacing={4}
+                  spacing={{ base: 2, sm: 3, md: 4 }}
                   align="center"
                   h="full"
                   position="relative"
@@ -327,11 +343,11 @@ const AboutUs = () => {
                     animate={hoveredValue === index ? { rotate: 360 } : { rotate: 0 }}
                     transition={{ duration: 0.8, ease: "easeInOut" }}
                   >
-                    <Icon as={stat.icon} w={8} h={8} color={accentColor} />
+                    <Icon as={stat.icon} w={iconSize} h={iconSize} color={accentColor} />
                   </MotionBox>
                   <Stat>
                     <StatNumber 
-                      fontSize="3xl" 
+                      fontSize={{ base: 'lg', sm: 'xl', md: '3xl' }}
                       fontWeight="bold" 
                       color={accentColor}
                       transition="all 0.3s ease"
@@ -339,7 +355,11 @@ const AboutUs = () => {
                     >
                       {stat.value}
                     </StatNumber>
-                    <StatLabel fontSize="md" textAlign="center" color={textColor}>
+                    <StatLabel 
+                      fontSize={{ base: 'xs', sm: 'sm', md: 'md' }} 
+                      textAlign="center" 
+                      color={textColor}
+                    >
                       {stat.label}
                     </StatLabel>
                   </Stat>
@@ -351,9 +371,13 @@ const AboutUs = () => {
       </Box>
       
       {/* Story Section */}
-      <Box py={16} id="story" bg={bgColor}>
-        <Container maxW="container.xl">
-          <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={12} alignItems="center">
+      <Box py={sectionPadding} id="story" bg={bgColor}>
+        <Container maxW="container.xl" px={containerPadding}>
+          <Grid 
+            templateColumns={{ base: '1fr', lg: '1fr 1fr' }} 
+            gap={{ base: 6, sm: 8, md: 12 }} 
+            alignItems="center"
+          >
             <GridItem>
               <MotionBox
                 initial={{ opacity: 0, x: -50 }}
@@ -362,14 +386,20 @@ const AboutUs = () => {
               >
                 <Heading
                   as="h2"
-                  size="xl"
-                  mb={6}
+                  size={headingSize}
+                  mb={{ base: 4, sm: 5, md: 6 }}
                   bgGradient="linear(to-r, yellow.400, yellow.600)"
                   bgClip="text"
+                  lineHeight="shorter"
                 >
                   {settings?.aboutPage?.storyTitle || 'قصتنا'}
                 </Heading>
-                <Text fontSize="lg" color={textColor} mb={6}>
+                <Text 
+                  fontSize={textSize} 
+                  color={textColor} 
+                  mb={{ base: 4, sm: 5, md: 6 }}
+                  lineHeight="tall"
+                >
                   {settings?.aboutPage?.storyContent || 'تأسست وكالة ورسة العقارية في عام 2013 بهدف تقديم خدمات عقارية متكاملة تلبي احتياجات العملاء في موريتانيا. بدأنا بفريق صغير من الخبراء المتخصصين في مجال العقارات، وتمكنا من بناء سمعة طيبة في السوق بفضل التزامنا بالشفافية والجودة.'}
                 </Text>
               </MotionBox>
@@ -393,7 +423,7 @@ const AboutUs = () => {
                     alt="Our Story"
                     objectFit="cover"
                     w="full"
-                    h={{ base: '300px', md: '400px' }}
+                    h={{ base: '200px', sm: '250px', md: '400px' }}
                   />
                   <Box
                     position="absolute"
@@ -405,23 +435,6 @@ const AboutUs = () => {
                     opacity={0.3}
                   />
                 </Box>
-                
-                <MotionBox
-                  animate={badgeControls}
-                  onHoverStart={() => setIsBadgeHovered(true)}
-                  onHoverEnd={() => setIsBadgeHovered(false)}
-                  position="absolute"
-                  bottom={-6}
-                  right={-6}
-                  bg={accentColor}
-                  color="white"
-                  p={4}
-                  rounded="xl"
-                  boxShadow="lg"
-                  zIndex={2}
-                  cursor="pointer"
-                >
-                </MotionBox>
               </MotionBox>
             </GridItem>
           </Grid>
@@ -429,30 +442,41 @@ const AboutUs = () => {
       </Box>
       
       {/* Values Section */}
-      <Box py={16} bg={lightBg}>
-        <Container maxW="container.xl">
+      <Box py={sectionPadding} bg={lightBg}>
+        <Container maxW="container.xl" px={containerPadding}>
           <MotionBox
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             textAlign="center"
-            mb={12}
+            mb={{ base: 6, sm: 8, md: 12 }}
           >
             <Heading
               as="h2"
-              size="xl"
-              mb={4}
+              size={headingSize}
+              mb={{ base: 3, sm: 4 }}
               bgGradient="linear(to-r, yellow.400, yellow.600)"
               bgClip="text"
+              lineHeight="shorter"
             >
               {settings?.about?.valuesTitle || 'قيمنا'}
             </Heading>
-            <Text fontSize="lg" color={textColor} maxW="3xl" mx="auto">
+            <Text 
+              fontSize={textSize} 
+              color={textColor} 
+              maxW={{ base: '100%', sm: '90%', md: '3xl' }} 
+              mx="auto"
+              lineHeight="tall"
+            >
               {settings?.about?.valuesDescription || 'نؤمن بقيم أساسية توجه عملنا وتساعدنا على تقديم أفضل الخدمات لعملائنا'}
             </Text>
           </MotionBox>
           
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={8}>
+          <SimpleGrid 
+            columns={{ base: 1, sm: 2, md: 3, lg: 4 }} 
+            spacing={spacing}
+            px={{ base: 2, sm: 0 }}
+          >
             {settings?.about?.values?.map((value, index) => (
               <MotionBox
                 key={index}
@@ -528,25 +552,32 @@ const AboutUs = () => {
       </Box>
       
       {/* Services Section */}
-      <Box py={16} bg={bgColor}>
-        <Container maxW="container.xl">
+      <Box py={sectionPadding} bg={bgColor}>
+        <Container maxW="container.xl" px={containerPadding}>
           <MotionBox
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             textAlign="center"
-            mb={12}
+            mb={{ base: 6, sm: 8, md: 12 }}
           >
             <Heading
               as="h2"
-              size="xl"
-              mb={4}
+              size={headingSize}
+              mb={{ base: 3, sm: 4 }}
               bgGradient="linear(to-r, yellow.400, yellow.600)"
               bgClip="text"
+              lineHeight="shorter"
             >
               خدماتنا
             </Heading>
-            <Text fontSize="lg" color={textColor} maxW="3xl" mx="auto">
+            <Text 
+              fontSize={textSize} 
+              color={textColor} 
+              maxW={{ base: '100%', sm: '90%', md: '3xl' }} 
+              mx="auto"
+              lineHeight="tall"
+            >
               نقدم مجموعة متنوعة من الخدمات العقارية لتلبية احتياجات عملائنا
             </Text>
           </MotionBox>
@@ -556,16 +587,42 @@ const AboutUs = () => {
             colorScheme="yellow"
             onChange={(index) => setActiveTab(index)}
             isFitted
-            mb={8}
+            mb={{ base: 4, sm: 6, md: 8 }}
             bg={tabBg}
             borderColor={tabBorderColor}
           >
-            <TabList mb="1em">
-              <Tab color={textColor}>بيع وشراء</Tab>
+            <TabList 
+              mb="1em" 
+              overflowX="auto" 
+              css={{
+                '&::-webkit-scrollbar': {
+                  height: '4px',
+                },
+                '&::-webkit-scrollbar-track': {
+                  background: 'transparent',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  background: 'yellow.400',
+                  borderRadius: '2px',
+                },
+              }}
+              px={{ base: 1, sm: 2 }}
+            >
+              <Tab 
+                color={textColor} 
+                whiteSpace="nowrap"
+                fontSize={{ base: 'sm', sm: 'md' }}
+                py={{ base: 2, sm: 3 }}
+              >
+                بيع وشراء
+              </Tab>
             </TabList>
             <TabPanels>
-              <TabPanel>
-                <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
+              <TabPanel px={{ base: 1, sm: 2, md: 4 }}>
+                <SimpleGrid 
+                  columns={{ base: 1, sm: 2, lg: 3 }} 
+                  spacing={spacing}
+                >
                   {[
                     { icon: Home, title: 'منازل', description: 'بيع وشراء المنازل بجميع الأحجام والمواقع', color: 'yellow.400' },
                     { icon: Building2, title: 'شقق', description: 'بيع وشراء الشقق السكنية والتجارية', color: 'yellow.400' },
@@ -628,30 +685,41 @@ const AboutUs = () => {
       </Box>
       
       {/* Team Section */}
-      <Box py={16} bg={bgColor}>
-        <Container maxW="container.xl">
+      <Box py={sectionPadding} bg={bgColor}>
+        <Container maxW="container.xl" px={containerPadding}>
           <MotionBox
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             textAlign="center"
-            mb={12}
+            mb={{ base: 6, sm: 8, md: 12 }}
           >
             <Heading
               as="h2"
-              size="xl"
-              mb={4}
+              size={headingSize}
+              mb={{ base: 3, sm: 4 }}
               bgGradient="linear(to-r, yellow.400, yellow.600)"
               bgClip="text"
+              lineHeight="shorter"
             >
               فريقنا
             </Heading>
-            <Text fontSize="lg" color={textColor} maxW="3xl" mx="auto">
+            <Text 
+              fontSize={textSize} 
+              color={textColor} 
+              maxW={{ base: '100%', sm: '90%', md: '3xl' }} 
+              mx="auto"
+              lineHeight="tall"
+            >
               فريق من الخبراء المتخصصين في مجال العقارات والاستثمار
             </Text>
           </MotionBox>
           
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={8}>
+          <SimpleGrid 
+            columns={{ base: 1, sm: 2, md: 3, lg: 4 }} 
+            spacing={spacing}
+            px={{ base: 2, sm: 0 }}
+          >
             {settings?.teamMembers?.map((member, index) => (
               <MotionBox
                 key={member._id}
@@ -783,9 +851,13 @@ const AboutUs = () => {
       </Box>
       
       {/* Contact Section */}
-      <Box py={16} bg={lightBg} id="contact">
-        <Container maxW="container.xl">
-          <Grid templateColumns={{ base: '1fr', lg: '1fr' }} gap={12} alignItems="center">
+      <Box py={sectionPadding} bg={lightBg} id="contact">
+        <Container maxW="container.xl" px={containerPadding}>
+          <Grid 
+            templateColumns={{ base: '1fr', lg: '1fr' }} 
+            gap={{ base: 6, sm: 8, md: 12 }} 
+            alignItems="center"
+          >
             <GridItem>
               <MotionBox
                 initial={{ opacity: 0, x: -50 }}
@@ -794,45 +866,69 @@ const AboutUs = () => {
               >
                 <Heading
                   as="h2"
-                  size="xl"
-                  mb={6}
+                  size={headingSize}
+                  mb={{ base: 4, sm: 5, md: 6 }}
                   bgGradient="linear(to-r, yellow.400, yellow.600)"
                   bgClip="text"
+                  lineHeight="shorter"
                 >
                   تواصل معنا
                 </Heading>
-                <Text fontSize="lg" color={textColor} mb={6}>
+                <Text 
+                  fontSize={textSize} 
+                  color={textColor} 
+                  mb={{ base: 4, sm: 5, md: 6 }}
+                  lineHeight="tall"
+                >
                   نحن هنا لمساعدتك في جميع احتياجاتك العقارية. تواصل معنا اليوم للحصول على استشارة مجانية.
                 </Text>
                 
-                <VStack align="start" spacing={4} mb={8}>
+                <VStack 
+                  align="start" 
+                  spacing={{ base: 3, sm: 4 }} 
+                  mb={{ base: 6, sm: 8 }}
+                >
                   <HStack 
                     _hover={{ transform: "translateX(5px)" }}
                     transition="all 0.3s ease"
                     cursor="pointer"
+                    spacing={3}
                   >
-                    <Icon as={Phone} color={accentColor} />
-                    <Text color={textColor}>{settings?.contactPage?.phone || settings?.contactPhone || ''}</Text>
+                    <Icon as={Phone} color={accentColor} boxSize={iconSize} />
+                    <Text fontSize={textSize} color={textColor}>
+                      {settings?.contactPage?.phone || settings?.contactPhone || ''}
+                    </Text>
                   </HStack>
                   <HStack 
                     _hover={{ transform: "translateX(5px)" }}
                     transition="all 0.3s ease"
                     cursor="pointer"
+                    spacing={3}
                   >
-                    <Icon as={Mail} color={accentColor} />
-                    <Text color={textColor}>{settings?.contactPage?.email || settings?.contactEmail || ''}</Text>
+                    <Icon as={Mail} color={accentColor} boxSize={iconSize} />
+                    <Text fontSize={textSize} color={textColor}>
+                      {settings?.contactPage?.email || settings?.contactEmail || ''}
+                    </Text>
                   </HStack>
                   <HStack 
                     _hover={{ transform: "translateX(5px)" }}
                     transition="all 0.3s ease"
                     cursor="pointer"
+                    spacing={3}
                   >
-                    <Icon as={MapPin} color={accentColor} />
-                    <Text color={textColor}>{settings?.contactPage?.address || ''}</Text>
+                    <Icon as={MapPin} color={accentColor} boxSize={iconSize} />
+                    <Text fontSize={textSize} color={textColor}>
+                      {settings?.contactPage?.address || ''}
+                    </Text>
                   </HStack>
                 </VStack>
                 
-                <HStack spacing={4}>
+                <HStack 
+                  spacing={4} 
+                  justify={{ base: 'center', md: 'flex-start' }}
+                  wrap="wrap"
+                  gap={2}
+                >
                   {settings?.socialMedia?.facebook && (
                     <IconButton
                       icon={<FaFacebook />}
@@ -898,74 +994,34 @@ const AboutUs = () => {
       </Box>
       
       {/* Map Section */}
-      <Box h={{ base: '300px', md: '400px' }} position="relative">
+      <Box 
+        h={{ base: '150px', sm: '200px', md: '250px', lg: '300px' }} 
+        position="relative"
+        overflow="hidden"
+        borderRadius={{ base: 'md', md: 'none' }}
+        mx={{ base: containerPadding, md: 0 }}
+        mb={{ base: 4, md: 0 }}
+      >
         {settings?.contactPage?.mapEmbedUrl && (
-          <div dangerouslySetInnerHTML={{ __html: settings.contactPage.mapEmbedUrl }} />
-        )}
-      </Box>
-      
-      {/* Developer Section */}
-      <Box py={16} bg={bgColor}>
-        <Container maxW="container.xl">
-          <MotionBox
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            textAlign="center"
-            mb={12}
-          >
-            <Heading
-              as="h2"
-              size="xl"
-              mb={4}
-              bgGradient="linear(to-r, yellow.400, yellow.600)"
-              bgClip="text"
-            >
-              المطورين
-            </Heading>
-            <Text fontSize="lg" color={textColor} maxW="3xl" mx="auto">
-              تم تطوير هذا الموقع بواسطة شركة الهلال الرقمية
-            </Text>
-          </MotionBox>
-
           <Box
-            bg={cardBg}
-            p={8}
-            rounded="xl"
-            boxShadow="lg"
-            borderWidth="1px"
-            borderColor={borderColor}
-            maxW="2xl"
-            mx="auto"
-            textAlign="center"
+            position="absolute"
+            top={0}
+            left={0}
+            right={0}
+            bottom={0}
+            overflow="hidden"
           >
-            <Image
-              src="/elhilal.png"
-              alt="شركة الهلال الرقمية"
-              maxH="100px"
-              mx="auto"
-              mb={6}
-            />
-            <Text fontSize="lg" color={textColor} mb={6}>
-              شركة الهلال الرقمية هي شركة متخصصة في تطوير الحلول التقنية والبرمجية. نحن نقدم خدمات تطوير المواقع والتطبيقات بجودة عالية وأسعار تنافسية.
-            </Text>
-            <Button
-              as="a"
-              href="https://wa.me/22242900600"
-              target="_blank"
-              leftIcon={<MessageCircle />}
-              colorScheme="yellow"
-              size="lg"
-              _hover={{
-                transform: "translateY(-3px)",
-                boxShadow: "xl",
+            <div 
+              style={{
+                width: '100%',
+                height: '100%',
+                transform: 'scale(1.2)',
+                transformOrigin: 'center center'
               }}
-              transition="all 0.3s ease"
-            >
-              تواصل مع المطورين عبر واتساب
-            </Button>
+              dangerouslySetInnerHTML={{ __html: settings.contactPage.mapEmbedUrl }} 
+            />
           </Box>
-        </Container>
+        )}
       </Box>
     </Box>
   );

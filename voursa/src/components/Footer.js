@@ -41,22 +41,11 @@ const Footer = () => {
         <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8}>
           <Stack spacing={6}>
             <Text fontSize="lg" fontWeight="bold">
-              وكالة فورسا
-            </Text>
+            وكالة فرصة العقارية            </Text>
             <Text>
               وكالة عقارية متخصصة في بيع وشراء العقارات في موريتانيا. نقدم أفضل الخدمات العقارية لعملائنا الكرام.
             </Text>
-            <Button
-              as="a"
-              href={`https://wa.me/${settings?.contactPage?.phone?.replace(/\D/g, '')}`}
-              target="_blank"
-              leftIcon={<Icon as={MessageCircle} />}
-              colorScheme="whatsapp"
-              size="sm"
-              w="fit-content"
-            >
-              تواصل مع شركة الهلال الرقمية
-            </Button>
+            
           </Stack>
 
           <Stack spacing={6}>
@@ -66,7 +55,7 @@ const Footer = () => {
             <Stack spacing={4}>
               <Link href="/">الرئيسية</Link>
               <Link href="/about">من نحن</Link>
-              <Link href="/contact">اتصل بنا</Link>
+              <Link href="/contact"> اتصل بنا </Link>
               <Link href="/properties">العقارات</Link>
             </Stack>
           </Stack>
@@ -91,7 +80,7 @@ const Footer = () => {
           textAlign="center"
         >
           <Text>
-            © {new Date().getFullYear()} وكالة فورسا. جميع الحقوق محفوظة.
+            © {new Date().getFullYear()} وكالة فرصة العقارية. جميع الحقوق محفوظة.
           </Text>
           <Text mt={2} fontSize="sm">
             تم التطوير بواسطة شركة الهلال الرقمية

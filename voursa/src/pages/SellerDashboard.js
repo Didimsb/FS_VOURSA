@@ -424,12 +424,34 @@ const SellerDashboard = () => {
 
   // Fetch data on component mount
   useEffect(() => {
-    if (user?._id) {
-      fetchSellerProperties();
-      fetchSellerStats();
-      fetchSellerCustomers();
-    }
-  }, [user?._id]); // Add user._id as dependency
+    const fetchData = async () => {
+      // Wait for user data to be available
+      if (!user || !user._id) {
+        console.log('Waiting for user data...');
+        return;
+      }
+
+      try {
+        // Fetch all data in parallel
+        await Promise.all([
+          fetchSellerProperties(),
+          fetchSellerStats(),
+          fetchSellerCustomers()
+        ]);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        toast({
+          title: "خطأ في تحميل البيانات",
+          description: "يرجى تحديث الصفحة",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    };
+
+    fetchData();
+  }, [user]); // Changed dependency to user object
 
   // Fetch points balance
   const fetchPointsBalance = async () => {
