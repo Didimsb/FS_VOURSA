@@ -325,6 +325,11 @@ const SellerDashboard = () => {
   // Fetch seller's properties
   const fetchSellerProperties = async () => {
     try {
+      if (!user?._id) {
+        console.log('User ID not available yet');
+        return;
+      }
+
       setIsLoading(true);
       const response = await axiosInstance.get(`/properties/seller/properties?sellerId=${user._id}`);
       if (response.data && response.data.success) {
@@ -350,6 +355,81 @@ const SellerDashboard = () => {
       setIsLoading(false);
     }
   };
+
+  const fetchSellerStats = async () => {
+    try {
+      if (!user?._id) {
+        console.log('User ID not available yet');
+        return;
+      }
+
+      setIsLoading(true);
+      const response = await axiosInstance.get(`/properties/seller/stats?sellerId=${user._id}`);
+      if (response.data && response.data.success) {
+        setStats(response.data.stats);
+      } else {
+        console.error('Error in response format:', response.data);
+        toast({
+          title: "خطأ في تنسيق البيانات",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+      toast({
+        title: "خطأ في جلب الإحصائيات",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchSellerCustomers = async () => {
+    try {
+      if (!user?._id) {
+        console.log('User ID not available yet');
+        return;
+      }
+
+      setIsLoading(true);
+      const response = await axiosInstance.get(`/properties/seller/customers?sellerId=${user._id}`);
+      if (response.data && response.data.success) {
+        setCustomers(response.data.customers);
+      } else {
+        console.error('Error in response format:', response.data);
+        toast({
+          title: "خطأ في تنسيق البيانات",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      toast({
+        title: "خطأ في جلب العملاء",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fetch data on component mount
+  useEffect(() => {
+    if (user?._id) {
+      fetchSellerProperties();
+      fetchSellerStats();
+      fetchSellerCustomers();
+    }
+  }, [user?._id]); // Add user._id as dependency
 
   // Fetch points balance
   const fetchPointsBalance = async () => {

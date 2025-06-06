@@ -100,7 +100,7 @@ const Navbar = () => {
             <Image
               src="/logo.jpg"
               alt="وكالة ورسة"
-              h={{ base: "60px", md: "70px" }}
+              h={{ base: "60px", md: "60px" }}
               objectFit="contain"
               transition="all 0.3s ease"
               _hover={{ transform: 'scale(1.05)' }}
