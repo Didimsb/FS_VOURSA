@@ -98,9 +98,9 @@ const Navbar = () => {
           {/* Logo */}
           <Link as={RouterLink} to="/">
             <Image
-              src="/logo.png"
+              src="/logo.jpg"
               alt="وكالة ورسة"
-              h={{ base: "40px", md: "50px" }}
+              h={{ base: "60px", md: "70px" }}
               objectFit="contain"
               transition="all 0.3s ease"
               _hover={{ transform: 'scale(1.05)' }}

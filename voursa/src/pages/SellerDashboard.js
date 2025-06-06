@@ -1403,18 +1403,79 @@ const SellerDashboard = () => {
     });
   };
 
+  const [localSettings, setLocalSettings] = useState({
+    name: user?.name || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
+    whatsapp: user?.whatsapp || ''
+  });
+
+  const handleSaveSettings = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axiosInstance.put('/users/profile', localSettings);
+      
+      if (response.data.success) {
+        toast({
+          title: 'تم الحفظ',
+          description: 'تم حفظ الإعدادات بنجاح',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      toast({
+        title: 'خطأ',
+        description: 'حدث خطأ أثناء حفظ الإعدادات',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSettingsChange = (field, value) => {
+    setLocalSettings(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   return (
-    <Box>
-      <Container maxW="container.xl" py={isMobile ? 4 : 10} px={isMobile ? 2 : 4} bg={bgColor}>
+    <Box overflowX="hidden" width="100%" maxW="100vw">
+      <Container maxW="container.xl" py={isMobile ? 4 : 10} px={isMobile ? 2 : 4} bg={bgColor} overflow="hidden">
         <MotionBox
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
+          width="100%"
+          maxW="100%"
         >
-          <Grid templateColumns={{ base: '1fr', lg: '250px 1fr' }} gap={isMobile ? 4 : 8}>
+          <Grid 
+            templateColumns={{ base: '1fr', lg: '250px 1fr' }} 
+            gap={isMobile ? 4 : 8}
+            width="100%"
+            maxW="100%"
+          >
             {/* Stats Section */}
-            <Box gridColumn={{ base: '1', lg: '2' }} mb={6}>
-              <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mb={8}>
+            <Box 
+              gridColumn={{ base: '1', lg: '2' }} 
+              mb={6}
+              width="100%"
+              maxW="100%"
+              overflow="hidden"
+            >
+              <SimpleGrid 
+                columns={{ base: 1, md: 2, lg: 4 }} 
+                spacing={6} 
+                mb={8}
+                width="100%"
+                maxW="100%"
+              >
                 <Stat
                   label="إجمالي العقارات"
                   value={stats.totalProperties}
@@ -1429,7 +1490,7 @@ const SellerDashboard = () => {
                 />
                 <Stat
                   label="إجمالي المبيعات"
-                  value={`${stats.totalSalesAmount?.toLocaleString() || 0} ريال`}
+                  value={`${stats.totalSalesAmount?.toLocaleString() || 0} MRU`}
                   helpText={`${stats.monthlySales} هذا الشهر`}
                   icon={FaChartLine}
                 />
@@ -1479,7 +1540,7 @@ const SellerDashboard = () => {
                   borderColor={borderColor}
                 >
                   <StatLabel>إجمالي المبيعات</StatLabel>
-                  <StatNumber>{stats.totalSalesAmount?.toLocaleString() || 0} ريال</StatNumber>
+                  <StatNumber>{stats.totalSalesAmount?.toLocaleString() || 0} MRU</StatNumber>
                   <StatHelpText>
                     <StatArrow type="increase" />
                     {stats.monthlySales.toLocaleString()} هذا الشهر
@@ -1649,11 +1710,16 @@ const SellerDashboard = () => {
             )}
             
             {/* Main Content */}
-            <Box position="relative">
-              <Tabs index={activeTab} onChange={setActiveTab}>
+            <Box 
+              gridColumn={{ base: '1', lg: '2' }}
+              width="100%"
+              maxW="100%"
+              overflow="hidden"
+            >
+              <Tabs index={activeTab} onChange={setActiveTab} width="100%" maxW="100%">
                 {/* Show tab list only on mobile */}
                 {isMobile && (
-                  <TabList mb={6} display="flex" flexWrap="wrap" justifyContent="center">
+                  <TabList mb={6} display="flex" flexWrap="wrap" justifyContent="center" width="100%">
                     <Tab>لوحة التحكم</Tab>
                     <Tab>العقارات</Tab>
                     <Tab>العملاء</Tab>
@@ -1661,10 +1727,10 @@ const SellerDashboard = () => {
                   </TabList>
                 )}
                 
-                <TabPanels>
+                <TabPanels width="100%" maxW="100%">
                   {/* Dashboard Tab */}
-                  <TabPanel px={isMobile ? 0 : 4}>
-                    <Stack spacing={8}>
+                  <TabPanel px={isMobile ? 0 : 4} width="100%" maxW="100%" overflowX="auto" overflowY="hidden">
+                    <Stack spacing={8} minW="max-content">
                       {/* Credits Alert for Mobile */}
                       {isMobile && (
                         <Alert 
@@ -2060,7 +2126,7 @@ const SellerDashboard = () => {
                   </TabPanel>
                   
                   {/* Settings Tab */}
-                  <TabPanel px={isMobile ? 0 : 4}>
+                  <TabPanel px={isMobile ? 0 : 4} width="100%" maxW="100%" overflow="hidden">
                     <Box
                       bg={bgColor}
                       p={isMobile ? 3 : 6}
@@ -2068,39 +2134,64 @@ const SellerDashboard = () => {
                       boxShadow="xl"
                       borderWidth="1px"
                       borderColor={borderColor}
+                      width="100%"
+                      maxW="100%"
                     >
-                      <Stack spacing={6}>
+                      <Stack spacing={6} width="100%" maxW="100%">
                         <Heading size="md">إعدادات الحساب</Heading>
                         
-                        <form>
-                          <VStack spacing={4}>
-                            <FormControl>
+                        <form onSubmit={(e) => {
+                          e.preventDefault();
+                          handleSaveSettings();
+                        }} style={{ width: '100%', maxWidth: '100%' }}>
+                          <VStack spacing={4} width="100%" maxW="100%">
+                            <FormControl width="100%" maxW="100%">
                               <FormLabel>الاسم</FormLabel>
-                              <Input defaultValue={user?.name} />
+                              <Input 
+                                value={localSettings.name}
+                                onChange={(e) => handleSettingsChange('name', e.target.value)}
+                                width="100%"
+                                maxW="100%"
+                              />
                             </FormControl>
                             
-                            <FormControl>
+                            <FormControl width="100%" maxW="100%">
                               <FormLabel>البريد الإلكتروني</FormLabel>
-                              <Input type="email" defaultValue={user?.email} />
+                              <Input 
+                                type="email" 
+                                value={localSettings.email}
+                                onChange={(e) => handleSettingsChange('email', e.target.value)}
+                                width="100%"
+                                maxW="100%"
+                              />
                             </FormControl>
                             
-                            <FormControl>
+                            <FormControl width="100%" maxW="100%">
                               <FormLabel>رقم الهاتف</FormLabel>
-                              <Input defaultValue={user?.phone} />
+                              <Input 
+                                value={localSettings.phone}
+                                onChange={(e) => handleSettingsChange('phone', e.target.value)}
+                                width="100%"
+                                maxW="100%"
+                              />
                             </FormControl>
                             
-                            <FormControl>
+                            <FormControl width="100%" maxW="100%">
                               <FormLabel>رقم الواتساب</FormLabel>
-                              <Input defaultValue={user?.whatsapp} />
+                              <Input 
+                                value={localSettings.whatsapp}
+                                onChange={(e) => handleSettingsChange('whatsapp', e.target.value)}
+                                width="100%"
+                                maxW="100%"
+                              />
                             </FormControl>
-                            
-                    
                             
                             <Button
                               type="submit"
                               colorScheme="primary"
                               size="lg"
                               w="full"
+                              isLoading={isLoading}
                             >
                               حفظ التغييرات
                             </Button>
@@ -3366,7 +3457,7 @@ const SellerDashboard = () => {
                 <Box w="100%" p={4} bg="gray.50" borderRadius="md">
                   <Text fontWeight="bold">تفاصيل العقار</Text>
                   <Text>العنوان: {selectedProperty?.title}</Text>
-                  <Text>السعر: {selectedProperty?.price?.toLocaleString('ar-SA')} ريال</Text>
+                  <Text>السعر: {selectedProperty?.price?.toLocaleString('ar-SA')} MRU</Text>
                 </Box>
                 <FormControl isRequired>
                   <FormLabel>
