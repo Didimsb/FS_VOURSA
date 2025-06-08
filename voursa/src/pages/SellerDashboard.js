@@ -1063,90 +1063,96 @@ const SellerDashboard = () => {
   };
   
   // Mobile-friendly property card component
-  const PropertyCard = ({ property }) => (
-    <Card 
-      bg={bgColor} 
-      borderWidth="1px" 
-      borderColor={borderColor} 
-      borderRadius="lg" 
-      overflow="hidden"
-      mb={4}
-    >
-      <CardHeader pb={0}>
-        <Flex justify="space-between" align="center">
-          <Heading size="sm">{property.title}</Heading>
-          <Badge colorScheme={getStatusColor(property.status)}>
-            {property.status}
-          </Badge>
-        </Flex>
-      </CardHeader>
-      <CardBody>
-        <VStack align="stretch" spacing={2}>
-          <Flex justify="space-between">
-            <Text fontWeight="bold">النوع:</Text>
-            <Badge>
-              {property.type === 'villa' ? 'فيلا' :
-               property.type === 'apartment' ? 'شقة' : 'أرض'}
+  const PropertyCard = ({ property }) => {
+    if (!property) {
+      return null;
+    }
+
+    return (
+      <Card 
+        bg={bgColor} 
+        borderWidth="1px" 
+        borderColor={borderColor} 
+        borderRadius="lg" 
+        overflow="hidden"
+        mb={4}
+      >
+        <CardHeader pb={0}>
+          <Flex justify="space-between" align="center">
+            <Heading size="sm">{property.title || 'بدون عنوان'}</Heading>
+            <Badge colorScheme={getStatusColor(property.status)}>
+              {property.status || 'غير محدد'}
             </Badge>
           </Flex>
-          <Flex justify="space-between">
-            <Text fontWeight="bold">السعر:</Text>
-            <Text>{property.price} أوقية</Text>
-          </Flex>
-          <Flex justify="space-between">
-            <Text fontWeight="bold">المشاهدات:</Text>
-            <Text>{property.views}</Text>
-          </Flex>
-          {property.type !== 'land' && (
-            <>
-              <Flex justify="space-between">
-                <Text fontWeight="bold">غرف النوم:</Text>
-                <Text>{property.bedrooms}</Text>
-              </Flex>
-              <Flex justify="space-between">
-                <Text fontWeight="bold">الحمامات:</Text>
-                <Text>{property.bathrooms}</Text>
-              </Flex>
-            </>
-          )}
-        </VStack>
-      </CardBody>
-      <CardFooter pt={0}>
-        <HStack spacing={2} width="100%" justify="flex-end">
-          <IconButton
-            icon={<Eye />}
-            size="sm"
-            variant="ghost"
-            aria-label="عرض"
-            onClick={() => handleViewProperty(property)}
-          />
-          <IconButton
-            icon={<Edit2 />}
-            size="sm"
-            variant="ghost"
-            colorScheme="blue"
-            aria-label="تعديل"
-            onClick={() => handleEditProperty(property)}
-          />
-          {property.status !== 'بيع' && property.status !== 'مؤجر' && (
-            <Tooltip label="تحديد كمباع">
-              <IconButton
-                icon={<Icon as={FaDollarSign} />}
-                size="sm"
-                variant="ghost"
-                colorScheme="green"
-                aria-label="تحديد كمباع"
-                onClick={() => {
-                  setSelectedProperty(property);
-                  setIsMarkSoldModalOpen(true);
-                }}
-              />
-            </Tooltip>
-          )}
-        </HStack>
-      </CardFooter>
-    </Card>
-  );
+        </CardHeader>
+        <CardBody>
+          <VStack align="stretch" spacing={2}>
+            <Flex justify="space-between">
+              <Text fontWeight="bold">النوع:</Text>
+              <Badge>
+                {property.type === 'villa' ? 'فيلا' :
+                 property.type === 'apartment' ? 'شقة' : 'أرض'}
+              </Badge>
+            </Flex>
+            <Flex justify="space-between">
+              <Text fontWeight="bold">السعر:</Text>
+              <Text>{property.price || 0} أوقية</Text>
+            </Flex>
+            <Flex justify="space-between">
+              <Text fontWeight="bold">المشاهدات:</Text>
+              <Text>{property.views || 0}</Text>
+            </Flex>
+            {property.type !== 'land' && (
+              <>
+                <Flex justify="space-between">
+                  <Text fontWeight="bold">غرف النوم:</Text>
+                  <Text>{property.bedrooms || 0}</Text>
+                </Flex>
+                <Flex justify="space-between">
+                  <Text fontWeight="bold">الحمامات:</Text>
+                  <Text>{property.bathrooms || 0}</Text>
+                </Flex>
+              </>
+            )}
+          </VStack>
+        </CardBody>
+        <CardFooter>
+          <HStack spacing={2} width="100%" justify="flex-end">
+            <IconButton
+              icon={<Eye />}
+              size="sm"
+              variant="ghost"
+              aria-label="عرض"
+              onClick={() => handleViewProperty(property)}
+            />
+            <IconButton
+              icon={<Edit2 />}
+              size="sm"
+              variant="ghost"
+              colorScheme="blue"
+              aria-label="تعديل"
+              onClick={() => handleEditProperty(property)}
+            />
+            {property.status !== 'بيع' && property.status !== 'مؤجر' && (
+              <Tooltip label="تحديد كمباع">
+                <IconButton
+                  icon={<Icon as={FaDollarSign} />}
+                  size="sm"
+                  variant="ghost"
+                  colorScheme="green"
+                  aria-label="تحديد كمباع"
+                  onClick={() => {
+                    setSelectedProperty(property);
+                    setIsMarkSoldModalOpen(true);
+                  }}
+                />
+              </Tooltip>
+            )}
+          </HStack>
+        </CardFooter>
+      </Card>
+    );
+  };
 
   // Mobile sidebar drawer
   const MobileSidebar = () => (

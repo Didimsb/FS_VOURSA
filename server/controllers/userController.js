@@ -215,7 +215,7 @@ exports.getUserProfile = async (req, res) => {
 // Update user profile
 exports.updateUserProfile = async (req, res) => {
   try {
-    const { name, email, phone } = req.body;
+    const { name, email, phone, whatsapp } = req.body;
     const user = await User.findById(req.user.id);
 
     if (!user) {
@@ -229,6 +229,7 @@ exports.updateUserProfile = async (req, res) => {
     if (name) user.name = name;
     if (email) user.email = email;
     if (phone) user.phone = phone;
+    if (whatsapp) user.whatsapp = whatsapp;
 
     // Handle avatar upload
     if (req.file) {
@@ -260,6 +261,7 @@ exports.updateUserProfile = async (req, res) => {
         name: user.name,
         email: user.email,
         phone: user.phone,
+        whatsapp: user.whatsapp,
         avatar: user.avatar,
         role: user.role
       }
