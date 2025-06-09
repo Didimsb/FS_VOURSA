@@ -69,7 +69,23 @@ exports.createTransaction = async (req, res) => {
 // Get all transactions
 exports.getAllTransactions = async (req, res) => {
   try {
-    const transactions = await Transaction.find().populate('user', 'name email');
+    const transactions = await Transaction.find()
+      .populate({
+        path: 'user',
+        select: 'name email',
+        
+        options: { lean: true },
+        transform: (doc) => {
+          if (!doc) {
+            return {
+              name: 'مستخدم محذوف',
+              email: 'غير معروف'
+            };
+          }
+          return doc;
+        }
+      });
+
     res.status(200).json({
       success: true,
       transactions

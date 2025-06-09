@@ -487,6 +487,9 @@ exports.deleteUser = async (req, res) => {
       });
     }
 
+    // Önce transactionları sil
+    await Transaction.deleteMany({ user: user._id });
+
     await user.remove();
 
     res.status(200).json({

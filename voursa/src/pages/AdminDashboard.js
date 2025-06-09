@@ -551,8 +551,8 @@ const AdminDashboard = () => {
   const handleViewTransaction = (transaction) => {
     setSelectedTransaction({
       ...transaction,
-      sellerName: transaction.user.name,
-      sellerEmail: transaction.user.email,
+      sellerName: transaction.user?.name || 'مستخدم محذوف',
+      sellerEmail: transaction.user?.email || 'غير معروف',
       date: new Date(transaction.createdAt).toLocaleDateString('ar-SA'),
       screenshot: transaction.screenshotUrl
     });
@@ -572,8 +572,8 @@ const AdminDashboard = () => {
       <VStack align="stretch" spacing={3}>
         <HStack justify="space-between">
           <Box>
-            <Text fontWeight="bold">{transaction.user.name}</Text>
-            <Text fontSize="sm" color="gray.500">{transaction.user.email}</Text>
+            <Text fontWeight="bold">{transaction.user?.name || 'مستخدم محذوف'}</Text>
+            <Text fontSize="sm" color="gray.500">{transaction.user?.email || 'غير معروف'}</Text>
           </Box>
           <Badge
             colorScheme={
@@ -592,15 +592,15 @@ const AdminDashboard = () => {
         <SimpleGrid columns={2} spacing={2}>
           <Box>
             <Text fontSize="sm" color="gray.500">المبلغ</Text>
-          <Text>{transaction.amount} أوقية</Text>
+            <Text>{transaction.amount} أوقية</Text>
           </Box>
           <Box>
             <Text fontSize="sm" color="gray.500">النقاط</Text>
-          <Text>{transaction.points}</Text>
+            <Text>{transaction.points}</Text>
           </Box>
           <Box>
             <Text fontSize="sm" color="gray.500">طريقة الدفع</Text>
-          <Text>{transaction.paymentMethod}</Text>
+            <Text>{transaction.paymentMethod}</Text>
           </Box>
           <Box>
             <Text fontSize="sm" color="gray.500">التاريخ</Text>
@@ -609,31 +609,31 @@ const AdminDashboard = () => {
         </SimpleGrid>
 
         <HStack spacing={2} justify="flex-end">
-        <IconButton
-          icon={<Eye size={18} />}
-          size="sm"
-          variant="ghost"
-          onClick={() => handleViewTransaction(transaction)}
-        />
+          <IconButton
+            icon={<Eye size={18} />}
+            size="sm"
+            variant="ghost"
+            onClick={() => handleViewTransaction(transaction)}
+          />
           {transaction.status === 'pending' && (
             <>
-        <IconButton
-          icon={<CheckCircle size={18} />}
-          size="sm"
-          variant="ghost"
-                  colorScheme="green"
-          onClick={() => handleApproveTransaction(transaction)}
-        />
-        <IconButton
-          icon={<XCircle size={18} />}
-          size="sm"
-          variant="ghost"
-                  colorScheme="red"
-          onClick={() => handleRejectTransaction(transaction)}
-        />
+              <IconButton
+                icon={<CheckCircle size={18} />}
+                size="sm"
+                variant="ghost"
+                colorScheme="green"
+                onClick={() => handleApproveTransaction(transaction)}
+              />
+              <IconButton
+                icon={<XCircle size={18} />}
+                size="sm"
+                variant="ghost"
+                colorScheme="red"
+                onClick={() => handleRejectTransaction(transaction)}
+              />
             </>
           )}
-      </HStack>
+        </HStack>
       </VStack>
     </Box>
   );

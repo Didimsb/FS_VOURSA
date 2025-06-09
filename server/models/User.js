@@ -123,6 +123,12 @@ userSchema.methods.deductCredits = async function(amount) {
   await this.save();
 };
 
+userSchema.pre('remove', async function(next) {
+  // 'this' refers to the user being removed
+  await this.model('Transaction').deleteMany({ user: this._id });
+  next();
+});
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User; 
