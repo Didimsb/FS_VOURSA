@@ -65,9 +65,9 @@ const Footer = () => {
               معلومات الاتصال
             </Text>
             <Stack spacing={4}>
-              <Text>{settings?.contactPage?.address || 'نواكشوط، موريتانيا'}</Text>
-              <Text>البريد الإلكتروني: {settings?.contactPage?.email || 'info@voursa.com'}</Text>
-              <Text>الهاتف: {settings?.contactPage?.phone || '+222 42900600'}</Text>
+              <Text>{settings?.contactPage?.address}</Text>
+              <Text>البريد الإلكتروني: {settings?.contactPage?.email}</Text>
+              <Text>الهاتف: {settings?.contactPage?.phone}</Text>
             </Stack>
           </Stack>
         </SimpleGrid>
