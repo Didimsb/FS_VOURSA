@@ -1,11 +1,12 @@
 {
-  "short_name": "فرصة",
+  "short_name": "وكالة فرصة العقارية",
   "name": "وكالة فرصة العقارية",
+  "description": "وكالة فرصة العقارية - الوكيل العقاري الأول في موريتانيا",
   "icons": [
     {
-      "src": "logo.jpg",
+      "src": "favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/jpg"
+      "type": "image/x-icon"
     },
     {
       "src": "logo.jpg",
@@ -21,5 +22,7 @@
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#0ea5e9",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "dir": "rtl",
+  "lang": "ar"
 }
