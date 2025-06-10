@@ -396,6 +396,12 @@ exports.deleteProperty = async (req, res) => {
       await cloudinary.uploader.destroy(publicId);
     }
 
+    // Update associated customers to mark property as deleted
+    await Customer.updateMany(
+      { property: property._id },
+      { $set: { property: null } }
+    );
+
     await property.remove();
 
     res.json({
@@ -403,6 +409,7 @@ exports.deleteProperty = async (req, res) => {
       message: 'تم حذف العقار بنجاح'
     });
   } catch (error) {
+    console.error('Error deleting property:', error);
     res.status(500).json({
       success: false,
       message: 'خطأ في حذف العقار'

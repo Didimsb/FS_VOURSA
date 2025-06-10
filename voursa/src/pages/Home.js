@@ -57,11 +57,16 @@ const Home = () => {
   const bgColor = useColorModeValue('white', 'gray.800');
   const containerBg = useColorModeValue('gray.50', 'gray.900');
   const hoverBg = useColorModeValue('yellow.50', 'yellow.900');
+  const [availablePropertyTypes, setAvailablePropertyTypes] = useState([]);
 
   const fetchProperties = async (pageNum = 1, currentFilters = {}) => {
     try {
       setLoading(true);
       const { properties: fetchedProperties, hasMore: fetchedHasMore } = await getAllProperties(pageNum, 10);
+      
+      // Get unique property types from fetched properties
+      const uniqueTypes = [...new Set(fetchedProperties.map(property => property.propertyType))];
+      setAvailablePropertyTypes(uniqueTypes);
       
       // Apply filters
       let filteredProperties = fetchedProperties || [];
@@ -194,33 +199,35 @@ const Home = () => {
           <Box mb={8}>
             <Heading size="md" mb={4} textAlign="center">اختر نوع العقار</Heading>
             <Wrap spacing={4} justify="center">
-              {Object.entries(propertyTypeIcons).map(([type, IconComponent]) => (
-                <WrapItem key={type}>
-                  <VStack spacing={2}>
-                    <Tooltip label={type} placement="top">
-                      <Button
-                        size="lg"
-                        variant={selectedPropertyType === type ? "solid" : "outline"}
-                        colorScheme="yellow"
-                        borderRadius="full"
-                        minW={16}
-                        h={16}
-                        p={0}
-                        onClick={() => handlePropertyTypeClick(type)}
-                        _hover={{
-                          // bg: hoverBg,
-                          transform: 'translateY(-2px)',
-                          boxShadow: 'lg'
-                        }}
-                        transition="all 0.2s"
-                      >
-                        <Icon as={IconComponent} boxSize={7} />
-                      </Button>
-                    </Tooltip>
-                    <Text fontSize="sm" textAlign="center">{type}</Text>
-                  </VStack>
-                </WrapItem>
-              ))}
+              {availablePropertyTypes.map((type) => {
+                const IconComponent = propertyTypeIcons[type] || FaHome; // Fallback to FaHome if icon not found
+                return (
+                  <WrapItem key={type}>
+                    <VStack spacing={2}>
+                      <Tooltip label={type} placement="top">
+                        <Button
+                          size="lg"
+                          variant={selectedPropertyType === type ? "solid" : "outline"}
+                          colorScheme="yellow"
+                          borderRadius="full"
+                          minW={16}
+                          h={16}
+                          p={0}
+                          onClick={() => handlePropertyTypeClick(type)}
+                          _hover={{
+                            transform: 'translateY(-2px)',
+                            boxShadow: 'lg'
+                          }}
+                          transition="all 0.2s"
+                        >
+                          <Icon as={IconComponent} boxSize={7} />
+                        </Button>
+                      </Tooltip>
+                      <Text fontSize="sm" textAlign="center">{type}</Text>
+                    </VStack>
+                  </WrapItem>
+                );
+              })}
             </Wrap>
           </Box>
 

@@ -2210,7 +2210,9 @@ const SellerDashboard = () => {
                                   </HStack>
                                   <HStack>
                                     <Icon as={FaHome} color="gray.500" />
-                                    <Text>{customer.property.title}</Text>
+                                    <Text>
+                                      {customer.property ? customer.property.title : 'العقار تم حذفه'}
+                                    </Text>
                                   </HStack>
                                   <HStack>
                                     <Icon as={FaMoneyBill} color="gray.500" />
