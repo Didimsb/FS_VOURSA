@@ -1,4 +1,4 @@
-## Voursa - Financial Services Platform
+## Agence Voursa - Financial Services Platform
 
 A modern financial services platform built with Next.js and React.
 

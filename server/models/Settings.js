@@ -4,22 +4,22 @@ const settingsSchema = new mongoose.Schema({
   // Site settings
   siteName: {
     type: String,
-    default: 'وكالة بورصة العقارية',
+    default: 'وكالة فرصة العقارية',
     required: true
   },
   siteDescription: {
     type: String,
-    default: 'أفضل وكالة عقارية في المملكة',
+    default: 'أفضل وكالة عقارية في موريتانيا',
     required: true
   },
   contactEmail: {
     type: String,
-    default: 'info@voursa.com',
+    default: 'agencevoursa@gmail.com',
     required: true
   },
   contactPhone: {
     type: String,
-    default: '+966 50 123 4567',
+    default: '+222 44 19 16 13',
     required: true
   },
   
@@ -27,7 +27,7 @@ const settingsSchema = new mongoose.Schema({
   homePage: {
     heroTitle: {
       type: String,
-      default: 'وكالة بورصة العقارية',
+      default: 'وكالة فرصة العقارية',
       required: true
     },
     heroDescription: {
@@ -73,7 +73,7 @@ const settingsSchema = new mongoose.Schema({
   aboutPage: {
     heroTitle: {
       type: String,
-      default: 'وكالة ورسة العقارية',
+      default: 'وكالة فرصة العقارية',
       required: true
     },
     heroDescription: {
@@ -83,7 +83,7 @@ const settingsSchema = new mongoose.Schema({
     },
     heroImage: {
       type: String,
-      default: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
+      default: '/logo.jpg'
     },
     storyTitle: {
       type: String,
@@ -97,7 +97,7 @@ const settingsSchema = new mongoose.Schema({
     },
     storyImage: {
       type: String,
-      default: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80'
+      default: '/logo.jpg'
     },
     values: [{
       icon: {
@@ -172,12 +172,12 @@ const settingsSchema = new mongoose.Schema({
     },
     phone: {
       type: String,
-      default: '+222 123 456 789',
+      default: '+222 44 19 16 13',
       required: true
     },
     email: {
       type: String,
-      default: 'info@voursa.com',
+      default: 'agencevoursa@gmail.com',
       required: true
     },
     socialMedia: {
@@ -207,7 +207,7 @@ const settingsSchema = new mongoose.Schema({
       },
       whatsapp: {
         type: String,
-        default: '22242900600'
+        default: '22244191613'
       }
     }
   },
