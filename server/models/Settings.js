@@ -365,7 +365,7 @@ const initializeSettings = async () => {
     const count = await Settings.countDocuments();
     if (count === 0) {
       await Settings.create({});
-      console.log('Default settings created successfully');
+      // console.log('Default settings created successfully');
     }
   } catch (error) {
     console.error('Error initializing settings:', error);

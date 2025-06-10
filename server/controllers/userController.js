@@ -13,7 +13,7 @@ cloudinary.config({
 // Register user
 exports.registerUser = async (req, res) => {
   try {
-    console.log('Registration request body:', req.body);
+    // console.log('Registration request body:', req.body);
     const { name, email, password, phone, whatsapp } = req.body;
 
     // Check if user already exists
@@ -36,11 +36,11 @@ exports.registerUser = async (req, res) => {
       isApproved: false
     });
 
-    console.log('New user object before save:', user);
+    // console.log('New user object before save:', user);
 
     try {
       await user.save();
-      console.log('User saved successfully:', user);
+      // console.log('User saved successfully:', user);
     } catch (saveError) {
       console.error('Error saving user:', saveError);
       return res.status(500).json({
@@ -79,7 +79,7 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log('Login attempt for email:', email);
+    // console.log('Login attempt for email:', email);
 
     if (!email || !password) {
       console.error('Login attempt with missing credentials');
@@ -142,12 +142,12 @@ exports.loginUser = async (req, res) => {
 
     // Generate token
     const token = user.generateAuthToken();
-    console.log('Login successful for user:', {
-      email: user.email,
-      role: user.role,
-      isApproved: user.isApproved,
-      isActive: user.isActive
-    });
+    // console.log('Login successful for user:', {
+    //   email: user.email,
+    //   role: user.role,
+    //   isApproved: user.isApproved,
+    //   isActive: user.isActive
+    // });
 
     res.status(200).json({
       success: true,

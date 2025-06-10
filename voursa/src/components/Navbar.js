@@ -63,9 +63,7 @@ const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
 
-  // Add console.log to check user object
-  console.log('Navbar - User:', user);
-  console.log('Navbar - User Role:', user?.role);
+
 
   // Handle scroll effect
   React.useEffect(() => {

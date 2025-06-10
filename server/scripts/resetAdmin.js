@@ -17,11 +17,11 @@ const resetAdmin = async () => {
   try {
     // Connect to MongoDB
     await mongoose.connect(MONGODB_URI);
-    console.log('Connected to MongoDB');
+    // console.log('Connected to MongoDB');
 
     // Delete existing admin users
     await User.deleteMany({ role: { $in: ['admin', 'superadmin'] } });
-    console.log('All admin users deleted');
+    // console.log('All admin users deleted');
 
     // Create new superadmin
     const admin = new User({
@@ -36,12 +36,12 @@ const resetAdmin = async () => {
     });
 
     await admin.save();
-    console.log('New superadmin created successfully');
-    console.log('Email: admin@voursa.com');
-    console.log('Username: admin');
-    console.log('Password: Admin123!');
-    console.log('Phone: +22212345678');
-    console.log('WhatsApp: +22212345678');
+    // console.log('New superadmin created successfully');
+    // console.log('Email: admin@voursa.com');
+    // console.log('Username: admin');
+    // console.log('Password: Admin123!');
+    // console.log('Phone: +22212345678');
+    // console.log('WhatsApp: +22212345678');
 
   } catch (error) {
     console.error('Error resetting admin:', error);

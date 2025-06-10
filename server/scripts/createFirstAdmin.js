@@ -17,12 +17,12 @@ const createFirstAdmin = async () => {
   try {
     // Connect to MongoDB
     await mongoose.connect(MONGODB_URI);
-    console.log('Connected to MongoDB');
+    // console.log('Connected to MongoDB');
 
     // Check if any admin exists
     const existingAdmin = await Admin.findOne();
     if (existingAdmin) {
-      console.log('Admin already exists');
+      // console.log('Admin already exists');
       process.exit(0);
     }
 
@@ -39,12 +39,12 @@ const createFirstAdmin = async () => {
     });
 
     await admin.save();
-    console.log('First admin created successfully');
-    console.log('Email: admin@voursa.com');
-    console.log('Username: admin');
-    console.log('Password: Admin123!');
-    console.log('Phone: +22212345678');
-    console.log('WhatsApp: +22212345678');
+    // console.log('First admin created successfully');
+    // console.log('Email: admin@voursa.com');
+    // console.log('Username: admin');
+    // console.log('Password: Admin123!');
+    // console.log('Phone: +22212345678');
+    // console.log('WhatsApp: +22212345678');
 
   } catch (error) {
     console.error('Error creating first admin:', error);

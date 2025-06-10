@@ -20,9 +20,7 @@ export const AuthProvider = ({ children }) => {
       const storedUser = JSON.parse(localStorage.getItem('user'));
       const loginError = localStorage.getItem('loginError');
       
-      if (loginError) {
-        console.log('Previous login error:', JSON.parse(loginError));
-      }
+     
       
       if (!token || !storedUser) {
         setUser(null);

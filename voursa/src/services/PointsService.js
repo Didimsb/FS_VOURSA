@@ -4,7 +4,7 @@ import axiosInstance from '../utils/axiosInstance';
 export const getPointsBalance = async () => {
   try {
     const response = await axiosInstance.get('/points/balance');
-    console.log('Points balance API response:', response.data); // Debug log
+    // console.log('Points balance API response:', response.data); // Debug log
     
     // Handle both response formats
     if (response.data) {

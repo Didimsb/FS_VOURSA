@@ -112,7 +112,7 @@ const PropertyDetail = () => {
       try {
         setIsLoading(true);
         const response = await getProperty(id);
-        console.log('Property response:', response);
+        // console.log('Property response:', response);
         if (response.success && response.property) {
           setProperty(response.property);
         } else {

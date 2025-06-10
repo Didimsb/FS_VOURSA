@@ -59,9 +59,9 @@ export const deleteProperty = async (id) => {
 
 export const getProperty = async (id) => {
   try {
-    console.log('Fetching property with ID:', id);
+    // console.log('Fetching property with ID:', id);
     const response = await axiosInstance.get(`/properties/${id}`);
-    console.log('Property response:', response.data);
+    // console.log('Property response:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching property:', {

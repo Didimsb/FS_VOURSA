@@ -170,20 +170,20 @@ const Contact = () => {
   };
   
   // Debug logging for settings
-  useEffect(() => {
-    console.log('=== Contact Page Settings Debug ===');
-    console.log('Full Settings Object:', settings);
-    console.log('Contact Page Settings:', settings?.contactPage);
-    console.log('Banners:', settings?.banners);
-    console.log('Contact Info:', {
-      phone: settings?.contactPhone,
-      whatsapp: settings?.whatsappNumber,
-      email: settings?.contactEmail,
-      address: settings?.contactPage?.address,
-      socialMedia: settings?.socialMedia,
-      mapUrl: settings?.mapEmbedUrl
-    });
-  }, [settings]);
+  // useEffect(() => {
+  //   console.log('=== Contact Page Settings Debug ===');
+  //   console.log('Full Settings Object:', settings);
+  //   console.log('Contact Page Settings:', settings?.contactPage);
+  //   console.log('Banners:', settings?.banners);
+  //   console.log('Contact Info:', {
+  //     phone: settings?.contactPhone,
+  //     whatsapp: settings?.whatsappNumber,
+  //     email: settings?.contactEmail,
+  //     address: settings?.contactPage?.address,
+  //     socialMedia: settings?.socialMedia,
+  //     mapUrl: settings?.mapEmbedUrl
+  //   });
+  // }, [settings]);
   
   return (
     <Box bg={bgColor} overflow="hidden">

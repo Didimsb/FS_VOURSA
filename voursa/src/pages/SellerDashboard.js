@@ -326,7 +326,7 @@ const SellerDashboard = () => {
   const fetchSellerProperties = async () => {
     try {
       if (!user?._id) {
-        console.log('User ID not available yet');
+        // console.log('User ID not available yet');
         return;
       }
 
@@ -359,7 +359,7 @@ const SellerDashboard = () => {
   const fetchSellerStats = async () => {
     try {
       if (!user?._id) {
-        console.log('User ID not available yet');
+        // console.log('User ID not available yet');
         return;
       }
 
@@ -392,7 +392,7 @@ const SellerDashboard = () => {
   const fetchSellerCustomers = async () => {
     try {
       if (!user?._id) {
-        console.log('User ID not available yet');
+        // console.log('User ID not available yet');
         return;
       }
 
@@ -427,7 +427,7 @@ const SellerDashboard = () => {
     const fetchData = async () => {
       // Wait for user data to be available
       if (!user || !user._id) {
-        console.log('Waiting for user data...');
+        // console.log('Waiting for user data...');
         return;
       }
 
@@ -457,14 +457,14 @@ const SellerDashboard = () => {
   const fetchPointsBalance = async () => {
     try {
       const response = await getPointsBalance();
-      console.log('Points balance response:', response); // Debug log
+      // console.log('Points balance response:', response); // Debug log
       
       if (response && response.credits !== undefined) {
         const credits = parseInt(response.credits, 10);
         if (!isNaN(credits)) {
           setPointsBalance(credits);
           setCredits(credits);
-          console.log('Updated credits:', credits); // Debug log
+          //  console.log('Updated credits:', credits); // Debug log
         } else {
           console.error('Invalid credits value:', response.credits);
           toast({
@@ -699,25 +699,25 @@ const SellerDashboard = () => {
   };
   
   const handleViewProperty = (property) => {
-    console.log('Selected Property Data:', {
-      id: property._id,
-      title: property.title,
-      description: property.description,
-      price: property.price,
-      location: property.location,
-      type: property.type,
-      status: property.status,
-      bedrooms: property.bedrooms,
-      bathrooms: property.bathrooms,
-      area: property.area,
-      images: property.images,
-      features: property.features,
-      amenities: property.amenities,
-      createdBy: property.createdBy,
-      userRole: property.userRole,
-      createdAt: property.createdAt,
-      updatedAt: property.updatedAt
-    });
+    // console.log('Selected Property Data:', {
+    //   id: property._id,
+    //   title: property.title,
+    //   description: property.description,
+    //   price: property.price,
+    //   location: property.location,
+    //   type: property.type,
+    //   status: property.status,
+    //   bedrooms: property.bedrooms,
+    //   bathrooms: property.bathrooms,
+    //   area: property.area,
+    //   images: property.images,
+    //   features: property.features,
+    //   amenities: property.amenities,
+    //   createdBy: property.createdBy,
+    //   userRole: property.userRole,
+    //   createdAt: property.createdAt,
+    //   updatedAt: property.updatedAt
+    // });
     setSelectedProperty(property);
     onViewOpen();
   };
@@ -813,7 +813,7 @@ const SellerDashboard = () => {
       const formData = new FormData();
       
       // Debug log before processing
-      console.log('Original newProperty:', newProperty);
+      // console.log('Original newProperty:', newProperty);
       
       // Add all property data
       Object.keys(newProperty).forEach(key => {
@@ -830,7 +830,7 @@ const SellerDashboard = () => {
           };
           
           const mappedPropertyType = propertyTypeMap[newProperty.type] || 'منزل للبيع';
-          console.log('Mapping property type:', { original: newProperty.type, mapped: mappedPropertyType });
+          // console.log('Mapping property type:', { original: newProperty.type, mapped: mappedPropertyType });
           formData.append('propertyType', mappedPropertyType);
         } else if (key === 'status') {
           // Map status to backend enum values
@@ -842,7 +842,7 @@ const SellerDashboard = () => {
           };
           
           const mappedStatus = statusMap[newProperty.status] || 'للبيع';
-          console.log('Mapping status:', { original: newProperty.status, mapped: mappedStatus });
+          // console.log('Mapping status:', { original: newProperty.status, mapped: mappedStatus });
           formData.append('status', mappedStatus);
         } else if (key !== 'mainPhoto' && key !== 'additionalMedia' && key !== 'propertyType') {
           formData.append(key, newProperty[key]);
@@ -865,10 +865,10 @@ const SellerDashboard = () => {
       formData.append('userRole', user.role);
 
       // Debug log to see what's being sent
-      console.log('Final FormData contents:');
-      for (let pair of formData.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
-      }
+      // console.log('Final FormData contents:');
+      // for (let pair of formData.entries()) {
+      //   console.log(pair[0] + ': ' + pair[1]);
+      // }
 
       // Make a single API call that handles both property creation and points deduction
       const response = await axiosInstance.post('/properties', formData, {
@@ -962,7 +962,7 @@ const SellerDashboard = () => {
         throw new Error("فشل في رفع صورة إثبات الدفع");
       }
       
-      console.log("Screenshot URL:", screenshotUrl); // Debug log
+      // console.log("Screenshot URL:", screenshotUrl); // Debug log
       
       // Send purchase request
       const purchaseResponse = await purchasePoints({
@@ -1393,15 +1393,15 @@ const SellerDashboard = () => {
   const fetchCustomers = async () => {
     try {
       setIsLoading(true);
-      console.log('Fetching customers for seller:', user._id);
+      // console.log('Fetching customers for seller:', user._id);
       
       // Use the correct endpoint from propertyRoutes.js
       const response = await axiosInstance.get(`/properties/seller/customers?sellerId=${user._id}`);
-      console.log('Customers API Response:', response);
+      // console.log('Customers API Response:', response);
       
       if (response.data && response.data.success) {
         setCustomers(response.data.customers || []);
-        console.log('Customers state updated:', response.data.customers);
+        // console.log('Customers state updated:', response.data.customers);
       } else {
         console.error('Invalid response format:', response.data);
         setError('تنسيق البيانات غير صالح');
@@ -1434,11 +1434,11 @@ const SellerDashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        console.log('Fetching stats...');
+        // console.log('Fetching stats...');
         const response = await axiosInstance.get('/properties/seller/stats');
-        console.log('Stats response:', response.data);
+        // console.log('Stats response:', response.data);
         setStats(response.data.stats);
-        console.log('Updated stats state:', response.data.stats);
+        // console.log('Updated stats state:', response.data.stats);
       } catch (error) {
         console.error('Error fetching stats:', error);
         toast({
@@ -1485,7 +1485,7 @@ const SellerDashboard = () => {
         type: selectedType,
         status: defaultStatus
       };
-      console.log('Property type changed:', updated);
+      // console.log('Property type changed:', updated);
       return updated;
     });
   };

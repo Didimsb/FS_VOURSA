@@ -17,9 +17,9 @@ cloudinary.config({
 // Create Property
 exports.createProperty = async (req, res) => {
   try {
-    console.log('Creating property with data:', req.body);
-    console.log('Files:', req.files);
-    console.log('User:', req.user);
+    // console.log('Creating property with data:', req.body);
+    // console.log('Files:', req.files);
+    // console.log('User:', req.user);
 
     const settings = await getSettings();
     if (!settings) {
@@ -38,9 +38,9 @@ exports.createProperty = async (req, res) => {
       });
     }
 
-    console.log('User role:', user.role);
-    console.log('User credits:', user.credits);
-    console.log('Required points:', settings.pointsPerProperty);
+    // console.log('User role:', user.role);
+    // console.log('User credits:', user.credits);
+    // console.log('Required points:', settings.pointsPerProperty);
 
     // Skip points check for admin users
     if (user.role === 'seller') {
@@ -130,7 +130,7 @@ exports.createProperty = async (req, res) => {
         if (err) {
           console.error('Error deleting file:', filePath, err);
         } else {
-          console.log('Successfully deleted file:', filePath);
+          // console.log('Successfully deleted file:', filePath);
         }
       });
     }
@@ -205,25 +205,25 @@ exports.getAllProperties = async (req, res) => {
 // Get Single Property
 exports.getProperty = async (req, res) => {
   try {
-    console.log('Fetching property with ID:', req.params.id);
+    // console.log('Fetching property with ID:', req.params.id);
     
     const property = await Property.findById(req.params.id)
       .populate('createdBy', 'name email phone whatsapp')
       .select('+images');
 
     if (!property) {
-      console.log('Property not found with ID:', req.params.id);
+      // console.log('Property not found with ID:', req.params.id);
       return res.status(404).json({
         success: false,
         message: 'العقار غير موجود'
       });
     }
 
-    console.log('Found property:', {
-      id: property._id,
-      title: property.title,
-      createdBy: property.createdBy
-    });
+    // console.log('Found property:', {
+        //   id: property._id,
+        //   title: property.title,
+        //   createdBy: property.createdBy
+        // });
 
     // Increment views count without saving (to avoid validation errors)
     property.views = (property.views || 0) + 1;
@@ -613,35 +613,35 @@ exports.getSellerCustomers = async (req, res) => {
 exports.getSellerStats = async (req, res) => {
   try {
     const sellerId = req.user._id;
-    console.log('Fetching stats for seller:', sellerId);
+    // console.log('Fetching stats for seller:', sellerId);
 
     // Get total properties
     const totalProperties = await Property.countDocuments({ createdBy: sellerId });
-    console.log('Total properties:', totalProperties);
+    // console.log('Total properties:', totalProperties);
 
     // Get available properties (status: lilbay3)
     const activeProperties = await Property.countDocuments({ 
       createdBy: sellerId,
       status: 'للبيع'
     });
-    console.log('Available properties:', activeProperties);
+    // console.log('Available properties:', activeProperties);
 
     // Get total views
     const properties = await Property.find({ createdBy: sellerId });
     const totalViews = properties.reduce((sum, property) => sum + (property.views || 0), 0);
-    console.log('Total views:', totalViews);
+    // console.log('Total views:', totalViews);
 
     // Get total sales and total sales amount
     const customers = await Customer.find({ seller: sellerId });
-    console.log('Found customers:', customers.length);
-    console.log('Customers data:', JSON.stringify(customers, null, 2));
+    // console.log('Found customers:', customers.length);
+    // console.log('Customers data:', JSON.stringify(customers, null, 2));
     
     const totalSales = customers.length;
     const totalSalesAmount = customers.reduce((sum, customer) => {
-      console.log('Customer agreedPrice:', customer.agreedPrice);
+      // console.log('Customer agreedPrice:', customer.agreedPrice);
       return sum + (customer.agreedPrice || 0);
     }, 0);
-    console.log('Total sales amount:', totalSalesAmount);
+    // console.log('Total sales amount:', totalSalesAmount);
 
     // Get monthly sales
     const startOfMonth = new Date();
@@ -651,7 +651,7 @@ exports.getSellerStats = async (req, res) => {
       seller: sellerId,
       createdAt: { $gte: startOfMonth }
     });
-    console.log('Monthly sales:', monthlySales);
+    // console.log('Monthly sales:', monthlySales);
 
     // Get monthly views
     const monthlyViews = properties.reduce((sum, property) => {
@@ -660,7 +660,7 @@ exports.getSellerStats = async (req, res) => {
       ).length || 0;
       return sum + viewsThisMonth;
     }, 0);
-    console.log('Monthly views:', monthlyViews);
+    // console.log('Monthly views:', monthlyViews);
 
     const stats = {
       totalProperties,
@@ -671,7 +671,7 @@ exports.getSellerStats = async (req, res) => {
       monthlySales,
       monthlyViews
     };
-    console.log('Final stats:', stats);
+    // console.log('Final stats:', stats);
 
     res.status(200).json({
       success: true,

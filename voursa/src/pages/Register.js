@@ -35,10 +35,10 @@ const Register = () => {
     
     // Format WhatsApp number if it's the whatsapp field
     if (name === 'whatsapp') {
-      console.log('Original WhatsApp value:', value);
+      // console.log('Original WhatsApp value:', value);
       // Remove any non-digit characters
       let cleaned = value.replace(/\D/g, '');
-      console.log('Cleaned WhatsApp value:', cleaned);
+      // console.log('Cleaned WhatsApp value:', cleaned);
       
       // If the number starts with 222, keep it
       if (cleaned.startsWith('222')) {
@@ -47,13 +47,13 @@ const Register = () => {
         // Otherwise, add 222 prefix
         cleaned = '+222' + cleaned;
       }
-      console.log('Formatted WhatsApp value:', cleaned);
+      // console.log('Formatted WhatsApp value:', cleaned);
       
       // Limit the length to 12 digits (including country code)
       if (cleaned.length > 12) {
         cleaned = cleaned.slice(0, 12);
       }
-      console.log('Final WhatsApp value:', cleaned);
+      // console.log('Final WhatsApp value:', cleaned);
       
       setFormData(prev => ({
         ...prev,

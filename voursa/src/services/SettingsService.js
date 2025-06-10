@@ -60,7 +60,7 @@ export const getSettings = async () => {
       paymentMethods: settings?.paymentMethods || []
     };
     
-    console.log('Processed Settings:', processedSettings); // Debug log
+    // console.log('Processed Settings:', processedSettings); // Debug log 
     
     return {
       success: true,
@@ -78,7 +78,7 @@ export const getSettings = async () => {
 // Update settings
 export const updateSettings = async (settingsData) => {
   try {
-    console.log('SettingsService - Updating settings with data:', settingsData);
+    // console.log('SettingsService - Updating settings with data:', settingsData);
     
     const token = localStorage.getItem('token');
     if (!token) {
@@ -95,7 +95,7 @@ export const updateSettings = async (settingsData) => {
     };
 
     const response = await axiosInstance.put('/settings', processedData);
-    console.log('SettingsService - Update settings response:', response.data);
+    // console.log('SettingsService - Update settings response:', response.data);
     
     if (response.data.success) {
       const updatedSettings = {

@@ -269,7 +269,7 @@ const AdminDashboard = () => {
   
   // Update local settings when settings from context change
   useEffect(() => {
-    console.log('Settings from context changed:', settings);
+    // console.log('Settings from context changed:', settings);
     if (settings) {
       setLocalSettings(settings);
     }
@@ -387,8 +387,8 @@ const AdminDashboard = () => {
   const handleSaveSettings = async () => {
     setIsSavingSettings(true);
     try {
-      console.log('Save button clicked');
-      console.log('Current localSettings:', localSettings);
+      // console.log('Save button clicked');
+      // console.log('Current localSettings:', localSettings);
 
       // Prepare settings data
       const settingsData = { ...localSettings };
@@ -397,7 +397,7 @@ const AdminDashboard = () => {
       delete settingsData._id;
       delete settingsData.__v;
 
-      console.log('Prepared settings data:', settingsData);
+      // console.log('Prepared settings data:', settingsData);
 
       const response = await axiosInstance.put('/settings', settingsData);
       
@@ -1750,7 +1750,7 @@ const AdminDashboard = () => {
         const response = await axiosInstance.get('/settings');
         if (response.data.success) {
           const settings = response.data.settings;
-          console.log('Fetched settings:', settings);
+          // console.log('Fetched settings:', settings);
           
           // Set local settings with proper number conversion
           setLocalSettings({
