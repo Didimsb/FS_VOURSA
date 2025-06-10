@@ -20,19 +20,19 @@ export const SettingsProvider = ({ children }) => {
       } else {
         setError(response.message);
         setSettings({
-          siteName: 'وكالة بورصة العقارية',
-          siteDescription: 'أفضل وكالة عقارية في المملكة',
-          contactEmail: 'info@voursa.com',
-          contactPhone: '+222 123 456 789',
+          siteName: 'وكالة فرصة العقارية',
+          siteDescription: 'أفضل وكالة عقارية في موريتانيا',
+          contactEmail: 'agencevoursa@gmail.com',
+          contactPhone: '+222 44 19 16 13',
           homePage: {
-            heroTitle: 'وكالة بورصة العقارية',
+            heroTitle: 'وكالة فرصة العقارية',
             heroDescription: 'نقدم حلولاً عقارية متكاملة تلبي احتياجات عملائنا بأعلى معايير الجودة والشفافية',
             featuredPropertiesTitle: 'أحدث العقارات',
             featuredPropertiesDescription: 'اكتشف مجموعة متنوعة من العقارات المميزة في أفضل المواقع',
             heroMedia: []
           },
           aboutPage: {
-            heroTitle: 'وكالة ورسة العقارية',
+            heroTitle: 'وكالة فرصة العقارية',
             heroDescription: 'نحن نقدم حلولاً عقارية متكاملة تلبي احتياجات عملائنا بأعلى معايير الجودة والشفافية',
             storyTitle: 'قصتنا',
             storyContent: 'تأسست وكالة ورسة العقارية في عام 2013 بهدف تقديم خدمات عقارية متكاملة تلبي احتياجات العملاء في موريتانيا',
@@ -43,8 +43,8 @@ export const SettingsProvider = ({ children }) => {
             title: 'تواصل معنا',
             description: 'نحن هنا لمساعدتك في جميع استفساراتك. لا تتردد في التواصل معنا',
             address: 'شارع الرئيسي، نواكشوط، موريتانيا',
-            phone: '+222 123 456 789',
-            email: 'info@voursa.com',
+            phone: '+222 44 19 16 13',
+            email: 'agencevoursa@gmail.com',
             socialMedia: {},
             mapEmbedUrl: ''
           },
@@ -64,19 +64,19 @@ export const SettingsProvider = ({ children }) => {
     } catch (error) {
       setError(error.message);
       setSettings({
-        siteName: 'وكالة بورصة العقارية',
-        siteDescription: 'أفضل وكالة عقارية في المملكة',
-        contactEmail: 'info@voursa.com',
-        contactPhone: '+222 123 456 789',
+        siteName: 'وكالة فرصة العقارية',
+        siteDescription: 'أفضل وكالة عقارية في موريتانيا',
+        contactEmail: 'agencevoursa@gmail.com',
+        contactPhone: '+222 44 19 16 13',
         homePage: {
-          heroTitle: 'وكالة بورصة العقارية',
+          heroTitle: 'وكالة فرصة العقارية',
           heroDescription: 'نقدم حلولاً عقارية متكاملة تلبي احتياجات عملائنا بأعلى معايير الجودة والشفافية',
           featuredPropertiesTitle: 'أحدث العقارات',
           featuredPropertiesDescription: 'اكتشف مجموعة متنوعة من العقارات المميزة في أفضل المواقع',
           heroMedia: []
         },
         aboutPage: {
-          heroTitle: 'وكالة ورسة العقارية',
+          heroTitle: 'وكالة فرصة العقارية',
           heroDescription: 'نحن نقدم حلولاً عقارية متكاملة تلبي احتياجات عملائنا بأعلى معايير الجودة والشفافية',
           storyTitle: 'قصتنا',
           storyContent: 'تأسست وكالة ورسة العقارية في عام 2013 بهدف تقديم خدمات عقارية متكاملة تلبي احتياجات العملاء في موريتانيا',
@@ -87,8 +87,8 @@ export const SettingsProvider = ({ children }) => {
           title: 'تواصل معنا',
           description: 'نحن هنا لمساعدتك في جميع استفساراتك. لا تتردد في التواصل معنا',
           address: 'شارع الرئيسي، نواكشوط، موريتانيا',
-          phone: '+222 123 456 789',
-          email: 'info@voursa.com',
+          phone: '+222 44 19 16 13',
+          email: 'agencevoursa@gmail.com',
           socialMedia: {},
           mapEmbedUrl: ''
         },

@@ -726,7 +726,7 @@ const SellerDashboard = () => {
     // Set the selected property with all its data
     setSelectedProperty({
       ...property,
-      type: property.propertyType, // Map propertyType to type for the form
+      propertyType: property.propertyType,
       mainPhoto: property.images?.[0] || null, // Set first image as main photo
       additionalMedia: property.images?.slice(1) || [], // Set remaining images as additional media
       features: property.features || [],
@@ -822,21 +822,14 @@ const SellerDashboard = () => {
         } else if (key === 'type') {
           // Map property type to backend enum values
           const propertyTypeMap = {
-            'شقة': 'شقة',
-            'فيلا': 'فيلا',
-            'أرض': 'أرض',
-            'مكتب': 'مكتب',
-            'متجر': 'متجر',
-            'مصنع': 'مصنع',
-            'مصنع للايجار': 'مصنع للايجار',
-            'شقة للايجار': 'شقة للايجار',
-            'أرض للايجار': 'أرض للايجار',
-            'فيلا للايجار': 'فيلا للايجار',
-            'مكتب للايجار': 'مكتب للايجار',
-            'متجر للايجار': 'متجر للايجار'
+            'منزل للبيع': 'منزل للبيع',
+            'منزل للايجار': 'منزل للايجار',
+            'دوبلكس للبيع': 'دوبلكس للبيع',
+            'دوبلكس للايجار': 'دوبلكس للايجار',
+            'أرض للبيع': 'أرض للبيع',
           };
           
-          const mappedPropertyType = propertyTypeMap[newProperty.type] || 'شقة';
+          const mappedPropertyType = propertyTypeMap[newProperty.type] || 'منزل للبيع';
           console.log('Mapping property type:', { original: newProperty.type, mapped: mappedPropertyType });
           formData.append('propertyType', mappedPropertyType);
         } else if (key === 'status') {
@@ -1462,33 +1455,19 @@ const SellerDashboard = () => {
   }, [user._id]);
 
   const propertyTypes = [
-    'شقة',
-    'فيلا',
-    'أرض',
-    'مكتب',
-    'متجر',
-    'مصنع',
-    'شقة للايجار',
-    'فيلا للايجار',
-    'أرض للايجار',
-    'مكتب للايجار',
-    'متجر للايجار',
-    'مصنع للايجار'
+    'منزل للبيع',
+    'منزل للايجار',
+    'دوبلكس للبيع',
+    'دوبلكس للايجار',
+    'أرض للبيع'
   ];
 
   const propertyStatuses = {
-    'شقة': ['للبيع', 'بيع'],
-    'فيلا': ['للبيع', 'بيع'],
-    'أرض': ['للبيع', 'بيع'],
-    'مكتب': ['للبيع', 'بيع'],
-    'متجر': ['للبيع', 'بيع'],
-    'مصنع': ['للبيع', 'بيع'],
-    'شقة للايجار': ['للايجار', 'مؤجر'],
-    'فيلا للايجار': ['للايجار', 'مؤجر'],
-    'أرض للايجار': ['للايجار', 'مؤجر'],
-    'مكتب للايجار': ['للايجار', 'مؤجر'],
-    'متجر للايجار': ['للايجار', 'مؤجر'],
-    'مصنع للايجار': ['للايجار', 'مؤجر']
+    'منزل للبيع': ['للبيع', 'بيع'],
+    'دوبلكس للبيع': ['للبيع', 'بيع'],
+    'أرض للبيع': ['للبيع', 'بيع'],
+    'منزل للايجار': ['للايجار', 'مؤجر'],
+    'دوبلكس للايجار': ['للايجار', 'مؤجر']
   };
 
   const handlePropertyTypeChange = (e) => {
@@ -2715,13 +2694,15 @@ const SellerDashboard = () => {
                 <FormControl isRequired>
                   <FormLabel>نوع العقار</FormLabel>
                   <Select
-                    value={newProperty.type}
-                    onChange={handlePropertyTypeChange}
                     placeholder="اختر نوع العقار"
+                    value={newProperty.type}
+                    onChange={(e) => setNewProperty({ ...newProperty, type: e.target.value })}
                   >
-                    {propertyTypes.map((type) => (
-                      <option key={type} value={type}>{type}</option>
-                    ))}
+                    <option value="منزل للبيع">منزل للبيع</option>
+                    <option value="منزل للايجار">منزل للايجار</option>
+                    <option value="دوبلكس للبيع">دوبلكس للبيع</option>
+                    <option value="دوبلكس للايجار">دوبلكس للايجار</option>
+                    <option value="أرض للبيع">أرض للبيع</option>
                   </Select>
                 </FormControl>
 
@@ -3131,15 +3112,14 @@ const SellerDashboard = () => {
                   <FormControl>
                     <FormLabel>النوع</FormLabel>
                     <Select 
-                      value={selectedProperty.type}
-                      onChange={(e) => setSelectedProperty({...selectedProperty, type: e.target.value})}
+                      value={selectedProperty.propertyType}
+                      onChange={(e) => setSelectedProperty({...selectedProperty, propertyType: e.target.value})}
                     >
-                      <option value="فيلا">فيلا</option>
-                      <option value="شقة">شقة</option>
-                      <option value="أرض">أرض</option>
-                      <option value="مكتب">مكتب</option>
-                      <option value="متجر">متجر</option>
-                      <option value="مصنع">مصنع</option>
+                      <option value="منزل للبيع">منزل للبيع</option>
+                      <option value="منزل للايجار">منزل للايجار</option>
+                      <option value="دوبلكس للبيع">دوبلكس للبيع</option>
+                      <option value="دوبلكس للايجار">دوبلكس للايجار</option>
+                      <option value="أرض للبيع">أرض للبيع</option>
                     </Select>
                   </FormControl>
                   
@@ -3149,8 +3129,10 @@ const SellerDashboard = () => {
                       value={selectedProperty.status}
                       onChange={(e) => setSelectedProperty({...selectedProperty, status: e.target.value})}
                     >
-                      <option value="متاح">متاح</option>
-                      <option value="تم البيع">تم البيع</option>
+                      <option value="للبيع">للبيع</option>
+                      <option value="بيع">بيع</option>
+                      <option value="للايجار">للايجار</option>
+                      <option value="مؤجر">مؤجر</option>
                     </Select>
                   </FormControl>
                   
