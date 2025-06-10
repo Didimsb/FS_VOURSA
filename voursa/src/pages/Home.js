@@ -18,9 +18,8 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import { FaHome, FaBuilding, FaStore, FaIndustry, FaWarehouse, FaLandmark } from 'react-icons/fa';
-import { MdApartment, MdBusiness, MdFactory } from 'react-icons/md';
-import { GiOfficeChair } from 'react-icons/gi';
+import { FaHome } from 'react-icons/fa';
+import { Building2, LandPlot } from 'lucide-react';
 import Hero from '../components/Hero';
 import PropertyCard from '../components/PropertyCard';
 import BannerSlider from '../components/BannerSlider';
@@ -31,18 +30,11 @@ import { getAllProperties } from '../services/PropertyService';
 const MotionBox = motion(Box);
 
 const propertyTypeIcons = {
-  'شقة': MdApartment,
-  'فيلا': FaHome,
-  'أرض': FaLandmark,
-  'مكتب': MdBusiness,
-  'متجر': FaStore,
-  'مصنع': FaIndustry,
-  'مصنع للايجار': MdFactory,
-  'شقة للايجار': MdApartment,
-  'أرض للايجار': FaLandmark,
-  'فيلا للايجار': FaHome,
-  'مكتب للايجار': GiOfficeChair,
-  'متجر للايجار': FaStore
+  'منزل للبيع': FaHome,
+  'منزل للايجار': FaHome,
+  'دوبلكس للبيع': Building2,
+  'دوبلكس للايجار': Building2,
+  'أرض للبيع': LandPlot
 };
 
 const Home = () => {
