@@ -174,11 +174,11 @@ const Hero = ({ onSearch }) => {
                           value={propertyType}
                           onChange={(e) => setPropertyType(e.target.value)}
                         >
+                          <option value="أرض للبيع">أرض للبيع</option>
                           <option value="منزل للبيع">منزل للبيع</option>
                           <option value="منزل للايجار">منزل للايجار</option>
-                          <option value="دوبلكس للبيع">دوبلكس للبيع</option>
-                          <option value="دوبلكس للايجار">دوبلكس للايجار</option>
-                          <option value="أرض للبيع">أرض للبيع</option>
+                          <option value="شقة للايجار">شقة للايجار</option>
+                          
                         </Select>
                       </VStack>
                     </GridItem>
