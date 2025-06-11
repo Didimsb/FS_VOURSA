@@ -69,14 +69,7 @@ const PropertyCard = ({ property }) => {
         </Text>
 
         <Stack direction="row" spacing={4} align="center">
-          <Stack direction="row" align="center" spacing={1}>
-            <Bed size={16} />
-            <Text>{property.bedrooms}</Text>
-          </Stack>
-          <Stack direction="row" align="center" spacing={1}>
-            <Bath size={16} />
-            <Text>{property.bathrooms}</Text>
-          </Stack>
+         
           <Stack direction="row" align="center" spacing={1}>
             <Square size={16} />
             <Text>{property.area}م²</Text>

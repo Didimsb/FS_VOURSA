@@ -30,11 +30,11 @@ import { getAllProperties } from '../services/PropertyService';
 const MotionBox = motion(Box);
 
 const propertyTypeIcons = {
+  'أرض للبيع': LandPlot,
   'منزل للبيع': FaHome,
   'منزل للايجار': FaHome,
-  'دوبلكس للبيع': Building2,
-  'دوبلكس للايجار': Building2,
-  'أرض للبيع': LandPlot
+  'شقة للايجار': Building2
+  
 };
 
 const Home = () => {

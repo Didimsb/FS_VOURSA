@@ -280,7 +280,7 @@ const PropertyDetail = () => {
                 </Box>
 
               <SimpleGrid columns={2} spacing={4}>
-                <Box p={4} borderWidth="1px" borderRadius="lg">
+                {/* <Box p={4} borderWidth="1px" borderRadius="lg">
                   <Icon as={Bed} boxSize={6} color="gray.500" />
                   <Text mt={2} fontSize="lg" fontWeight="medium">
                     {property.bedrooms || 0} غرف نوم
@@ -291,7 +291,7 @@ const PropertyDetail = () => {
                   <Text mt={2} fontSize="lg" fontWeight="medium">
                     {property.bathrooms || 0} حمامات
                   </Text>
-                </Box>
+                </Box> */}
                 <Box p={4} borderWidth="1px" borderRadius="lg">
                   <Icon as={Square} boxSize={6} color="gray.500" />
                   <Text mt={2} fontSize="lg" fontWeight="medium">

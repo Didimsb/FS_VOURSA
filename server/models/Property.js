@@ -119,7 +119,7 @@ const propertySchema = new mongoose.Schema({
   propertyType: {
     type: String,
     required: [true, 'نوع العقار مطلوب'],
-    enum: ['منزل للبيع', 'منزل للايجار', 'دوبلكس للبيع', 'دوبلكس للايجار', 'أرض للبيع']
+    enum: ['أرض للبيع','منزل للبيع', 'منزل للايجار', , 'شقة للايجار' ]
   },
   status: {
     type: String,
@@ -129,12 +129,12 @@ const propertySchema = new mongoose.Schema({
   },
   bedrooms: {
     type: Number,
-    required: [true, 'عدد غرف النوم مطلوب'],
+    // required: [true, 'عدد غرف النوم مطلوب'],
     min: [0, 'عدد غرف النوم يجب أن يكون 0 أو أكثر']
   },
   bathrooms: {
     type: Number,
-    required: [true, 'عدد الحمامات مطلوب'],
+    // required: [true, 'عدد الحمامات مطلوب'],
     min: [0, 'عدد الحمامات يجب أن يكون 0 أو أكثر']
   },
   area: {

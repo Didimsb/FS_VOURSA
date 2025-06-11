@@ -822,11 +822,11 @@ const SellerDashboard = () => {
         } else if (key === 'type') {
           // Map property type to backend enum values
           const propertyTypeMap = {
+            'أرض للبيع': 'أرض للبيع',
             'منزل للبيع': 'منزل للبيع',
             'منزل للايجار': 'منزل للايجار',
-            'دوبلكس للبيع': 'دوبلكس للبيع',
-            'دوبلكس للايجار': 'دوبلكس للايجار',
-            'أرض للبيع': 'أرض للبيع',
+            'شقة للايجار': 'شقة للايجار',
+            
           };
           
           const mappedPropertyType = propertyTypeMap[newProperty.type] || 'منزل للبيع';
@@ -1095,18 +1095,18 @@ const SellerDashboard = () => {
               <Text fontWeight="bold">المشاهدات:</Text>
               <Text>{property.views || 0}</Text>
             </Flex>
-            {property.type !== 'land' && (
-              <>
-                <Flex justify="space-between">
-                  <Text fontWeight="bold">غرف النوم:</Text>
-                  <Text>{property.bedrooms || 0}</Text>
-                </Flex>
-                <Flex justify="space-between">
-                  <Text fontWeight="bold">الحمامات:</Text>
-                  <Text>{property.bathrooms || 0}</Text>
-                </Flex>
-              </>
-            )}
+            {/* {property.type !== 'land' && (
+              // <>
+              //   <Flex justify="space-between">
+              //     <Text fontWeight="bold">غرف النوم:</Text>
+              //     <Text>{property.bedrooms || 0}</Text>
+              //   </Flex>
+              //   <Flex justify="space-between">
+              //     <Text fontWeight="bold">الحمامات:</Text>
+              //     <Text>{property.bathrooms || 0}</Text>
+              //   </Flex>
+              // </>
+            )} */}
           </VStack>
         </CardBody>
         <CardFooter>
@@ -1455,19 +1455,18 @@ const SellerDashboard = () => {
   }, [user._id]);
 
   const propertyTypes = [
+    'أرض للبيع',
     'منزل للبيع',
     'منزل للايجار',
-    'دوبلكس للبيع',
-    'دوبلكس للايجار',
-    'أرض للبيع'
+    'شقة للايجار',
+    
   ];
 
   const propertyStatuses = {
-    'منزل للبيع': ['للبيع', 'بيع'],
-    'دوبلكس للبيع': ['للبيع', 'بيع'],
     'أرض للبيع': ['للبيع', 'بيع'],
+    'منزل للبيع': ['للبيع', 'بيع'],
     'منزل للايجار': ['للايجار', 'مؤجر'],
-    'دوبلكس للايجار': ['للايجار', 'مؤجر']
+    'شقة للايجار': ['للايجار', 'مؤجر']
   };
 
   const handlePropertyTypeChange = (e) => {
@@ -2698,11 +2697,10 @@ const SellerDashboard = () => {
                     value={newProperty.type}
                     onChange={(e) => setNewProperty({ ...newProperty, type: e.target.value })}
                   >
+                    <option value="أرض للبيع">أرض للبيع</option>
                     <option value="منزل للبيع">منزل للبيع</option>
                     <option value="منزل للايجار">منزل للايجار</option>
-                    <option value="دوبلكس للبيع">دوبلكس للبيع</option>
-                    <option value="دوبلكس للايجار">دوبلكس للايجار</option>
-                    <option value="أرض للبيع">أرض للبيع</option>
+                    <option value="شقة للايجار">شقة للايجار</option>
                   </Select>
                 </FormControl>
 
@@ -2776,29 +2774,7 @@ const SellerDashboard = () => {
                   </NumberInput>
                 </FormControl>
 
-                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} width="100%">
-                  <FormControl isRequired>
-                    <FormLabel>عدد غرف النوم</FormLabel>
-                    <NumberInput min={0} value={newProperty.bedrooms} onChange={(value) => setNewProperty({ ...newProperty, bedrooms: value })}>
-                      <NumberInputField />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                  </FormControl>
-
-                  <FormControl isRequired>
-                    <FormLabel>عدد الحمامات</FormLabel>
-                    <NumberInput min={0} value={newProperty.bathrooms} onChange={(value) => setNewProperty({ ...newProperty, bathrooms: value })}>
-                      <NumberInputField />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                  </FormControl>
-                </SimpleGrid>
+                
 
                 <FormControl isRequired>
                   <FormLabel>المميزات</FormLabel>
@@ -2984,21 +2960,8 @@ const SellerDashboard = () => {
                       <Text>{selectedProperty.views}</Text>
                     </Box>
                     
-                    {selectedProperty.propertyType !== 'land' && (
-                      <>
-                        <Box>
-                          <Text fontWeight="bold">عدد غرف النوم:</Text>
-                          <Text>{selectedProperty.bedrooms}</Text>
-                        </Box>
-                        
-                        <Box>
-                          <Text fontWeight="bold">عدد الحمامات:</Text>
-                          <Text>{selectedProperty.bathrooms}</Text>
-                        </Box>
-                      </>
-                    )}
+                    
                   </SimpleGrid>
-
                   {selectedProperty.features && selectedProperty.features.length > 0 && (
                     <Box>
                       <Text fontWeight="bold" mb={2}>المميزات:</Text>
@@ -3115,11 +3078,10 @@ const SellerDashboard = () => {
                       value={selectedProperty.propertyType}
                       onChange={(e) => setSelectedProperty({...selectedProperty, propertyType: e.target.value})}
                     >
+                      <option value="أرض للبيع">أرض للبيع</option>
                       <option value="منزل للبيع">منزل للبيع</option>
                       <option value="منزل للايجار">منزل للايجار</option>
-                      <option value="دوبلكس للبيع">دوبلكس للبيع</option>
-                      <option value="دوبلكس للايجار">دوبلكس للايجار</option>
-                      <option value="أرض للبيع">أرض للبيع</option>
+                      <option value="شقة للايجار">شقة للايجار</option>
                     </Select>
                   </FormControl>
                   
@@ -3136,7 +3098,7 @@ const SellerDashboard = () => {
                     </Select>
                   </FormControl>
                   
-                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} width="100%">
+                  {/* <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} width="100%">
                     <FormControl>
                       <FormLabel>عدد غرف النوم</FormLabel>
                       <NumberInput 
@@ -3166,7 +3128,7 @@ const SellerDashboard = () => {
                         </NumberInputStepper>
                       </NumberInput>
                     </FormControl>
-                  </SimpleGrid>
+                  </SimpleGrid> */}
                   
                   <FormControl>
                     <FormLabel>السعر</FormLabel>
