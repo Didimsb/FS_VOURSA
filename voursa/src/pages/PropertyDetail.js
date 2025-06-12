@@ -190,7 +190,7 @@ const PropertyDetail = () => {
                 />
               ) : (
                 <Image
-                  src={property.images?.[activeImage] || '/placeholder.jpg'}
+                  src={property.images?.[activeImage] || '/maison.jpg'}
                   alt={property.title}
                   w="100%"
                   h="500px"

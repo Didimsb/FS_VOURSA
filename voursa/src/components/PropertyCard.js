@@ -33,7 +33,7 @@ const PropertyCard = ({ property }) => {
     >
       <Box position="relative">
         <Image
-          src={property.images?.[0] || 'https://img.freepik.com/vecteurs-premium/arret-repos-nature_1107076-468.jpg?semt=ais_hybrid&w=740'}
+          src={property.images?.[0] || '/maison.jpg'}
           alt={property.title}
           w="full"
           h="200px"
