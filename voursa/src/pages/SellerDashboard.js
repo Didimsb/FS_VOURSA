@@ -945,8 +945,8 @@ const SellerDashboard = () => {
       const formData = new FormData();
       formData.append('file', paymentScreenshot);
       
-      const uploadResponse = await axios.post(
-        'http://localhost:5000/api/upload/cloudinary',
+      const uploadResponse = await axiosInstance.post(
+        '/upload/cloudinary',
         formData,
         {
           headers: {
