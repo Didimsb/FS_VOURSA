@@ -465,7 +465,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `http://localhost:5000/api/admin/points-transactions/${selectedTransaction._id}`,
+        `${process.env.REACT_APP_API_URL}/admin/points-transactions/${selectedTransaction._id}`,
         { status: 'failed' },
         {
           headers: {
