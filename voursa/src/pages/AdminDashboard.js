@@ -553,7 +553,7 @@ const AdminDashboard = () => {
       ...transaction,
       sellerName: transaction.user?.name || 'مستخدم محذوف',
       sellerEmail: transaction.user?.email || 'غير معروف',
-      date: new Date(transaction.createdAt).toLocaleDateString('ar-SA'),
+      date: new Date(transaction.createdAt).toLocaleDateString('fr-FR'),
       screenshot: transaction.screenshotUrl
     });
     onViewTransactionOpen();
@@ -604,7 +604,7 @@ const AdminDashboard = () => {
           </Box>
           <Box>
             <Text fontSize="sm" color="gray.500">التاريخ</Text>
-            <Text>{new Date(transaction.createdAt).toLocaleDateString('ar-SA')}</Text>
+            <Text>{new Date(transaction.createdAt).toLocaleDateString('fr-FR')}</Text>
           </Box>
         </SimpleGrid>
 
@@ -2179,7 +2179,7 @@ const AdminDashboard = () => {
                         <StatNumber>{stats.totalSales}</StatNumber>
                         <StatHelpText>
                           <StatArrow type="increase" />
-                          {stats.totalSalesAmount?.toLocaleString() || 0} ريال
+                          {stats.totalSalesAmount?.toLocaleString() || 0} أوقية
                         </StatHelpText>
                       </Stat>
                     </SimpleGrid>
@@ -2241,7 +2241,7 @@ const AdminDashboard = () => {
                                     <Td>{transaction.amount} أوقية</Td>
                                     <Td>{transaction.points}</Td>
                                     <Td>{transaction.paymentMethod}</Td>
-                                      <Td>{new Date(transaction.createdAt).toLocaleDateString('ar-SA')}</Td>
+                                      <Td>{new Date(transaction.createdAt).toLocaleDateString('fr-FR')}</Td>
                                     <Td>
                                       <Badge colorScheme="yellow">معلق</Badge>
                                     </Td>
@@ -2639,7 +2639,7 @@ const AdminDashboard = () => {
                                     <Td>{transaction.amount} أوقية</Td>
                                     <Td>{transaction.points}</Td>
                                     <Td>{transaction.paymentMethod}</Td>
-                                    <Td>{new Date(transaction.createdAt).toLocaleDateString('ar-SA')}</Td>
+                                    <Td>{new Date(transaction.createdAt).toLocaleDateString('fr-FR')}</Td>
                                     <Td>
                                       <Badge
                                         colorScheme={
