@@ -2314,7 +2314,7 @@ const SellerDashboard = () => {
                                   </HStack>
                                   <HStack>
                                     <Icon as={FaCalendar} color="gray.500" />
-                                    <Text>{customer.createdAt ? new Date(customer.createdAt).toLocaleDateString('ar-EG') : 'لم يتم تحديد التاريخ'}</Text>
+                                    <Text>{customer.createdAt ? new Date(customer.createdAt).toLocaleDateString('fr-FR') : 'لم يتم تحديد التاريخ'}</Text>
                                   </HStack>
                                 </VStack>
                               </Box>
@@ -3763,7 +3763,7 @@ const SellerDashboard = () => {
                 <Tbody>
                   {pointsTransactions.map((transaction) => (
                     <Tr key={transaction._id}>
-                      <Td>{new Date(transaction.createdAt).toLocaleDateString('ar-SA')}</Td>
+                      <Td>{new Date(transaction.createdAt).toLocaleDateString('fr-FR')}</Td>
                       <Td>
                         {transaction.type === 'points_purchase' ? 'شراء نقاط' : 'إضافة عقار'}
                       </Td>
