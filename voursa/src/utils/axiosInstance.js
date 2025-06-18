@@ -5,7 +5,7 @@ const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 300000, // 5 minutes timeout for property uploads
+  timeout: 1800000, // 30 minutes timeout for large file uploads
 });
 
 // Add a request interceptor
@@ -15,6 +15,12 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Set longer timeout for file uploads
+    if (config.data instanceof FormData) {
+      config.timeout = 1800000; // 30 minutes for file uploads
+    }
+    
     return config;
   },
   (error) => {
@@ -41,10 +47,16 @@ axiosInstance.interceptors.response.use(
       } else if (error.response.status === 500) {
         // Handle server errors
         console.error('Server Error:', error.response.data);
+      } else if (error.response.status === 413) {
+        // Handle file too large error
+        console.error('File too large:', error.response.data);
       }
     } else if (error.request) {
       // The request was made but no response was received
       console.error('No response received:', error.request);
+    } else if (error.code === 'ECONNABORTED') {
+      // Handle timeout errors
+      console.error('Request timeout:', error.message);
     } else {
       // Something happened in setting up the request that triggered an Error
       console.error('Error setting up request:', error.message);

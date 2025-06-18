@@ -625,6 +625,19 @@ const SellerDashboard = () => {
   const handleMainPhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Check file size
+      const maxSize = 500 * 1024 * 1024; // 500MB
+      if (file.size > maxSize) {
+        toast({
+          title: "ملف كبير جداً",
+          description: `الملف ${file.name} يتجاوز الحد الأقصى (100 ميجابايت)`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onloadend = () => {
         setMainPhotoPreview(reader.result);
@@ -632,6 +645,14 @@ const SellerDashboard = () => {
           ...prev,
           mainPhoto: file
         }));
+        
+        toast({
+          title: "تم إضافة الصورة الرئيسية",
+          description: `تم إضافة ${file.name} بنجاح`,
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+        });
       };
       reader.readAsDataURL(file);
     }
@@ -644,12 +665,72 @@ const SellerDashboard = () => {
       const newFiles = [...additionalMediaFiles];
       const newPreviews = [...additionalMediaPreviews];
       
+      // Check file sizes
+      const maxImageSize = 500 * 1024 * 1024; // 500MB for images
+      const maxVideoSize = 100 * 1024 * 1024; // 100MB for videos (3-4 minutes)
+      
+      const oversizedFiles = files.filter(file => {
+        const isVideo = file.type.startsWith('video/');
+        const maxSize = isVideo ? maxVideoSize : maxImageSize;
+        return file.size > maxSize;
+      });
+      
+      if (oversizedFiles.length > 0) {
+        const oversizedNames = oversizedFiles.map(f => f.name).join(', ');
+        toast({
+          title: "ملفات كبيرة جداً",
+          description: `الملفات التالية تتجاوز الحد الأقصى: ${oversizedNames}. الحد الأقصى للفيديو: 100 ميجابايت (1-2 دقائق)، للصور: 100 ميجابايت`,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        return;
+      }
+      
       files.forEach(file => {
+        // Check if file is video and show duration warning
+        if (file.type.startsWith('video/')) {
+          const video = document.createElement('video');
+          video.preload = 'metadata';
+          video.onloadedmetadata = () => {
+            const durationInMinutes = video.duration / 60;
+            if (durationInMinutes > 2) {
+              toast({
+                title: "فيديو طويل جداً",
+                description: `الفيديو ${file.name} طويل جداً (${Math.round(durationInMinutes)} دقيقة). الحد الأقصى هو 2 دقيقة للخطة المجانية.`,
+                status: "error",
+                duration: 4000,
+                isClosable: true,
+              });
+              // Remove the file from the array
+              const fileIndex = newFiles.indexOf(file);
+              if (fileIndex > -1) {
+                newFiles.splice(fileIndex, 1);
+                newPreviews.splice(fileIndex, 1);
+                setAdditionalMediaFiles([...newFiles]);
+                setAdditionalMediaPreviews([...newPreviews]);
+              }
+              return;
+            } else if (durationInMinutes > 1) {
+              toast({
+                title: "فيديو طويل",
+                description: `الفيديو ${file.name} طويل (${Math.round(durationInMinutes)} دقيقة). قد يستغرق الرفع وقتاً طويلاً.`,
+                status: "warning",
+                duration: 4000,
+                isClosable: true,
+              });
+            }
+          };
+          video.src = URL.createObjectURL(file);
+        }
+        
         const reader = new FileReader();
         reader.onloadend = () => {
           newPreviews.push({
             url: reader.result,
-            type: file.type.startsWith('image/') ? 'image' : 'video'
+            type: file.type.startsWith('image/') ? 'image' : 'video',
+            name: file.name,
+            size: file.size
           });
           setAdditionalMediaPreviews([...newPreviews]);
         };
@@ -662,6 +743,14 @@ const SellerDashboard = () => {
         ...prev,
         additionalMedia: newFiles
       }));
+      
+      toast({
+        title: "تم إضافة الملفات",
+        description: `تم إضافة ${files.length} ملف بنجاح`,
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
     }
   };
 
@@ -792,6 +881,11 @@ const SellerDashboard = () => {
     }
   };
 
+  // Add new state for upload progress
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState('');
+
   const handleSaveNewProperty = async () => {
     try {
       // Check points balance first
@@ -808,6 +902,9 @@ const SellerDashboard = () => {
       }
 
       setIsLoading(true);
+      setIsUploading(true);
+      setUploadProgress(0);
+      setUploadStatus('جاري التحضير...');
 
       // Create FormData for the entire request
       const formData = new FormData();
@@ -870,10 +967,17 @@ const SellerDashboard = () => {
       //   console.log(pair[0] + ': ' + pair[1]);
       // }
 
+      setUploadStatus('جاري رفع الملفات...');
+
       // Make a single API call that handles both property creation and points deduction
       const response = await axiosInstance.post('/properties', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setUploadProgress(percentCompleted);
+          setUploadStatus(`جاري الرفع... ${percentCompleted}%`);
         }
       });
       
@@ -914,15 +1018,27 @@ const SellerDashboard = () => {
     } catch (error) {
       console.error('Error saving property:', error);
       console.error('Error details:', error.response?.data);
+      
+      let errorMessage = "حدث خطأ أثناء إضافة العقار";
+      
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       toast({
         title: "خطأ في الإضافة",
-        description: error.response?.data?.message || "حدث خطأ أثناء إضافة العقار",
+        description: errorMessage,
         status: "error",
         duration: 5000,
         isClosable: true,
       });
     } finally {
       setIsLoading(false);
+      setIsUploading(false);
+      setUploadProgress(0);
+      setUploadStatus('');
     }
   };
     
@@ -2689,6 +2805,36 @@ const SellerDashboard = () => {
                     </AlertDescription>
                   </Box>
                 </Alert>
+
+                {/* Upload Progress Bar */}
+                {isUploading && (
+                  <Box w="100%" p={4} bg="blue.50" borderRadius="md" borderWidth="1px" borderColor="blue.200">
+                    <VStack spacing={3}>
+                      <Text fontWeight="bold" color="blue.700">{uploadStatus}</Text>
+                      <Progress 
+                        value={uploadProgress} 
+                        size="lg" 
+                        colorScheme="blue" 
+                        width="100%" 
+                        borderRadius="full"
+                      />
+                      <Text fontSize="sm" color="blue.600">
+                        {uploadProgress}% مكتمل
+                      </Text>
+                    </VStack>
+                  </Box>
+                )}
+
+                {/* File Size Warning */}
+                <Alert status="warning" borderRadius="md">
+                  <AlertIcon />
+                  <Box>
+                    <AlertTitle>ملاحظة مهمة</AlertTitle>
+                    <AlertDescription>
+                      يمكنك رفع ملفات فيديو كبيرة حتى 100 ميجابايت (1-2 دقائق). قد يستغرق الرفع وقتاً أطول للملفات الكبيرة.
+                    </AlertDescription>
+                  </Box>
+                </Alert>
                 
                 <FormControl isRequired>
                   <FormLabel>نوع العقار</FormLabel>
@@ -2834,7 +2980,7 @@ const SellerDashboard = () => {
                       )}
                     </Box>
                     <Box>
-                      <Text mb={2}>صور وفيديوهات إضافية</Text>
+                      <Text mb={2}>صور وفيديوهات إضافية (حتى 100 ميجابايت لكل ملف)</Text>
                       <Input
                         type="file"
                         accept="image/*,video/*"
@@ -2842,6 +2988,9 @@ const SellerDashboard = () => {
                         onChange={handleAdditionalMediaUpload}
                         p={1}
                       />
+                      <Text fontSize="sm" color="gray.600" mt={1}>
+                        يمكنك رفع ملفات فيديو طويلة (1-2 دقائق) وملفات صور عالية الجودة
+                      </Text>
                       <SimpleGrid columns={3} spacing={2} mt={2}>
                         {additionalMediaPreviews.map((preview, index) => (
                           <Box key={index} position="relative">
@@ -2877,10 +3026,16 @@ const SellerDashboard = () => {
               </VStack>
             </ModalBody>
             <ModalFooter>
-              <Button variant="ghost" mr={3} onClick={onAddPropertyClose}>
+              <Button variant="ghost" mr={3} onClick={onAddPropertyClose} isDisabled={isUploading}>
                 إلغاء
               </Button>
-              <Button colorScheme="blue" onClick={handleSaveNewProperty}>
+              <Button 
+                colorScheme="blue" 
+                onClick={handleSaveNewProperty}
+                isLoading={isUploading}
+                loadingText="جاري الرفع..."
+                isDisabled={isUploading}
+              >
                 حفظ
               </Button>
             </ModalFooter>

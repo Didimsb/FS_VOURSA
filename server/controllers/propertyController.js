@@ -14,6 +14,47 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
+// Helper function to check Cloudinary account limits
+const checkCloudinaryLimits = async () => {
+  try {
+    const result = await cloudinary.api.usage();
+    return {
+      plan: result.plan,
+      credits: result.credits,
+      objects: result.objects,
+      bandwidth: result.bandwidth,
+      storage: result.storage,
+      requests: result.requests
+    };
+  } catch (error) {
+    console.error('Error checking Cloudinary limits:', error);
+    return null;
+  }
+};
+
+// Helper function to validate video file before upload
+const validateVideoFile = (file) => {
+  const fileSizeInMB = file.size / (1024 * 1024);
+  const isVideo = file.mimetype.startsWith('video/');
+  
+  if (!isVideo) {
+    return { valid: true };
+  }
+  
+  // Cloudinary free plan limits
+  const maxVideoSize = 100; // 100MB for free plan
+  const maxDuration = 60; // 60 seconds for free plan
+  
+  if (fileSizeInMB > maxVideoSize) {
+    return {
+      valid: false,
+      error: `ملف الفيديو ${file.originalname} كبير جداً. الحد الأقصى هو ${maxVideoSize} ميجابايت`
+    };
+  }
+  
+  return { valid: true };
+};
+
 // Create Property
 exports.createProperty = async (req, res) => {
   try {
@@ -35,6 +76,21 @@ exports.createProperty = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: 'المستخدم غير موجود'
+      });
+    }
+
+    // Check for duplicate property (same title, location, and user)
+    const existingProperty = await Property.findOne({
+      title: req.body.title,
+      location: req.body.location,
+      createdBy: req.user.id,
+      propertyType: req.body.propertyType
+    });
+
+    if (existingProperty) {
+      return res.status(400).json({
+        success: false,
+        message: 'يوجد عقار مماثل بالفعل بنفس العنوان والموقع. يرجى التحقق من البيانات أو تعديل العنوان.'
       });
     }
 
@@ -62,7 +118,13 @@ exports.createProperty = async (req, res) => {
         try {
           const mainPhotoResult = await cloudinary.uploader.upload(req.files.mainPhoto[0].path, {
             folder: 'properties/main',
-            resource_type: 'auto'
+            resource_type: 'auto',
+            chunk_size: 6000000, // 6MB chunks for better progress tracking
+            eager: [
+              { width: 300, height: 300, crop: "pad", audio_codec: "none" },
+              { width: 160, height: 100, crop: "crop", gravity: "south", audio_codec: "none" }
+            ],
+            eager_async: true
           });
           images.push(mainPhotoResult.secure_url);
           filesToDelete.push(req.files.mainPhoto[0].path);
@@ -83,18 +145,80 @@ exports.createProperty = async (req, res) => {
 
         for (const file of mediaFiles) {
           try {
+            // Validate file before upload
+            const validation = validateVideoFile(file);
+            if (!validation.valid) {
+              return res.status(400).json({
+                success: false,
+                message: validation.error
+              });
+            }
+
+            // Check file size (500MB limit for images, 100MB for videos)
+            const fileSizeInMB = file.size / (1024 * 1024);
+            const isVideo = file.mimetype.startsWith('video/');
+            const maxSize = isVideo ? 100 : 500;
+            
+            if (fileSizeInMB > maxSize) {
+              return res.status(400).json({
+                success: false,
+                message: `الملف ${file.originalname} كبير جداً. الحد الأقصى هو ${maxSize} ميجابايت`
+              });
+            }
+
+            // For videos, add additional validation
+            if (isVideo) {
+              // Check Cloudinary account limits
+              const limits = await checkCloudinaryLimits();
+              if (limits && limits.plan === 'free') {
+                // Free plan has stricter limits
+                if (fileSizeInMB > 100) {
+                  return res.status(400).json({
+                    success: false,
+                    message: `ملف الفيديو ${file.originalname} كبير جداً للخطة المجانية. الحد الأقصى هو 100 ميجابايت (حوالي 2-3 دقائق)`
+                  });
+                }
+              }
+            }
+
             const result = await cloudinary.uploader.upload(file.path, {
               folder: 'properties/media',
-              resource_type: 'auto'
+              resource_type: 'auto',
+              chunk_size: 6000000, // 6MB chunks for better progress tracking
+              eager: [
+                { width: 300, height: 300, crop: "pad", audio_codec: "none" },
+                { width: 160, height: 100, crop: "crop", gravity: "south", audio_codec: "none" }
+              ],
+              eager_async: true,
+              timeout: 60000 // 60 seconds timeout
             });
             images.push(result.secure_url);
             filesToDelete.push(file.path);
           } catch (error) {
             console.error('Error uploading additional media:', error);
-            return res.status(500).json({
-              success: false,
-              message: 'حدث خطأ أثناء رفع الملفات الإضافية'
-            });
+            
+            // Handle specific Cloudinary errors
+            if (error.http_code === 413) {
+              return res.status(400).json({
+                success: false,
+                message: `ملف الفيديو ${file.originalname} كبير جداً. يرجى تقليل حجم الفيديو أو مدة الفيديو (أقل من 2-3 دقائق للخطة المجانية)`
+              });
+            } else if (error.http_code === 400) {
+              return res.status(400).json({
+                success: false,
+                message: `نوع الملف ${file.originalname} غير مدعوم. يرجى استخدام ملفات الصور أو الفيديو`
+              });
+            } else if (error.http_code === 403) {
+              return res.status(400).json({
+                success: false,
+                message: `تم تجاوز حد الاستخدام المجاني لـ Cloudinary. يرجى ترقية الخطة أو تقليل حجم الملفات`
+              });
+            } else {
+              return res.status(500).json({
+                success: false,
+                message: `حدث خطأ أثناء رفع الملف ${file.originalname}: ${error.message}`
+              });
+            }
           }
         }
       }
@@ -156,9 +280,11 @@ exports.getAllProperties = async (req, res) => {
   try {
     const {
       page = 1,
-      limit = 10,
+      limit = 12,
       propertyType,
       status,
+      province,
+      district,
       minPrice,
       maxPrice,
       bedrooms,
@@ -170,16 +296,43 @@ exports.getAllProperties = async (req, res) => {
 
     if (propertyType) query.propertyType = propertyType;
     if (status) query.status = status;
+    if (province) query.province = province;
+    if (district) query.district = district;
     if (bedrooms) query.bedrooms = bedrooms;
     if (bathrooms) query.bathrooms = bathrooms;
     if (minPrice || maxPrice) {
       query.price = {};
-      if (minPrice) query.price.$gte = minPrice;
-      if (maxPrice) query.price.$lte = maxPrice;
+      if (minPrice) query.price.$gte = parseInt(minPrice);
+      if (maxPrice) query.price.$lte = parseInt(maxPrice);
+    }
+
+    // Handle sorting
+    let sortQuery = {};
+    switch (sort) {
+      case 'newest':
+        sortQuery = { createdAt: -1 };
+        break;
+      case 'oldest':
+        sortQuery = { createdAt: 1 };
+        break;
+      case 'price_low':
+        sortQuery = { price: 1 };
+        break;
+      case 'price_high':
+        sortQuery = { price: -1 };
+        break;
+      case 'space_low':
+        sortQuery = { area: 1 };
+        break;
+      case 'space_high':
+        sortQuery = { area: -1 };
+        break;
+      default:
+        sortQuery = { createdAt: -1 };
     }
 
     const properties = await Property.find(query)
-      .sort(sort)
+      .sort(sortQuery)
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .populate('createdBy', 'name email phone')
@@ -191,13 +344,33 @@ exports.getAllProperties = async (req, res) => {
       success: true,
       properties,
       totalPages: Math.ceil(count / limit),
-      currentPage: page
+      currentPage: parseInt(page),
+      totalProperties: count,
+      hasMore: parseInt(page) < Math.ceil(count / limit)
     });
   } catch (error) {
     console.error('Error in getAllProperties:', error);
     res.status(500).json({
       success: false,
       message: 'خطأ في جلب العقارات'
+    });
+  }
+};
+
+// Get All Property Types
+exports.getAllPropertyTypes = async (req, res) => {
+  try {
+    const propertyTypes = await Property.distinct('propertyType');
+    
+    res.json({
+      success: true,
+      propertyTypes: propertyTypes.filter(type => type) // Remove null/undefined values
+    });
+  } catch (error) {
+    console.error('Error in getAllPropertyTypes:', error);
+    res.status(500).json({
+      success: false,
+      message: 'خطأ في جلب أنواع العقارات'
     });
   }
 };

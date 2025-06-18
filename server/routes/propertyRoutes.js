@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   createProperty,
   getAllProperties,
+  getAllPropertyTypes,
   getProperty,
   updateProperty,
   deleteProperty,
@@ -30,7 +31,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 50000000 }, // 50MB
+  limits: { 
+    fileSize: 500 * 1024 * 1024, // 500MB limit for large videos
+    fieldSize: 500 * 1024 * 1024 // 500MB field size
+  },
   fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
   }
@@ -54,6 +58,7 @@ function checkFileType(file, cb) {
 
 // Public routes
 router.get('/', getAllProperties);
+router.get('/types', getAllPropertyTypes);
 router.get('/seller/properties', getSellerProperties);
 router.get('/latest', getLatestProperties);
 router.get('/:id', getProperty);
