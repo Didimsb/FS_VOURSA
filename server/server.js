@@ -21,6 +21,8 @@ if (!fs.existsSync(uploadsDir)) {
 const allowedOrigins = [
   'http://localhost:3000',
   'https://voursa.vercel.app',
+  'https://fs-voursa.vercel.app',
+  'https://fs-voursa-git-main-didis-projects-760bf862.vercel.app',
   'https://agencevoursa.com'
 ];
 
@@ -29,11 +31,19 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps, curl requests)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
+    // Check if origin is in allowed list
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
     }
-    return callback(null, true);
+    
+    // Allow all Vercel preview and deployment URLs for fs-voursa
+    if (origin && origin.includes('fs-voursa') && origin.includes('vercel.app')) {
+      return callback(null, true);
+    }
+    
+    // If origin doesn't match, reject it
+    const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+    return callback(new Error(msg), false);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

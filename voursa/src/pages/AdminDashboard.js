@@ -182,8 +182,8 @@ const uploadToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
     
-    const response = await axios.post(
-      `${process.env.REACT_APP_API_URL}/upload/cloudinary`, 
+    const response = await axiosInstance.post(
+      '/upload/cloudinary', 
       formData, 
       {
         headers: {
@@ -463,15 +463,9 @@ const AdminDashboard = () => {
 
   const handleConfirmReject = async () => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.put(
-        `${process.env.REACT_APP_API_URL}/admin/points-transactions/${selectedTransaction._id}`,
-        { status: 'failed' },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
+      await axiosInstance.put(
+        `/admin/points-transactions/${selectedTransaction._id}`,
+        { status: 'failed' }
       );
 
       // Update local state
@@ -509,15 +503,9 @@ const AdminDashboard = () => {
 
   const handleConfirmApprove = async () => {
     try {
-      const token = localStorage.getItem('token');
-      await axios.put(
-        `${process.env.REACT_APP_API_URL}/admin/points-transactions/${selectedTransaction._id}`,
-        { status: 'completed' },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
+      await axiosInstance.put(
+        `/admin/points-transactions/${selectedTransaction._id}`,
+        { status: 'completed' }
       );
 
       // Update local state
@@ -1484,12 +1472,7 @@ const AdminDashboard = () => {
   const fetchPointsTransactions = async () => {
   try {
     setLoadingPoints(true);
-    const token = localStorage.getItem('token');
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/admin/points-transactions`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const response = await axiosInstance.get('/admin/points-transactions');
     setPointsTransactions(response.data.transactions);
   } catch (error) {
     toast({
@@ -1505,15 +1488,9 @@ const AdminDashboard = () => {
 };
  const handleUpdatePointsTransaction = async (transactionId, status) => {
   try {
-    const token = localStorage.getItem('token');
-    await axios.put(
-      `${process.env.REACT_APP_API_URL}/admin/points-transactions/${transactionId}`, 
-      { status },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
+    await axiosInstance.put(
+      `/admin/points-transactions/${transactionId}`, 
+      { status }
     );
     toast({
       title: 'نجاح',

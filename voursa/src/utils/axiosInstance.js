@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'https://voursa-e3mg.onrender.com/api',
+  baseURL: process.env.REACT_APP_API_URL || 'https://fs-voursa.onrender.com/api',
   headers: {
     'Content-Type': 'application/json',
   },
