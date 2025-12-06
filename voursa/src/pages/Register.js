@@ -116,11 +116,12 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
+    setLoading(true);
     try {
       // Check if user exists and was added by admin
       const checkResponse = await axiosInstance.post('/users/check-admin-added', {
@@ -137,27 +138,27 @@ const Register = () => {
 
         if (response.data.success) {
           toast({
-            title: "تم التسجيل بنجاح",
-            description: "يرجى انتظار موافقة المدير",
+            title: "تم إرسال رمز التحقق",
+            description: "يرجى التحقق من بريدك الإلكتروني",
             status: "success",
             duration: 5000,
             isClosable: true,
           });
-          navigate('/seller-login');
+          navigate('/verify-email', { state: { email: formData.email } });
         }
       } else {
-        // Normal registration flow
+        // Normal registration flow - send verification code
         const response = await axiosInstance.post('/users/register', formData);
-        
+
         if (response.data.success) {
           toast({
-            title: "تم التسجيل بنجاح",
-            description: "يرجى انتظار موافقة المدير",
+            title: "تم إرسال رمز التحقق",
+            description: "يرجى التحقق من بريدك الإلكتروني",
             status: "success",
             duration: 5000,
             isClosable: true,
           });
-          navigate('/seller-login');
+          navigate('/verify-email', { state: { email: formData.email } });
         }
       }
     } catch (error) {
@@ -168,6 +169,8 @@ const Register = () => {
         duration: 5000,
         isClosable: true,
       });
+    } finally {
+      setLoading(false);
     }
   };
 

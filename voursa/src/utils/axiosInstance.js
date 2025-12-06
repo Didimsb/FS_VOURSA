@@ -1,7 +1,17 @@
 import axios from 'axios';
 
+// Détecter automatiquement si on est en local ou en production
+const getBaseURL = () => {
+  // Si on est en localhost, utiliser le backend local
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return 'http://localhost:5000/api';
+  }
+  // Sinon utiliser le backend Render
+  return 'https://fs-voursa.onrender.com/api';
+};
+
 const axiosInstance = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'https://fs-voursa.onrender.com/api',
+  baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json',
   },

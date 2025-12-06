@@ -5,6 +5,8 @@ const path = require('path');
 const { protect, isAdmin } = require('../middleware/auth');
 const {
   registerUser,
+  verifyEmailCode,
+  resendVerificationCode,
   loginUser,
   getUserProfile,
   updateUserProfile,
@@ -47,6 +49,8 @@ const upload = multer({
 
 // Public routes
 router.post('/register', registerUser);
+router.post('/verify-email', verifyEmailCode);
+router.post('/resend-code', resendVerificationCode);
 router.post('/login', loginUser);
 
 // Protected routes

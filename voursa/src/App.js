@@ -13,6 +13,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import SellerLogin from './pages/SellerLogin';
 import AdminLogin from './pages/AdminLogin';
 import Register from './pages/Register';
+import VerifyEmail from './pages/VerifyEmail';
 import theme from './theme';
 import { ChakraProvider, CSSReset } from '@chakra-ui/react';
 
@@ -83,7 +84,8 @@ function App() {
             <Route path="/seller-login" element={<SellerLogin />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/register" element={<Register />} />
-            
+            <Route path="/verify-email" element={<VerifyEmail />} />
+
             {/* Seller Routes */}
             <Route
               path="/seller-dashboard/*"

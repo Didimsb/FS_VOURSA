@@ -1,6 +1,9 @@
 const User = require('../models/User');
 const Property = require('../models/Property');
 const Transaction = require('../models/Transaction');
+const VerificationCode = require('../models/VerificationCode');
+const { generateVerificationCode, sendVerificationEmail } = require('../utils/emailService');
+const bcrypt = require('bcryptjs');
 const cloudinary = require('cloudinary').v2;
 
 // Configure Cloudinary
@@ -10,10 +13,9 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Register user
+// Register user - Step 1: Send verification code
 exports.registerUser = async (req, res) => {
   try {
-    // console.log('Registration request body:', req.body);
     const { name, email, password, phone, whatsapp } = req.body;
 
     // Check if user already exists
@@ -25,51 +27,188 @@ exports.registerUser = async (req, res) => {
       });
     }
 
-    // Create new user
-    user = new User({
-      name,
+    // Delete any existing verification codes for this email
+    await VerificationCode.deleteMany({ email });
+
+    // Generate verification code
+    const code = generateVerificationCode();
+
+    // Hash password before storing temporarily
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Store verification code with user data
+    const verificationRecord = new VerificationCode({
       email,
-      password,
-      phone,
-      whatsapp,
-      role: 'seller',
-      isApproved: false
+      code,
+      userData: {
+        name,
+        password: hashedPassword,
+        phone,
+        whatsapp
+      }
     });
 
-    // console.log('New user object before save:', user);
+    await verificationRecord.save();
 
+    // Send verification email
     try {
-      await user.save();
-      // console.log('User saved successfully:', user);
-    } catch (saveError) {
-      console.error('Error saving user:', saveError);
+      await sendVerificationEmail(email, code);
+    } catch (emailError) {
+      console.error('Error sending verification email:', emailError);
+      await VerificationCode.deleteMany({ email });
       return res.status(500).json({
         success: false,
-        message: 'حدث خطأ أثناء التسجيل',
-        error: saveError.message
+        message: 'حدث خطأ أثناء إرسال رمز التحقق. يرجى المحاولة مرة أخرى.'
       });
     }
 
-    // Generate token
-    const token = user.generateAuthToken();
-
-    res.status(201).json({
+    res.status(200).json({
       success: true,
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        whatsapp: user.whatsapp,
-        role: user.role
-      }
+      message: 'تم إرسال رمز التحقق إلى بريدك الإلكتروني',
+      email: email
     });
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({
       success: false,
       message: 'حدث خطأ أثناء التسجيل',
+      error: error.message
+    });
+  }
+};
+
+// Verify email code and complete registration
+exports.verifyEmailCode = async (req, res) => {
+  try {
+    const { email, code } = req.body;
+
+    // Find verification record
+    const verificationRecord = await VerificationCode.findOne({ email, code });
+
+    if (!verificationRecord) {
+      return res.status(400).json({
+        success: false,
+        message: 'رمز التحقق غير صحيح أو منتهي الصلاحية'
+      });
+    }
+
+    // Check if code is expired
+    if (new Date() > verificationRecord.expiresAt) {
+      await VerificationCode.deleteMany({ email });
+      return res.status(400).json({
+        success: false,
+        message: 'انتهت صلاحية رمز التحقق. يرجى طلب رمز جديد.'
+      });
+    }
+
+    // Create the user with stored data
+    const { name, password, phone, whatsapp } = verificationRecord.userData;
+
+    const user = new User({
+      name,
+      email,
+      password, // Already hashed
+      phone,
+      whatsapp,
+      role: 'seller',
+      isApproved: false
+    });
+
+    // Skip password hashing since it's already hashed
+    user.$locals = { skipPasswordHash: true };
+
+    // Save user directly without triggering pre-save hook for password
+    await User.collection.insertOne({
+      name: user.name,
+      email: user.email,
+      password: password,
+      phone: user.phone,
+      whatsapp: user.whatsapp,
+      role: 'seller',
+      isApproved: false,
+      isActive: true,
+      credits: 100,
+      properties: [],
+      transactions: [],
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+
+    // Get the created user
+    const createdUser = await User.findOne({ email });
+
+    // Delete verification record
+    await VerificationCode.deleteMany({ email });
+
+    // Generate token
+    const token = createdUser.generateAuthToken();
+
+    res.status(201).json({
+      success: true,
+      message: 'تم التحقق من البريد الإلكتروني وإنشاء الحساب بنجاح',
+      token,
+      user: {
+        id: createdUser._id,
+        name: createdUser.name,
+        email: createdUser.email,
+        phone: createdUser.phone,
+        whatsapp: createdUser.whatsapp,
+        role: createdUser.role
+      }
+    });
+  } catch (error) {
+    console.error('Verification error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'حدث خطأ أثناء التحقق',
+      error: error.message
+    });
+  }
+};
+
+// Resend verification code
+exports.resendVerificationCode = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Check if there's a pending verification
+    const existingRecord = await VerificationCode.findOne({ email });
+
+    if (!existingRecord) {
+      return res.status(400).json({
+        success: false,
+        message: 'لا يوجد طلب تسجيل معلق لهذا البريد الإلكتروني'
+      });
+    }
+
+    // Generate new code
+    const code = generateVerificationCode();
+
+    // Update the verification record
+    existingRecord.code = code;
+    existingRecord.expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+    await existingRecord.save();
+
+    // Send new verification email
+    try {
+      await sendVerificationEmail(email, code);
+    } catch (emailError) {
+      console.error('Error sending verification email:', emailError);
+      return res.status(500).json({
+        success: false,
+        message: 'حدث خطأ أثناء إرسال رمز التحقق'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'تم إرسال رمز تحقق جديد إلى بريدك الإلكتروني'
+    });
+  } catch (error) {
+    console.error('Resend verification error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'حدث خطأ أثناء إعادة إرسال رمز التحقق',
       error: error.message
     });
   }
