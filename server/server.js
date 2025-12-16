@@ -97,8 +97,17 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Ping route for uptime/health checks
+app.get("/ping", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    message: "Backend is alive 🚀",
+    time: new Date().toISOString()
+  });
+});
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
