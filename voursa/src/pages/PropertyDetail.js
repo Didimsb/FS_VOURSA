@@ -268,6 +268,12 @@ const PropertyDetail = () => {
                 <Text color="gray.500" fontSize="md">
                   {property.location}
                 </Text>
+                {property.createdAt && (
+                  <Text color="gray.400" fontSize="sm" mt={1}>
+                    تاريخ النشر:{' '}
+                    {new Date(property.createdAt).toLocaleDateString('fr-FR')}
+                  </Text>
+                )}
               </Box>
 
                 <Box>

@@ -289,7 +289,9 @@ exports.getAllProperties = async (req, res) => {
       maxPrice,
       bedrooms,
       bathrooms,
-      sort = '-createdAt'
+      sort = '-createdAt',
+      startDate,
+      endDate
     } = req.query;
 
     const query = {};
@@ -304,6 +306,25 @@ exports.getAllProperties = async (req, res) => {
       query.price = {};
       if (minPrice) query.price.$gte = parseInt(minPrice);
       if (maxPrice) query.price.$lte = parseInt(maxPrice);
+    }
+
+    // Filter by publication date (createdAt)
+    if (startDate || endDate) {
+      query.createdAt = {};
+      if (startDate) {
+        const start = new Date(startDate);
+        if (!isNaN(start)) {
+          query.createdAt.$gte = start;
+        }
+      }
+      if (endDate) {
+        const end = new Date(endDate);
+        if (!isNaN(end)) {
+          // Include the full end day by setting time to end of day
+          end.setHours(23, 59, 59, 999);
+          query.createdAt.$lte = end;
+        }
+      }
     }
 
     // Handle sorting

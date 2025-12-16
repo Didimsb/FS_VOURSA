@@ -18,6 +18,9 @@ const MotionBox = motion(Box);
 const PropertyCard = ({ property }) => {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
+  const locationColor = useColorModeValue('gray.600', 'gray.300');
+  const dateColor = useColorModeValue('gray.500', 'gray.400');
+  const priceColor = useColorModeValue('primary.600', 'primary.200');
   const navigate = useNavigate();
 
   return (
@@ -63,10 +66,18 @@ const PropertyCard = ({ property }) => {
         <Heading size="md" noOfLines={1}>
           {property.title}
         </Heading>
-        
-        <Text color={useColorModeValue('gray.600', 'gray.300')} noOfLines={2}>
+
+        <Text color={locationColor} noOfLines={2}>
           {property.location}
         </Text>
+
+        {/* Publication date */}
+        {property.createdAt && (
+          <Text fontSize="sm" color={dateColor}>
+            تاريخ النشر:{' '}
+            {new Date(property.createdAt).toLocaleDateString('fr-FR')}
+          </Text>
+        )}
 
         <Stack direction="row" spacing={4} align="center">
          
@@ -79,7 +90,7 @@ const PropertyCard = ({ property }) => {
         <Text
           fontSize="xl"
           fontWeight="bold"
-          color={useColorModeValue('primary.600', 'primary.200')}
+          color={priceColor}
         >
           {property.price?.toLocaleString('fr-FR')} أوقية
         </Text>
