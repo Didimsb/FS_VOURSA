@@ -51,15 +51,11 @@ exports.registerUser = async (req, res) => {
     await verificationRecord.save();
 
     // Send verification email
+    // Send verification email
     try {
       await sendVerificationEmail(email, code);
     } catch (emailError) {
-      console.error('Error sending verification email:', emailError);
-      await VerificationCode.deleteMany({ email });
-      return res.status(500).json({
-        success: false,
-        message: 'حدث خطأ أثناء إرسال رمز التحقق. يرجى المحاولة مرة أخرى.'
-      });
+      console.error("Email failed, but registration continues", emailError);
     }
 
     res.status(200).json({

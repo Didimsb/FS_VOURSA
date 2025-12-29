@@ -17,38 +17,31 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// CORS configuration with multiple origins support
-const allowedOrigins = [
-  'http://localhost:3000',
-  'https://voursa.vercel.app',
-  'https://fs-voursa.vercel.app',
-  'https://fs-voursa-git-main-didis-projects-760bf862.vercel.app',
-  'https://agencevoursa.com'
-];
+// Configure CORS
+const corsOptions = {
+  origin: [
+    "https://agencevoursa.com",
+    "https://www.agencevoursa.com",
+    "http://localhost:3000",
+    "https://fs-voursa.vercel.app",
+    "https://voursa.vercel.app"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: false
+};
 
-app.use(cors({
-  origin: function(origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl requests)
-    if (!origin) return callback(null, true);
-    
-    // Check if origin is in allowed list
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      return callback(null, true);
-    }
-    
-    // Allow all Vercel preview and deployment URLs for fs-voursa
-    if (origin && origin.includes('fs-voursa') && origin.includes('vercel.app')) {
-      return callback(null, true);
-    }
-    
-    // If origin doesn't match, reject it
-    const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-    return callback(new Error(msg), false);
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(cors(corsOptions));
+app.options("*", cors());
+
+// Timeout Middleware (Fix for Render 502)
+app.use((req, res, next) => {
+  res.setTimeout(15000, () => {
+    console.error("⏱️ Request timeout");
+    res.status(408).json({ message: "Request timeout" });
+  });
+  next();
+});
 
 // Middleware
 app.use(express.json());
@@ -90,10 +83,10 @@ app.get('/health', (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ 
+  res.status(500).json({
     success: false,
     message: 'حدث خطأ في الخادم',
-    error: err.message 
+    error: err.message
   });
 });
 
