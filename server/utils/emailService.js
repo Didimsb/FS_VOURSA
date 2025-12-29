@@ -10,7 +10,7 @@ const generateVerificationCode = () => {
 const sendVerificationEmail = async (email, code) => {
   try {
     await resend.emails.send({
-      from: "Agence Voursa <onboarding@resend.dev>",
+      from: "Agence Voursa <contact@agencevoursa.com>",
       to: email,
       subject: "Code de vérification",
       html: `<h2>Votre code de vérification est : ${code}</h2>`
