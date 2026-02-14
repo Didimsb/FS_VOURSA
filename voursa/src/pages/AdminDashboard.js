@@ -2211,8 +2211,8 @@ const AdminDashboard = () => {
                                     <Tr key={transaction._id}>
                                       <Td>
                                         <VStack align="start" spacing={1}>
-                                          <Text fontWeight="medium">{transaction.user.name}</Text>
-                                          <Text fontSize="sm" color="gray.500">{transaction.user.email}</Text>
+                                          <Text fontWeight="medium">{transaction.user?.name || 'مستخدم محذوف'}</Text>
+                                          <Text fontSize="sm" color="gray.500">{transaction.user?.email || 'غير معروف'}</Text>
                                         </VStack>
                                       </Td>
                                     <Td>{transaction.amount} أوقية</Td>
@@ -2609,8 +2609,8 @@ const AdminDashboard = () => {
                                   <Tr key={transaction._id}>
                                     <Td>
                                       <VStack align="start" spacing={1}>
-                                        <Text fontWeight="medium">{transaction.user.name}</Text>
-                                        <Text fontSize="sm" color="gray.500">{transaction.user.email}</Text>
+                                        <Text fontWeight="medium">{transaction.user?.name || 'مستخدم محذوف'}</Text>
+                                        <Text fontSize="sm" color="gray.500">{transaction.user?.email || 'غير معروف'}</Text>
                                       </VStack>
                                     </Td>
                                     <Td>{transaction.amount} أوقية</Td>
