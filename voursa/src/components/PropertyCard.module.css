@@ -2,6 +2,7 @@
    PropertyCard.module.css
    Luxury Real Estate Card Styles
    Desert Gold + Navy Theme
+   Mobile-first: 2 columns on small screens
    ============================================= */
 
 /* ---------- Card Container ---------- */
@@ -9,7 +10,7 @@
   background: rgba(255, 255, 255, 0.65);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border-radius: 20px;
+  border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(10, 22, 40, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.85);
@@ -20,7 +21,6 @@
   flex-direction: column;
   direction: rtl;
   font-family: 'Cairo', 'Tajawal', sans-serif;
-  /* Stagger animation handled by inline style */
   opacity: 0;
   transform: translateY(30px);
   animation: slideUpFade 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
@@ -41,7 +41,7 @@
 /* ---------- Card Image Header ---------- */
 .cardHeader {
   position: relative;
-  height: 240px;
+  height: 200px;
   overflow: hidden;
   background-color: var(--sand, #E8DCC8);
   flex-shrink: 0;
@@ -99,9 +99,9 @@
 /* ---------- Badges + Overlays ---------- */
 .badgesContainer {
   position: absolute;
-  top: 14px;
-  right: 14px;
-  left: 14px;
+  top: 10px;
+  right: 10px;
+  left: 10px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -113,15 +113,15 @@
 .badge {
   background: linear-gradient(45deg, #C9A84C, #e6c875);
   color: #fff;
-  padding: 6px 18px;
+  padding: 4px 10px;
   border-radius: 50px;
   font-weight: 700;
-  font-size: 0.88rem;
+  font-size: 0.75rem;
   position: relative;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(201, 168, 76, 0.45);
   pointer-events: auto;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 /* Shimmer sweep every 3s */
@@ -153,9 +153,9 @@
   background: rgba(10, 22, 40, 0.65);
   backdrop-filter: blur(4px);
   color: #fff;
-  padding: 5px 12px;
-  border-radius: 6px;
-  font-size: 0.78rem;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 0.72rem;
   font-weight: 600;
   pointer-events: auto;
   direction: rtl;
@@ -175,8 +175,8 @@
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(4px);
   border: none;
-  width: 38px;
-  height: 38px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -185,7 +185,7 @@
   color: var(--navy, #0A1628);
   transition: all 0.3s ease;
   box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-  font-size: 1rem;
+  font-size: 0.85rem;
   padding: 0;
 }
 
@@ -208,7 +208,7 @@
 
 /* ---------- Card Body ---------- */
 .cardBody {
-  padding: 22px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -220,50 +220,50 @@
   display: inline-block;
   background-color: var(--sand, #E8DCC8);
   color: var(--navy, #0A1628);
-  padding: 4px 14px;
-  border-radius: 8px;
-  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 6px;
   align-self: flex-start;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
 }
 
 /* ---------- Contact Label ---------- */
 .contactLabel {
-  font-size: 0.88rem;
+  font-size: 0.78rem;
   color: #555;
   margin-bottom: 4px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
   font-weight: 600;
 }
 
 /* ---------- Price ---------- */
 .priceContainer {
-  margin: 14px 0;
+  margin: 8px 0;
 }
 
 .priceLabel {
-  font-size: 1rem;
+  font-size: 0.78rem;
   color: var(--navy, #0A1628);
-  margin-bottom: 3px;
+  margin-bottom: 2px;
   font-weight: 700;
 }
 
 .priceValue {
-  font-size: 2rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: var(--gold, #C9A84C);
   line-height: 1.2;
   display: flex;
   align-items: baseline;
-  gap: 6px;
+  gap: 4px;
 }
 
 .priceCurrency {
-  font-size: 1.1rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--navy, #0A1628);
 }
@@ -272,29 +272,29 @@
 .statsRow {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 12px;
   margin-top: auto;
   color: var(--navy, #0A1628);
   font-weight: 700;
-  font-size: 0.92rem;
+  font-size: 0.78rem;
 }
 
 .statItem {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 5px;
 }
 
 .statIcon {
   color: var(--gold, #C9A84C);
-  font-size: 1em;
+  font-size: 0.85em;
 }
 
 /* ---------- Publish Date ---------- */
 .publishDate {
-  font-size: 0.82rem;
+  font-size: 0.75rem;
   color: #888;
-  margin-top: 14px;
+  margin-top: 8px;
   font-weight: 500;
 }
 
@@ -310,9 +310,9 @@
   background: linear-gradient(45deg, #C9A84C, #e6c875);
   color: var(--navy, #0A1628);
   border: none;
-  border-radius: 12px;
-  padding: 14px 24px;
-  font-size: 1rem;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 0.8rem;
   font-weight: 800;
   font-family: 'Cairo', 'Tajawal', sans-serif;
   cursor: pointer;
@@ -321,12 +321,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 6px;
   position: relative;
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(201, 168, 76, 0.28);
-  min-height: 52px;
+  min-height: 38px;
   text-decoration: none;
+  margin-top: 8px;
 }
 
 .ctaBtn:hover {
@@ -357,26 +358,26 @@
 .skeletonCard {
   background: rgba(255,255,255,0.6);
   backdrop-filter: blur(12px);
-  border-radius: 20px;
+  border-radius: 14px;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.8);
 }
 
 .skeletonHeader {
-  height: 240px;
+  height: 130px;
   background: linear-gradient(90deg, #E8DCC8 0px, #F8F4ED 50%, #E8DCC8 100%);
   background-size: 200% 100%;
   animation: skeletonLoad 1.5s infinite linear;
 }
 
 .skeletonBody {
-  padding: 22px;
+  padding: 12px;
 }
 
 .skeletonLine {
-  height: 14px;
+  height: 12px;
   border-radius: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   background: linear-gradient(90deg, #E8DCC8 0px, #F8F4ED 50%, #E8DCC8 100%);
   background-size: 200% 100%;
   animation: skeletonLoad 1.5s infinite linear;
@@ -385,41 +386,46 @@
 .skeletonLine.short { width: 40%; }
 .skeletonLine.medium { width: 65%; }
 .skeletonLine.long { width: 90%; }
-.skeletonLine.full { width: 100%; height: 50px; border-radius: 12px; }
+.skeletonLine.full { width: 100%; height: 36px; border-radius: 10px; }
 
 /* =============================================
-   RESPONSIVE
+   RESPONSIVE — Tablet (md)
    ============================================= */
-@media (max-width: 768px) {
-  .cardHeader {
-    height: 200px;
-  }
+@media (min-width: 768px) {
+  .card { border-radius: 20px; }
+  .cardHeader { height: 240px; }
+  .cardBody { padding: 22px; }
+  .categoryTag { font-size: 0.8rem; padding: 4px 14px; margin-bottom: 12px; }
+  .badge { font-size: 0.88rem; padding: 6px 18px; }
+  .refBadge { font-size: 0.78rem; padding: 5px 12px; }
+  .priceLabel { font-size: 1rem; }
+  .priceValue { font-size: 2rem; }
+  .priceCurrency { font-size: 1.1rem; }
+  .statsRow { font-size: 0.92rem; gap: 20px; }
+  .publishDate { font-size: 0.82rem; margin-top: 14px; }
+  .ctaBtn { min-height: 52px; font-size: 1rem; border-radius: 12px; padding: 14px 24px; }
+  .heartBtn { width: 38px; height: 38px; font-size: 1rem; }
+  .contactLabel { font-size: 0.88rem; }
+}
 
-  .priceValue {
-    font-size: 1.75rem;
-  }
+/* =============================================
+   RESPONSIVE — Mobile (< 768px)
+   2-column layout: compact everything
+   ============================================= */
+@media (max-width: 767px) {
+  /* Hide verbose elements to save space */
+  .contactLabel { display: none; }
+  .publishDate { display: none; }
 
-  .cardBody {
-    padding: 18px;
-  }
+  /* Shrink divider on mobile */
+  .divider { margin: 8px 0; }
 
-  .ctaBtn {
-    min-height: 52px;
-    font-size: 1rem;
-  }
+  /* Arrow icon in button: hide on mobile */
+  .ctaBtnArrow { display: none; }
 }
 
 @media (max-width: 480px) {
-  .cardHeader {
-    height: 190px;
-  }
-
-  .priceValue {
-    font-size: 1.6rem;
-  }
-
-  .badge {
-    font-size: 0.8rem;
-    padding: 5px 13px;
-  }
+  .cardHeader { height: 120px; }
+  .priceValue { font-size: 1.1rem; }
+  .badge { font-size: 0.7rem; padding: 3px 8px; }
 }

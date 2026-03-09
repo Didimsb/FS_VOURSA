@@ -154,43 +154,43 @@ const Home = () => {
       <BannerSlider />
       <Hero onSearch={handleSearch} />
       
-      <Container maxW="container.xl" py={16}>
+      <Container maxW="container.xl" py={{ base: 6, md: 16 }} px={{ base: 3, md: 6, lg: 8 }}>
         <MotionBox
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <Box textAlign="center" mb={12}>
+          <Box textAlign="center" mb={{ base: 6, md: 12 }}>
             <Heading
               as="h2"
-              size="xl"
+              fontSize={{ base: '22px', md: '28px', lg: '32px' }}
               bgGradient="linear(to-r, yellow.400, yellow.600)"
               bgClip="text"
             >
               {settings?.homePage?.featuredPropertiesTitle || 'أحدث العقارات'}
             </Heading>
-            <Text fontSize="lg" color={textColor}>
+            <Text fontSize={{ base: '13px', md: 'lg' }} color={textColor}>
               {settings?.homePage?.featuredPropertiesDescription || 'اكتشف مجموعة متنوعة من العقارات المميزة في أفضل المواقع'}
             </Text>
           </Box>
 
           {/* Property Type Filter */}
-          <Box mb={8}>
-            <Heading size="md" mb={4} textAlign="center">اختر نوع العقار</Heading>
-            <Wrap spacing={4} justify="center">
+          <Box mb={{ base: 4, md: 8 }}>
+            <Heading size={{ base: 'sm', md: 'md' }} mb={{ base: 2, md: 4 }} textAlign="center">اختر نوع العقار</Heading>
+            <Wrap spacing={{ base: 3, md: 4 }} justify="center">
               {availablePropertyTypes.map((type) => {
-                const IconComponent = propertyTypeIcons[type] || FaHome; // Fallback to FaHome if icon not found
+                const IconComponent = propertyTypeIcons[type] || FaHome;
                 return (
                   <WrapItem key={type}>
-                    <VStack spacing={2}>
+                    <VStack spacing={{ base: 1, md: 2 }}>
                       <Tooltip label={type} placement="top">
                         <Button
-                          size="lg"
+                          size={{ base: 'md', md: 'lg' }}
                           variant={selectedPropertyType === type ? "solid" : "outline"}
                           colorScheme="yellow"
                           borderRadius="full"
-                          minW={16}
-                          h={16}
+                          minW={{ base: '52px', md: 16 }}
+                          h={{ base: '52px', md: 16 }}
                           p={0}
                           onClick={() => handlePropertyTypeClick(type)}
                           _hover={{
@@ -199,10 +199,10 @@ const Home = () => {
                           }}
                           transition="all 0.2s"
                         >
-                          <Icon as={IconComponent} boxSize={7} />
+                          <Icon as={IconComponent} boxSize={{ base: 5, md: 7 }} />
                         </Button>
                       </Tooltip>
-                      <Text fontSize="sm" textAlign="center">{type}</Text>
+                      <Text fontSize={{ base: '11px', md: 'sm' }} textAlign="center">{type}</Text>
                     </VStack>
                   </WrapItem>
                 );

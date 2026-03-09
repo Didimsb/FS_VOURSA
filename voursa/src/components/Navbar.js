@@ -92,13 +92,13 @@ const Navbar = () => {
       transition={{ duration: 0.5 }}
     >
       <Container maxW="container.xl">
-        <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
+        <Flex h={{ base: '60px', md: 16 }} alignItems={'center'} justifyContent={'space-between'}>
           {/* Logo */}
           <Link as={RouterLink} to="/">
             <Image
               src="/logo.jpg"
               alt="وكالة ورسة"
-              h={{ base: "60px", md: "60px" }}
+              h={{ base: "40px", md: "60px" }}
               objectFit="contain"
               transition="all 0.3s ease"
               _hover={{ transform: 'scale(1.05)' }}

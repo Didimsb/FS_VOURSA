@@ -101,6 +101,7 @@ const PropertyCard = ({ property, index = 0 }) => {
           src={imageUrl}
           alt={property?.title || 'عقار'}
           className={`${styles.cardImage} ${imgLoaded ? styles.loaded : ''}`}
+          loading="lazy"
           onLoad={() => setImgLoaded(true)}
           onError={() => setImgLoaded(true)}
         />
@@ -173,7 +174,7 @@ const PropertyCard = ({ property, index = 0 }) => {
           }}
         >
           <span>عرض المزيد</span>
-          <span>←</span>
+          <span className={styles.ctaBtnArrow}>←</span>
         </button>
       </div>
     </div>

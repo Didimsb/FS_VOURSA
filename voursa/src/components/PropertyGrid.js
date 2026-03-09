@@ -11,8 +11,8 @@ const gridStyles = {
   },
   grid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '24px',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: '12px',
   },
   empty: {
     gridColumn: '1 / -1',
@@ -26,18 +26,16 @@ const gridStyles = {
 
 /* Responsive CSS injected once at module load */
 const GRID_RESPONSIVE_CSS = `
-  @media (max-width: 991px) {
-    .voursa-property-grid { grid-template-columns: repeat(2, 1fr) !important; }
-  }
-  @media (max-width: 600px) {
+  @media (min-width: 768px) {
     .voursa-property-grid {
-      grid-template-columns: 1fr !important;
-      gap: 16px !important;
-      scroll-snap-type: y mandatory;
-      overflow-y: auto;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 20px !important;
     }
-    .voursa-property-grid > * {
-      scroll-snap-align: start;
+  }
+  @media (min-width: 992px) {
+    .voursa-property-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 24px !important;
     }
   }
 `;
@@ -54,25 +52,23 @@ const SkeletonCard = () => (
   <div style={{
     background: 'rgba(255,255,255,0.6)',
     backdropFilter: 'blur(12px)',
-    borderRadius: '20px',
+    borderRadius: '14px',
     overflow: 'hidden',
     border: '1px solid rgba(255,255,255,0.8)',
   }}>
-    {/* Skeleton image */}
     <div style={{
-      height: '240px',
+      height: '130px',
       background: 'linear-gradient(90deg, #E8DCC8 0px, #F8F4ED 40%, #E8DCC8 80%)',
       backgroundSize: '200% 100%',
       animation: 'skeletonLoad 1.5s infinite linear',
     }} />
-    {/* Skeleton body */}
-    <div style={{ padding: '22px' }}>
+    <div style={{ padding: '12px' }}>
       {[40, 65, 90, 50, 100].map((w, i) => (
         <div key={i} style={{
-          height: i === 4 ? '50px' : '14px',
+          height: i === 4 ? '36px' : '12px',
           width: `${w}%`,
-          borderRadius: i === 4 ? '12px' : '6px',
-          marginBottom: '12px',
+          borderRadius: i === 4 ? '10px' : '6px',
+          marginBottom: '10px',
           background: 'linear-gradient(90deg, #E8DCC8 0px, #F8F4ED 40%, #E8DCC8 80%)',
           backgroundSize: '200% 100%',
           animation: `skeletonLoad 1.5s ${i * 0.1}s infinite linear`,
@@ -158,3 +154,4 @@ const PropertyGrid = ({
 };
 
 export default PropertyGrid;
+

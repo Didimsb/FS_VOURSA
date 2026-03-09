@@ -154,7 +154,7 @@ const PropertyDetail = () => {
 
   return (
     <Box bg={IVORY} minH="100vh" dir="rtl" fontFamily="'Cairo', 'Tajawal', sans-serif">
-      <Container maxW="container.xl" py={10}>
+      <Container maxW="container.xl" py={{ base: 6, md: 10 }} px={{ base: 3, md: 6, lg: 8 }}>
 
         {/* ── Back Button ── */}
         <MotionDiv initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}>
@@ -438,17 +438,18 @@ const PropertyDetail = () => {
               )}
 
               {/* CTA Buttons */}
-              <VStack spacing={3}>
+              <Stack direction={{ base: 'row', md: 'column' }} spacing={3}>
                 {phone && (
                   <Button
                     as="a"
                     href={`tel:${phone}`}
-                    w="full"
+                    flex={{ base: 1, md: 'auto' }}
+                    w={{ md: 'full' }}
                     h="52px"
                     borderRadius="14px"
                     fontFamily="'Cairo', sans-serif"
                     fontWeight="700"
-                    fontSize="1rem"
+                    fontSize={{ base: '0.85rem', md: '1rem' }}
                     bg={`linear-gradient(45deg, ${GOLD}, #e6c875)`}
                     color={NAVY}
                     border="none"
@@ -466,12 +467,13 @@ const PropertyDetail = () => {
                     as="a"
                     href={`https://wa.me/${whatsapp}`}
                     target="_blank"
-                    w="full"
+                    flex={{ base: 1, md: 'auto' }}
+                    w={{ md: 'full' }}
                     h="52px"
                     borderRadius="14px"
                     fontFamily="'Cairo', sans-serif"
                     fontWeight="700"
-                    fontSize="1rem"
+                    fontSize={{ base: '0.85rem', md: '1rem' }}
                     bg={NAVY}
                     color="white"
                     border="none"
@@ -483,7 +485,7 @@ const PropertyDetail = () => {
                     تواصل عبر واتساب
                   </Button>
                 )}
-              </VStack>
+              </Stack>
             </MotionBox>
           </GridItem>
         </Grid>
