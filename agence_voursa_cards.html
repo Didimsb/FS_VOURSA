@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agence Voursa - Real Estate Listings</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* Desert Gold Theme Colors */
+            --navy: #0A1628;
+            --gold: #C9A84C;
+            --gold-light: #e6c875;
+            --ivory: #F8F4ED;
+            --sand: #E8DCC8;
+            --white: #FFFFFF;
+            
+            /* Typography */
+            --font-primary: 'Cairo', sans-serif;
+            --font-secondary: 'Amiri', serif;
+        }
+
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--ivory);
+            color: var(--navy);
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        /* Sticky Filter Bar */
+        .filter-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: rgba(248, 244, 237, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            border-bottom: 1px solid var(--sand);
+            /* Hide scrollbar */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .filter-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Navigation icons (Tabs) */
+        .filter-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--gold);
+            background-color: transparent;
+            color: var(--navy);
+            font-family: var(--font-primary);
+            font-size: 0.95rem;
+        }
+        .filter-tab.active {
+            background-color: var(--gold);
+            color: var(--navy);
+            border-color: var(--gold);
+        }
+        .filter-tab:hover:not(.active) {
+            background-color: rgba(201, 168, 76, 0.1);
+        }
+        .filter-tab i {
+            font-size: 1.1em;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header Title */
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            font-family: var(--font-secondary);
+            color: var(--navy);
+        }
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .page-header p {
+            color: #666;
+            font-family: var(--font-primary);
+        }
+
+        /* Grid Layout */
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        /* Card Container */
+        .property-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(10, 22, 40, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            opacity: 0; /* for staggered animation */
+            transform: translateY(30px);
+        }
+        
+        /* Card Hover */
+        .property-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(10, 22, 40, 0.1), 0 0 15px rgba(201, 168, 76, 0.2);
+            border-color: var(--gold);
+        }
+
+        /* Card Image Header */
+        .card-header {
+            position: relative;
+            height: 240px;
+            overflow: hidden;
+            background-color: var(--sand);
+        }
+
+        /* Skeleton Loading */
+        .skeleton {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--sand) 0px, var(--ivory) 50%, var(--sand) 100%);
+            background-size: 200% 100%;
+            animation: skeleton-load 1.5s infinite linear;
+            z-index: 1;
+        }
+        @keyframes skeleton-load {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+            position: relative;
+            z-index: 2;
+            opacity: 0; /* Starts hidden to show skeleton */
+        }
+        
+        .property-card:hover .card-image {
+            transform: scale(1.05);
+        }
+
+        /* Image Overlay */
+        .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(to top, rgba(10, 22, 40, 0.85), transparent);
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* Badges & Overlays */
+        .badges-container {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 4;
+            pointer-events: none;
+        }
+
+        .badge-sale {
+            background: linear-gradient(45deg, var(--gold), var(--gold-light));
+            color: var(--white);
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(201, 168, 76, 0.4);
+        }
+
+        /* Gold Shimmer Sweep */
+        .badge-sale::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-20deg);
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer {
+            0% { left: -100%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
+        }
+
+        .top-left-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            pointer-events: auto;
+        }
+
+        .ref-badge {
+            background: rgba(10, 22, 40, 0.65);
+            backdrop-filter: blur(4px);
+            color: var(--white);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            font-family: var(--font-primary);
+        }
+
+        .heart-btn {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--navy);
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .heart-btn:hover {
+            background: var(--white);
+            color: #ff4757;
+            transform: scale(1.1);
+        }
+        .heart-btn.active i {
+            color: #ff4757;
+            animation: heart-pulse 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes heart-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        /* Card Body */
+        .card-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .category-tag {
+            display: inline-block;
+            background-color: var(--sand);
+            color: var(--navy);
+            padding: 4px 14px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            align-self: flex-start;
+        }
+
+        .contact-label {
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        /* Price */
+        .price-container {
+            margin: 16px 0;
+            font-family: var(--font-secondary);
+        }
+        .price-label {
+            font-size: 1.1rem;
+            color: var(--navy);
+            margin-bottom: 2px;
+            font-family: var(--font-primary);
+            font-weight: 700;
+        }
+        .price-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gold);
+            line-height: 1.2;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+        .price-currency {
+            font-size: 1.2rem;
+            font-family: var(--font-primary);
+            color: var(--navy);
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: auto;
+            color: var(--navy);
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .stat-item i {
+            color: var(--gold);
+            font-size: 1.1em;
+        }
+
+        .publish-date {
+            font-size: 0.85rem;
+            color: #777;
+            margin-top: 16px;
+            font-weight: 600;
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(201, 168, 76, 0.3), transparent);
+            margin: 18px 0;
+        }
+
+        /* CTA Button */
+        .cta-btn {
+            background: linear-gradient(45deg, var(--gold), var(--gold-light));
+            color: var(--navy);
+            border: none;
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            font-family: var(--font-primary);
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(201, 168, 76, 0.25);
+            text-decoration: none;
+        }
+        .cta-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(201, 168, 76, 0.4);
+            color: var(--navy);
+        }
+        
+        /* Ripple Effect */
+        .ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-anim 0.6s linear;
+            pointer-events: none;
+        }
+        @keyframes ripple-anim {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Entrance Animations */
+        .animate-in {
+            animation: slideUpFade 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes slideUpFade {
+            0% {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Setup stagger classes */
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.25s; }
+        .delay-3 { animation-delay: 0.4s; }
+
+        /* Counter Animation */
+        .counter {
+            display: inline-block;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .property-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
+            .property-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .card-header {
+                height: 200px;
+            }
+            .price-value {
+                font-size: 28px;
+            }
+            .cta-btn {
+                min-height: 52px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sticky Filter Bar -->
+    <div class="filter-bar">
+        <button class="filter-tab active">
+            <i class="fa-solid fa-border-all"></i>
+            <span>الكل</span>
+        </button>
+        <button class="filter-tab">
+            <i class="fa-solid fa-home"></i>
+            <span>منازل جاهزة</span>
+        </button>
+        <button class="filter-tab">
+            <i class="fa-solid fa-layer-group"></i>
+            <span>تراب الإسكان</span>
+        </button>
+        <button class="filter-tab">
+            <i class="fa-solid fa-building"></i>
+            <span>شقق فاخرة</span>
+        </button>
+        <button class="filter-tab">
+            <i class="fa-solid fa-store"></i>
+            <span>عقارات تجارية</span>
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>عقارات مميزة</h1>
+            <p>اكتشف أفضل العروض العقارية من وكالة فورسا</p>
+        </div>
+
+        <div class="property-grid" id="propertyGrid">
+            <!-- Cards will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script>
+        // Sample Data Structure
+        const properties = [
+            {
+                id: '1342c',
+                category: 'تراب الإسكان',
+                priceLong: '3500000',
+                currency: 'أوقية',
+                area: '216م²',
+                publishDate: 'تاريخ النشر: 09/03/2026',
+                imageUrl: 'https://images.unsplash.com/photo-1505843513577-22bb7d21e455?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                delayClass: 'delay-1'
+            },
+            {
+                id: '1855a',
+                category: 'منازل جاهزة',
+                priceLong: '12000000',
+                currency: 'أوقية',
+                area: '350م²',
+                publishDate: 'تاريخ النشر: 08/03/2026',
+                imageUrl: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                delayClass: 'delay-2'
+            },
+            {
+                id: '2093b',
+                category: 'شقق فاخرة',
+                priceLong: '8200000',
+                currency: 'أوقية',
+                area: '150م²',
+                publishDate: 'تاريخ النشر: 07/03/2026',
+                imageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                delayClass: 'delay-3'
+            }
+        ];
+
+        // Format Number Helpers
+        const formatNumber = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+
+        // Create Card Element
+        function createCard(property) {
+            const card = document.createElement('div');
+            card.className = `property-card animate-in ${property.delayClass}`;
+            
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="skeleton"></div>
+                    <img src="${property.imageUrl}" alt="Property" class="card-image" onload="this.style.opacity=1; this.previousElementSibling.style.display='none';">
+                    <div class="image-overlay"></div>
+                    <div class="badges-container">
+                        <span class="badge-sale">للبيع</span>
+                        <div class="top-left-group">
+                            <span class="ref-badge">رقم : ${property.id}</span>
+                            <button class="heart-btn" onclick="toggleHeart(this)"><i class="fa-regular fa-heart"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <span class="category-tag">${property.category}</span>
+                    
+                    <div class="contact-label">
+                        <i class="fa-solid fa-phone"></i> للاستفسار والتواصل :
+                    </div>
+                    
+                    <div class="price-container">
+                        <div class="price-label">السعر :</div>
+                        <div class="price-value" data-target="${property.priceLong}">
+                            <span class="counter">0</span>
+                            <span class="price-currency">${property.currency}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="divider"></div>
+                    
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <i class="fa-solid fa-vector-square"></i>
+                            <span>${property.area}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="publish-date">${property.publishDate}</div>
+                    
+                    <div class="divider"></div>
+                    
+                    <button class="cta-btn" onclick="createRipple(event)">
+                        <span>عرض المزيد</span>
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        // Initialize Property Grid
+        const grid = document.getElementById('propertyGrid');
+        properties.forEach(prop => {
+            grid.appendChild(createCard(prop));
+        });
+
+        // Toggle Heart Icon Interaction
+        window.toggleHeart = function(btn) {
+            btn.classList.toggle('active');
+            const icon = btn.querySelector('i');
+            if (btn.classList.contains('active')) {
+                icon.classList.remove('fa-regular');
+                icon.classList.add('fa-solid');
+            } else {
+                icon.classList.remove('fa-solid');
+                icon.classList.add('fa-regular');
+            }
+        };
+
+        // Button Ripple Effect
+        window.createRipple = function(event) {
+            const button = event.currentTarget;
+            const circle = document.createElement("span");
+            const diameter = Math.max(button.clientWidth, button.clientHeight);
+            const radius = diameter / 2;
+
+            const rect = button.getBoundingClientRect();
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${event.clientX - rect.left - radius}px`;
+            circle.style.top = `${event.clientY - rect.top - radius}px`;
+            circle.classList.add("ripple");
+
+            const existingRipple = button.querySelector(".ripple");
+            if (existingRipple) {
+                existingRipple.remove();
+            }
+
+            button.appendChild(circle);
+        };
+
+        // Number Counter Animation
+        const animateValue = (obj, start, end, duration) => {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                // easeOutQuart easing
+                const easeOut = 1 - Math.pow(1 - progress, 4);
+                
+                let currentVal = Math.floor(easeOut * (end - start) + start);
+                obj.innerHTML = formatNumber(currentVal);
+                
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    obj.innerHTML = formatNumber(end);
+                }
+            };
+            window.requestAnimationFrame(step);
+        };
+
+        // Intersection Observer to trigger counter when visible
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const counterObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const priceElement = entry.target;
+                    const targetValue = parseInt(priceElement.getAttribute('data-target'), 10);
+                    const counterSpan = priceElement.querySelector('.counter');
+                    
+                    if (counterSpan && !priceElement.classList.contains('counted')) {
+                        priceElement.classList.add('counted');
+                        animateValue(counterSpan, 0, targetValue, 2000);
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.price-value').forEach(el => {
+            counterObserver.observe(el);
+        });
+
+        // Filter Tabs Interaction
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -2,17 +2,14 @@ import React, { useEffect, useState } from 'react';
 import {
   Box,
   Container,
-  SimpleGrid,
   Heading,
   Text,
   useColorModeValue,
   Button,
-  HStack,
   VStack,
   Spinner,
   Center,
   Icon,
-  Flex,
   Wrap,
   WrapItem,
   Tooltip,
@@ -22,7 +19,7 @@ import { motion } from 'framer-motion';
 import { FaHome } from 'react-icons/fa';
 import { Building2, LandPlot } from 'lucide-react';
 import Hero from '../components/Hero';
-import PropertyCard from '../components/PropertyCard';
+import PropertyGrid from '../components/PropertyGrid';
 import BannerSlider from '../components/BannerSlider';
 import Footer from '../components/Footer';
 import { useSettings } from '../context/SettingsContext';
@@ -213,59 +210,46 @@ const Home = () => {
             </Wrap>
           </Box>
 
-          {loading ? (
-            <Center py={10}>
-              <Spinner size="xl" color="yellow.500" />
-            </Center>
-          ) : properties && properties.length > 0 ? (
-            <>
-              <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
-                {properties.map(property => (
-                  <PropertyCard key={property._id} property={property} />
-                ))}
-              </SimpleGrid>
+          {/* Luxury PropertyGrid — handles filtering, skeleton, and cards */}
+          <PropertyGrid
+            externalProperties={properties}
+            externalLoading={loading}
+            filters={filters}
+          />
 
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <Center mt={8}>
-                  <ButtonGroup spacing={2} size="md">
-                    <Button
-                      onClick={() => handlePageChange(page - 1)}
-                      isDisabled={page === 1}
-                      colorScheme="yellow"
-                      variant="outline"
-                    >
-                      السابق
-                    </Button>
-                    
-                    {getPageNumbers().map((pageNum, index) => (
-                      <Button
-                        key={index}
-                        onClick={() => typeof pageNum === 'number' ? handlePageChange(pageNum) : null}
-                        isDisabled={pageNum === '...'}
-                        colorScheme={page === pageNum ? "yellow" : "gray"}
-                        variant={page === pageNum ? "solid" : "outline"}
-                      >
-                        {pageNum}
-                      </Button>
-                    ))}
-                    
-                    <Button
-                      onClick={() => handlePageChange(page + 1)}
-                      isDisabled={page === totalPages}
-                      colorScheme="yellow"
-                      variant="outline"
-                    >
-                      التالي
-                    </Button>
-                  </ButtonGroup>
-                </Center>
-              )}
-            </>
-          ) : (
-            <Text textAlign="center" fontSize="xl" color={textColor}>
-              {settings?.homePage?.noPropertiesMessage || 'لا توجد عقارات مميزة متاحة حالياً.'}
-            </Text>
+          {/* Pagination */}
+          {!loading && totalPages > 1 && (
+            <Center mt={4} mb={6}>
+              <ButtonGroup spacing={2} size="md">
+                <Button
+                  onClick={() => handlePageChange(page - 1)}
+                  isDisabled={page === 1}
+                  colorScheme="yellow"
+                  variant="outline"
+                >
+                  السابق
+                </Button>
+                {getPageNumbers().map((pageNum, index) => (
+                  <Button
+                    key={index}
+                    onClick={() => typeof pageNum === 'number' ? handlePageChange(pageNum) : null}
+                    isDisabled={pageNum === '...'}
+                    colorScheme={page === pageNum ? 'yellow' : 'gray'}
+                    variant={page === pageNum ? 'solid' : 'outline'}
+                  >
+                    {pageNum}
+                  </Button>
+                ))}
+                <Button
+                  onClick={() => handlePageChange(page + 1)}
+                  isDisabled={page === totalPages}
+                  colorScheme="yellow"
+                  variant="outline"
+                >
+                  التالي
+                </Button>
+              </ButtonGroup>
+            </Center>
           )}
 
         </MotionBox>

@@ -1,112 +1,183 @@
-import React from 'react';
-import {
-  Box,
-  Image,
-  Badge,
-  Text,
-  Stack,
-  Heading,
-  useColorModeValue,
-  Button,
-} from '@chakra-ui/react';
-import { motion } from 'framer-motion';
-import { Bed, Bath, Square, Eye } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styles from './PropertyCard.module.css';
 
-const MotionBox = motion(Box);
-
-const PropertyCard = ({ property }) => {
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
-  const locationColor = useColorModeValue('gray.600', 'gray.300');
-  const dateColor = useColorModeValue('gray.500', 'gray.400');
-  const priceColor = useColorModeValue('primary.600', 'primary.200');
+/**
+ * Luxury PropertyCard Component
+ * Agence Voursa — Desert Gold + Navy Theme
+ * Supports RTL Arabic layout
+ *
+ * @param {Object}  props.property  — property object from API
+ * @param {number}  props.index     — card index for staggered animation delay
+ */
+const PropertyCard = ({ property, index = 0 }) => {
   const navigate = useNavigate();
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [heartActive, setHeartActive] = useState(false);
+  const [displayPrice, setDisplayPrice] = useState(0);
+  const priceRef = useRef(null);
+  const animatedRef = useRef(false);
+
+  // ── Resolve property fields (compatible with existing API shape) ──────────
+  const imageUrl  = property?.images?.[0] || property?.imageUrl || '/maison.jpg';
+  const reference = property?.reference || property?._id?.slice(-5).toUpperCase() || '-----';
+  const price     = Number(property?.price) || 0;
+  const area      = property?.area != null ? `${property.area}م²` : null;
+  const category  = property?.propertyType || property?.category || 'عقار';
+  const status    = property?.status || 'للبيع';
+  const publishDate = property?.createdAt
+    ? `تاريخ النشر: ${new Date(property.createdAt).toLocaleDateString('fr-FR')}`
+    : '';
+  const propertyId = property?._id || property?.id;
+
+  // ── Badge text mapping ────────────────────────────────────────────────────
+  const badgeText = {
+    للبيع: 'للبيع',
+    بيع: 'تم البيع',
+    للايجار: 'للإيجار',
+    مؤجر: 'تم التأجير',
+  }[status] || status;
+
+  // ── Price counter animation on scroll into view ───────────────────────────
+  const animatePrice = useCallback(() => {
+    if (animatedRef.current || price === 0) return;
+    animatedRef.current = true;
+
+    const duration = 1800;
+    let start = null;
+
+    const step = (timestamp) => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      // easeOutQuart
+      const eased = 1 - Math.pow(1 - progress, 4);
+      setDisplayPrice(Math.floor(eased * price));
+      if (progress < 1) requestAnimationFrame(step);
+      else setDisplayPrice(price);
+    };
+
+    requestAnimationFrame(step);
+  }, [price]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) animatePrice(); },
+      { threshold: 0.15 }
+    );
+    const el = priceRef.current;
+    if (el) observer.observe(el);
+    return () => { if (el) observer.unobserve(el); };
+  }, [animatePrice]);
+
+  // ── Ripple effect ─────────────────────────────────────────────────────────
+  const handleRipple = (e) => {
+    const btn = e.currentTarget;
+    const circle = document.createElement('span');
+    const diameter = Math.max(btn.clientWidth, btn.clientHeight);
+    const radius = diameter / 2;
+    const rect = btn.getBoundingClientRect();
+
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left  = `${e.clientX - rect.left - radius}px`;
+    circle.style.top   = `${e.clientY - rect.top  - radius}px`;
+    circle.classList.add(styles.ripple);
+
+    btn.querySelector(`.${styles.ripple}`)?.remove();
+    btn.appendChild(circle);
+  };
+
+  // ── Card inline style for staggered animation ─────────────────────────────
+  const cardStyle = { animationDelay: `${index * 0.12}s` };
 
   return (
-    <MotionBox
-      whileHover={{ y: -5 }}
-      transition={{ duration: 0.2 }}
-      bg={bgColor}
-      rounded="xl"
-      overflow="hidden"
-      boxShadow="lg"
-      borderWidth="1px"
-      borderColor={borderColor}
-    >
-      <Box position="relative">
-        <Image
-          src={property.images?.[0] || '/maison.jpg'}
-          alt={property.title}
-          w="full"
-          h="200px"
-          objectFit="cover"
+    <div className={styles.card} style={cardStyle} dir="rtl">
+
+      {/* ── Image Header ── */}
+      <div className={styles.cardHeader}>
+        {/* Skeleton */}
+        <div className={`${styles.skeleton} ${imgLoaded ? styles.hidden : ''}`} />
+
+        <img
+          src={imageUrl}
+          alt={property?.title || 'عقار'}
+          className={`${styles.cardImage} ${imgLoaded ? styles.loaded : ''}`}
+          onLoad={() => setImgLoaded(true)}
+          onError={() => setImgLoaded(true)}
         />
-        <Box position="absolute" top={4} right={4} zIndex={1}>
-          <Badge
-            colorScheme={
-              property.status === 'للبيع' ? 'blue' :
-              property.status === 'بيع' ? 'green' :
-              property.status === 'للايجار' ? 'purple' :
-              property.status === 'مؤجر' ? 'orange' : 'gray'
-            }
-            px={2}
-            py={1}
-            borderRadius="md"
-          >
-            {property.status === 'للبيع' ? 'للبيع' :
-             property.status === 'بيع' ? 'تم البيع' :
-             property.status === 'للايجار' ? 'للايجار' :
-             property.status === 'مؤجر' ? 'تم التأجير' : property.status}
-          </Badge>
-        </Box>
-      </Box>
+        <div className={styles.imageOverlay} />
 
-      <Stack p={4} spacing={3}>
-        <Heading size="md" noOfLines={1}>
-          {property.title}
-        </Heading>
+        {/* ── Badges Row ── */}
+        <div className={styles.badgesContainer}>
+          {/* Sale badge (right) */}
+          <span className={styles.badge}>{badgeText}</span>
 
-        <Text color={locationColor} noOfLines={2}>
-          {property.location}
-        </Text>
+          {/* Ref + Heart (left) */}
+          <div className={styles.topLeftGroup}>
+            <span className={styles.refBadge}>رقم : {reference}</span>
+            <button
+              className={`${styles.heartBtn} ${heartActive ? styles.heartActive : ''}`}
+              onClick={() => setHeartActive(prev => !prev)}
+              aria-label="حفظ العقار"
+            >
+              {heartActive ? '❤️' : '🤍'}
+            </button>
+          </div>
+        </div>
+      </div>
 
-        {/* Publication date */}
-        {property.createdAt && (
-          <Text fontSize="sm" color={dateColor}>
-            تاريخ النشر:{' '}
-            {new Date(property.createdAt).toLocaleDateString('fr-FR')}
-          </Text>
+      {/* ── Card Body ── */}
+      <div className={styles.cardBody}>
+
+        {/* Category Tag */}
+        <span className={styles.categoryTag}>{category}</span>
+
+        {/* Contact */}
+        <div className={styles.contactLabel}>
+          📞 للاستفسار والتواصل :
+        </div>
+
+        {/* Price */}
+        <div className={styles.priceContainer} ref={priceRef}>
+          <div className={styles.priceLabel}>السعر :</div>
+          <div className={styles.priceValue}>
+            <span>{displayPrice.toLocaleString('fr-FR')}</span>
+            <span className={styles.priceCurrency}>أوقية</span>
+          </div>
+        </div>
+
+        <div className={styles.divider} />
+
+        {/* Stats */}
+        {area && (
+          <div className={styles.statsRow}>
+            <div className={styles.statItem}>
+              <span className={styles.statIcon}>📐</span>
+              <span>{area}</span>
+            </div>
+          </div>
         )}
 
-        <Stack direction="row" spacing={4} align="center">
-         
-          <Stack direction="row" align="center" spacing={1}>
-            <Square size={16} />
-            <Text>{property.area}م²</Text>
-          </Stack>
-        </Stack>
+        {/* Publish Date */}
+        {publishDate && (
+          <div className={styles.publishDate}>{publishDate}</div>
+        )}
 
-        <Text
-          fontSize="xl"
-          fontWeight="bold"
-          color={priceColor}
-        >
-          {property.price?.toLocaleString('fr-FR')} أوقية
-        </Text>
+        <div className={styles.divider} />
 
-        <Button
-          leftIcon={<Eye size={16} />}
-          colorScheme="primary"
-          variant="outline"
-          w="full"
-          onClick={() => navigate(`/property/${property.id}`)}
+        {/* CTA */}
+        <button
+          className={styles.ctaBtn}
+          onClick={(e) => {
+            handleRipple(e);
+            navigate(`/property/${propertyId}`);
+          }}
         >
-          عرض المزيد
-        </Button>
-      </Stack>
-    </MotionBox>
+          <span>عرض المزيد</span>
+          <span>←</span>
+        </button>
+      </div>
+    </div>
   );
 };
 
-export default PropertyCard; 
+export default PropertyCard;

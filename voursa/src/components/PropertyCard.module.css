@@ -1,0 +1,425 @@
+/* =============================================
+   PropertyCard.module.css
+   Luxury Real Estate Card Styles
+   Desert Gold + Navy Theme
+   ============================================= */
+
+/* ---------- Card Container ---------- */
+.card {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(10, 22, 40, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              box-shadow 0.4s ease,
+              border-color 0.4s ease;
+  display: flex;
+  flex-direction: column;
+  direction: rtl;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  /* Stagger animation handled by inline style */
+  opacity: 0;
+  transform: translateY(30px);
+  animation: slideUpFade 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.card:hover {
+  transform: translateY(-8px) !important;
+  box-shadow: 0 24px 48px rgba(10, 22, 40, 0.12),
+              0 0 18px rgba(201, 168, 76, 0.22);
+  border-color: var(--gold, #C9A84C);
+}
+
+@keyframes slideUpFade {
+  0%   { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Card Image Header ---------- */
+.cardHeader {
+  position: relative;
+  height: 240px;
+  overflow: hidden;
+  background-color: var(--sand, #E8DCC8);
+  flex-shrink: 0;
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.6s ease;
+}
+
+.cardImage.loaded {
+  opacity: 1;
+}
+
+.card:hover .cardImage {
+  transform: scale(1.05);
+}
+
+/* Gradient Overlay */
+.imageOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60%;
+  background: linear-gradient(to top, rgba(10, 22, 40, 0.85), transparent);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ---------- Skeleton Loader ---------- */
+.skeleton {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #E8DCC8 0px, #F8F4ED 50%, #E8DCC8 100%);
+  background-size: 200% 100%;
+  animation: skeletonLoad 1.5s infinite linear;
+  z-index: 2;
+}
+
+.skeleton.hidden {
+  display: none;
+}
+
+@keyframes skeletonLoad {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ---------- Badges + Overlays ---------- */
+.badgesContainer {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  left: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* "للبيع" Sale Badge */
+.badge {
+  background: linear-gradient(45deg, #C9A84C, #e6c875);
+  color: #fff;
+  padding: 6px 18px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(201, 168, 76, 0.45);
+  pointer-events: auto;
+  letter-spacing: 0.5px;
+}
+
+/* Shimmer sweep every 3s */
+.badge::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.75) 50%,
+    rgba(255,255,255,0) 100%
+  );
+  transform: skewX(-20deg);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0%   { left: -100%; }
+  20%  { left: 200%; }
+  100% { left: 200%; }
+}
+
+/* Reference Number Badge */
+.refBadge {
+  background: rgba(10, 22, 40, 0.65);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  pointer-events: auto;
+  direction: rtl;
+}
+
+/* Top-left group: ref + heart stacked */
+.topLeftGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+/* ---------- Heart / Save Button ---------- */
+.heartBtn {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(4px);
+  border: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--navy, #0A1628);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+  font-size: 1rem;
+  padding: 0;
+}
+
+.heartBtn:hover {
+  background: #fff;
+  color: #ff4757;
+  transform: scale(1.1);
+}
+
+.heartBtn.heartActive {
+  color: #ff4757;
+  animation: heartPulse 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes heartPulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+/* ---------- Card Body ---------- */
+.cardBody {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  background: transparent;
+}
+
+/* ---------- Category Tag ---------- */
+.categoryTag {
+  display: inline-block;
+  background-color: var(--sand, #E8DCC8);
+  color: var(--navy, #0A1628);
+  padding: 4px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  align-self: flex-start;
+  letter-spacing: 0.3px;
+}
+
+/* ---------- Contact Label ---------- */
+.contactLabel {
+  font-size: 0.88rem;
+  color: #555;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+/* ---------- Price ---------- */
+.priceContainer {
+  margin: 14px 0;
+}
+
+.priceLabel {
+  font-size: 1rem;
+  color: var(--navy, #0A1628);
+  margin-bottom: 3px;
+  font-weight: 700;
+}
+
+.priceValue {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--gold, #C9A84C);
+  line-height: 1.2;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.priceCurrency {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--navy, #0A1628);
+}
+
+/* ---------- Stats Row ---------- */
+.statsRow {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: auto;
+  color: var(--navy, #0A1628);
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.statItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.statIcon {
+  color: var(--gold, #C9A84C);
+  font-size: 1em;
+}
+
+/* ---------- Publish Date ---------- */
+.publishDate {
+  font-size: 0.82rem;
+  color: #888;
+  margin-top: 14px;
+  font-weight: 500;
+}
+
+/* ---------- Divider ---------- */
+.divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(201, 168, 76, 0.3), transparent);
+  margin: 16px 0;
+}
+
+/* ---------- CTA Button ---------- */
+.ctaBtn {
+  background: linear-gradient(45deg, #C9A84C, #e6c875);
+  color: var(--navy, #0A1628);
+  border: none;
+  border-radius: 12px;
+  padding: 14px 24px;
+  font-size: 1rem;
+  font-weight: 800;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  cursor: pointer;
+  width: 100%;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(201, 168, 76, 0.28);
+  min-height: 52px;
+  text-decoration: none;
+}
+
+.ctaBtn:hover {
+  transform: scale(1.025);
+  box-shadow: 0 8px 24px rgba(201, 168, 76, 0.42);
+}
+
+/* Ripple */
+.ctaBtn .ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(0);
+  animation: rippleAnim 0.6s linear;
+  pointer-events: none;
+}
+
+@keyframes rippleAnim {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* =============================================
+   SKELETON CARD (loading state)
+   ============================================= */
+.skeletonCard {
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.8);
+}
+
+.skeletonHeader {
+  height: 240px;
+  background: linear-gradient(90deg, #E8DCC8 0px, #F8F4ED 50%, #E8DCC8 100%);
+  background-size: 200% 100%;
+  animation: skeletonLoad 1.5s infinite linear;
+}
+
+.skeletonBody {
+  padding: 22px;
+}
+
+.skeletonLine {
+  height: 14px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  background: linear-gradient(90deg, #E8DCC8 0px, #F8F4ED 50%, #E8DCC8 100%);
+  background-size: 200% 100%;
+  animation: skeletonLoad 1.5s infinite linear;
+}
+
+.skeletonLine.short { width: 40%; }
+.skeletonLine.medium { width: 65%; }
+.skeletonLine.long { width: 90%; }
+.skeletonLine.full { width: 100%; height: 50px; border-radius: 12px; }
+
+/* =============================================
+   RESPONSIVE
+   ============================================= */
+@media (max-width: 768px) {
+  .cardHeader {
+    height: 200px;
+  }
+
+  .priceValue {
+    font-size: 1.75rem;
+  }
+
+  .cardBody {
+    padding: 18px;
+  }
+
+  .ctaBtn {
+    min-height: 52px;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .cardHeader {
+    height: 190px;
+  }
+
+  .priceValue {
+    font-size: 1.6rem;
+  }
+
+  .badge {
+    font-size: 0.8rem;
+    padding: 5px 13px;
+  }
+}
