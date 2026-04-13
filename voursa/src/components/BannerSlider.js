@@ -93,14 +93,14 @@ const BannerSlider = () => {
               </Box>
             </a>
             <a
-              href="https://wa.me/22233191613"
+              href="https://wa.me/22226262673"
               target="_blank"
               rel="noopener noreferrer"
               style={{ textDecoration: "none", color: "inherit" }}
             >
               <Box display="flex" alignItems="center" gap={2} _hover={{ color: "green.700" }} minW={{ base: "120px", md: "unset" }} justifyContent="center">
                 <FaWhatsapp size={22} style={{ marginLeft: 6 }} />
-                33191613
+                26262673
               </Box>
             </a>
           </Box>
@@ -127,12 +127,12 @@ const BannerSlider = () => {
             gap={2}
           >
             <a
-              href="tel:25000084"
+              href="tel:26262673"
               style={{ textDecoration: "none", color: "inherit" }}
             >
               <Box display="flex" alignItems="center" gap={2} _hover={{ color: "blue.800" }} minW={{ base: "120px", md: "unset" }} justifyContent="center">
                 <FaPhone size={22} style={{ marginRight: 6 }} />
-                25000084
+                26262673
               </Box>
             </a>
           </Box>
