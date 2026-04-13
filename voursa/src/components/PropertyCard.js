@@ -142,7 +142,7 @@ const PropertyCard = ({ property, index = 0 }) => {
           <div className={styles.priceLabel}>السعر :</div>
           <div className={styles.priceValue}>
             <span>{displayPrice.toLocaleString('fr-FR')}</span>
-            <span className={styles.priceCurrency}>أوقية</span>
+            <span className={styles.priceCurrency}>اوقية قديمة</span>
           </div>
         </div>
 
