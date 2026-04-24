@@ -21,6 +21,8 @@ body {
   font-family: 'Cairo', 'Tajawal', 'Noto Kufi Arabic', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 /* Custom scrollbar for RTL */
