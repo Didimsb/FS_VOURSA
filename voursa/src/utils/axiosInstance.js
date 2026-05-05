@@ -7,7 +7,7 @@ const getBaseURL = () => {
     return 'http://localhost:5000/api';
   }
   // Sinon utiliser le backend Render
-  return 'https://fs-voursa.onrender.com/api';
+  return 'https://fs-voursa-g3ym.onrender.com/api';
 };
 
 const axiosInstance = axios.create({
